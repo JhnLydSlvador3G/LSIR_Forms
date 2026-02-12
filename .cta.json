@@ -1,0 +1,25 @@
+{
+  "projectName": "lsir-digitization",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "pnpm",
+  "tailwind": true,
+  "addOnOptions": {
+    "drizzle": {
+      "database": "postgresql"
+    }
+  },
+  "git": true,
+  "version": 1,
+  "framework": "react-cra",
+  "chosenAddOns": [
+    "eslint",
+    "nitro",
+    "start",
+    "drizzle",
+    "form",
+    "table",
+    "better-auth",
+    "tanstack-query"
+  ]
+}
