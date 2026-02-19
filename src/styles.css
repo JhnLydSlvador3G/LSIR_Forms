@@ -13,3 +13,15 @@ code {
   font-family:
     source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+@theme inline {
+  --color-leb: #4d248a;
+  --color-lebSecond: #dbd3e8;
+  --color-lebThird: #e3dfeb;
+}
+
+@layer components {
+  .input-text {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-leb focus:border-leb transition-colors duration-150;
+  }
+}

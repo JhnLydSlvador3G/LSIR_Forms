@@ -1,0 +1,64 @@
+import { z } from 'zod'
+import { useNavigate } from '@tanstack/react-router'
+import { useAppForm } from '@/hooks/form-context'
+import { sleep } from '@/lib/utils'
+import { authClient } from '@/lib/auth-client'
+
+const LoginFormSchema = z.object({
+  userName: z.string().min(1, 'Username is required'),
+  password: z.string().min(8, 'You must have a length of at least 8'),
+})
+
+type LoginFormValues = z.infer<typeof LoginFormSchema>
+
+const defaultValues: LoginFormValues = {
+  userName: '',
+  password: '',
+}
+
+export default function LoginForm() {
+  const navigate = useNavigate()
+  const form = useAppForm({
+    defaultValues,
+    validators: {
+      onChange: LoginFormSchema,
+    },
+    onSubmit: async ({ value, formApi }) => {
+      const { userName, password } = value
+      const { data, error } = await authClient.signIn.username({
+        username: userName,
+        password: password,
+      })
+
+      if (error) {
+        formApi.setErrorMap({ onSubmit: error.message })
+      } else {
+        navigate({ to: '/dashboard' })
+      }
+    },
+  })
+
+  return (
+    <form
+      className="w-full flex flex-col gap-8"
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        form.handleSubmit()
+      }}
+    >
+      <form.AppForm>
+        <form.AppField
+          name="userName"
+          children={(field) => <field.TextField label="Username" />}
+        />
+        <form.AppField
+          name="password"
+          children={(field) => <field.PasswordField label="Password" />}
+        />
+        <form.FormErrorMessage />
+        <form.SubscribeButton label="Sign in" />
+      </form.AppForm>
+    </form>
+  )
+}
