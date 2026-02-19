@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/form-context'
 import { sleep } from '@/lib/utils'
 import { authClient } from '@/lib/auth-client'
@@ -18,6 +18,11 @@ const defaultValues: LoginFormValues = {
 
 export default function LoginForm() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
+  const redirectTo = searchParams.get('redirect') || '/dashboard'
+  console.log(redirectTo)
+
   const form = useAppForm({
     defaultValues,
     validators: {
@@ -33,7 +38,7 @@ export default function LoginForm() {
       if (error) {
         formApi.setErrorMap({ onSubmit: error.message })
       } else {
-        navigate({ to: '/dashboard' })
+        navigate({ to: redirectTo })
       }
     },
   })
