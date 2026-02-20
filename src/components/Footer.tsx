@@ -1,6 +1,13 @@
-export default function Footer() {
+import { cn } from '@/lib/utils'
+
+export default function Footer({ classNameProp }: { classNameProp?: string }) {
   return (
-    <footer className="text-[0.5rem] lg:text-sm text-white bg-[#937bd0] w-full px-6 py-1 lg:sticky bottom-0">
+    <footer
+      className={cn(
+        'text-[0.5rem] lg:text-sm text-white bg-[#937bd0] w-full px-6 py-1 bottom-0',
+        classNameProp,
+      )}
+    >
       <div className="flex flex-row gap-2 px-3 items-center justify-center lg:justify-start">
         <a href="https://leb.gov.ph/" className="flex items-center gap-2">
           <img
