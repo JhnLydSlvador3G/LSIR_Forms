@@ -20,7 +20,7 @@ export const Route = createFileRoute('/_protected')({
   component: () => (
     <SidebarProvider>
       <NavigationBar />
-      <main className="flex-1 p-4">
+      <main className="flex-1 p-5 pb-18">
         <Outlet />
       </main>
       <Footer classNameProp="fixed left-0 bottom-0 w-full" />

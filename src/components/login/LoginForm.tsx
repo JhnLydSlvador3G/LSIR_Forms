@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/form-context'
-import { sleep } from '@/lib/utils'
 import { authClient } from '@/lib/auth-client'
 
 const LoginFormSchema = z.object({
@@ -55,7 +54,9 @@ export default function LoginForm() {
       <form.AppForm>
         <form.AppField
           name="userName"
-          children={(field) => <field.TextField label="Username" />}
+          children={(field) => (
+            <field.TextField label="Username" htmlForVal="userName" />
+          )}
         />
         <form.AppField
           name="password"

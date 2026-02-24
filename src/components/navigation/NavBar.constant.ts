@@ -33,6 +33,12 @@ export const navigationConfig: Array<NavItemConfig> = [
     icon: Info,
   },
   {
+    type: 'item',
+    label: 'HEI General Information',
+    to: '/heiinfo',
+    icon: Info,
+  },
+  {
     type: 'group',
     label: 'Start - SSR Demos',
     icon: StickyNote,

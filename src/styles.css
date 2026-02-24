@@ -22,6 +22,49 @@ code {
 
 @layer components {
   .input-text {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-leb focus:border-leb transition-colors duration-150;
+    @apply w-full px-3 py-2 border border-leb rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-leb focus:border-leb transition-colors duration-150;
+  }
+}
+
+@layer components {
+  .select-trigger {
+    @apply whitespace-nowrap inline-flex self-start shrink-0 w-fit h-[40px] items-center justify-center gap-[5px] rounded-md bg-white px-[15px] text-[16px] leading-none shadow-md outline-none border-leb border hover:bg-lebSecond focus:ring-2 focus:ring-leb data-placeholder:text-black text-black;
+  }
+
+  .select-content {
+    @apply overflow-hidden rounded-md bg-white shadow-lg;
+  }
+
+  .select-scroll-button {
+    @apply flex h-[25px] cursor-default items-center justify-center bg-white text-violet-700;
+  }
+
+  .select-viewport {
+    @apply p-[5px];
+  }
+
+  .select-label {
+    @apply px-[25px] text-xs leading-[25px] text-gray-600;
+  }
+
+  .select-separator {
+    @apply m-[5px] h-px bg-violet-200;
+  }
+
+  .select-item {
+    @apply relative flex h-[25px] select-none items-center rounded-sm pl-[25px] pr-[35px] text-[13px] leading-none text-leb;
+    @apply data-disabled:pointer-events-none;
+    @apply data-disabled:text-gray-400;
+    @apply data-highlighted:bg-leb;
+    @apply data-highlighted:text-violet-50;
+    @apply data-highlighted:outline-none;
+  }
+
+  .select-item-indicator {
+    @apply absolute left-1 inline-flex w-[15px] items-center justify-center;
+  }
+
+  .no-hover {
+    @apply hover:bg-white hover:text-black hover:shadow-md hover:border-leb;
   }
 }

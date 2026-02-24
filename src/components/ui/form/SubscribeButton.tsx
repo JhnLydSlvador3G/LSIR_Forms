@@ -4,11 +4,17 @@ import { cn } from '@/lib/utils'
 export default function SubscribeButton({ label }: { label: string }) {
   const form = useFormContext()
   return (
-    <form.Subscribe selector={(state) => state.isSubmitting}>
-      {(isSubmitting) => (
+    <form.Subscribe
+      selector={(state) => [
+        state.isSubmitting,
+        state.canSubmit,
+        state.isPristine,
+      ]}
+    >
+      {([isSubmitting, canSubmit, isPristine]) => (
         <button
           type="submit"
-          disabled={isSubmitting}
+          aria-disabled={isSubmitting || !canSubmit || isPristine}
           className={cn(
             'flex-2 md:flex-none',
             'px-3 py-1.5 md:px-12 md:py-4',
