@@ -15,6 +15,14 @@ const HeiGeneral = withForm({
         <div className="flex flex-row justify-start gap-5">
           <form.AppField
             name="heiOwnership"
+            listeners={{
+              onChange: ({ value }) => {
+                if (value !== 'private') {
+                  form.setFieldValue('privateOwnerShip', '')
+                }
+              },
+            }}
+
             children={(field) => (
               <field.SelectField
                 label="Ownership Type"
@@ -32,24 +40,12 @@ const HeiGeneral = withForm({
               return (
                 <form.AppField
                   name="privateOwnerShip"
-                  validators={{
-                    onChangeListenTo: ['heiOwnership'],
-                    onChangeAsync: ({ value, fieldApi }) => {
-                      if (
-                        fieldApi.form.getFieldValue('heiOwnership') !==
-                          'private' &&
-                        value !== undefined
-                      ) {
-                        fieldApi.setValue('')
-                      }
-                    },
-                  }}
                 >
                   {(field) => {
                     return (
                       <field.SelectField
                         label="Private Classification"
-                        htmlForVal="privateOwnerShip"
+                        htmlForVal="privateOwnership"
                         required={ownership === 'private'}
                         disabled={ownership !== 'private'}
                         options={[
@@ -71,8 +67,9 @@ const HeiGeneral = withForm({
                 htmlForVal="heiType"
                 required
                 options={[
-                  { value: 'University', label: 'University' },
-                  { value: 'College', label: 'College' },
+                  { value: 'university', label: 'University' },
+                  { value: 'college', label: 'College' },
+                  { value: 'others', label: 'Others' },
                 ]}
               />
             )}

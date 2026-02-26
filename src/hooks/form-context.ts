@@ -4,6 +4,7 @@ import { PasswordField } from '@/components/ui/form/PasswordField'
 import SubscribeButton from '@/components/ui/form/SubscribeButton'
 import FormErrorMessage from '@/components/ui/form/FormErrorMessage'
 import { SelectField } from '@/components/ui/form/SelectField'
+import { NumberField } from '@/components/ui/form/NumberField'
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts()
@@ -15,6 +16,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
     TextField,
     PasswordField,
     SelectField,
+    NumberField,
   },
   formComponents: {
     SubscribeButton,

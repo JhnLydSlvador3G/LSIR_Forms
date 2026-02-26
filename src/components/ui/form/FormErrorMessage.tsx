@@ -5,11 +5,13 @@ export default function FormErrorMessage() {
 
   return (
     <form.Subscribe selector={(state) => state.errorMap.onSubmit}>
-      {(errors) => (
-        <div className="text-red-500">
-          {errors && errors.length > 0 ? <em>{errors}</em> : ''}
-        </div>
-      )}
+      {(errors) => {
+        return (
+          <div className="text-red-500">
+            {errors && errors.length > 0 ? <em>{errors}</em> : ''}
+          </div>
+        )
+      }}
     </form.Subscribe>
   )
 }

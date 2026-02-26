@@ -1,12 +1,15 @@
+import { cn } from "@/lib/utils"
+
 type FormWrapperProps = {
   title: string
   subtitle?: string
   children: React.ReactNode
+  noPadding?: boolean
 }
 
-export function FormWrapper({ title, subtitle, children }: FormWrapperProps) {
+export function FormWrapper({ title, subtitle, children, noPadding = false }: FormWrapperProps) {
   return (
-    <div className="max-w-5xl mx-auto my-10 rounded-xl overflow-hidden shadow-xl border border-[#937bd0]/20 bg-white">
+    <div className="max-w-5xl mx-auto my-10 rounded-xl overflow-auto shadow-xl border border-[#937bd0]/20 bg-white">
       {/* Header */}
       <div className="relative bg-leb px-8 py-8 text-white">
         <div className="absolute inset-0 bg-white/5" />
@@ -17,7 +20,10 @@ export function FormWrapper({ title, subtitle, children }: FormWrapperProps) {
       </div>
 
       {/* Body */}
-      <div className="px-8 py-5 bg-white space-y-10">{children}</div>
+      <div className={cn(
+        `bg-white space-y-10`,
+        noPadding ? '' : 'px-8 py-5'
+      )}>{children}</div>
     </div>
   )
 }

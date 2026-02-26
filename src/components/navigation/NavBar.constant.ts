@@ -1,23 +1,23 @@
-import { ClipboardType, Database, Home, Info, StickyNote } from 'lucide-react'
+import { Home, Info, StickyNote, GraduationCapIcon } from 'lucide-react'
 
 export type NavItemConfig =
   | {
-      type: 'item'
+    type: 'item'
+    label: string
+    to: string
+    icon: any
+  }
+  | {
+    type: 'group'
+    label: string
+    icon: any
+    key: string
+    children: Array<{
       label: string
       to: string
       icon: any
-    }
-  | {
-      type: 'group'
-      label: string
-      icon: any
-      key: string
-      children: Array<{
-        label: string
-        to: string
-        icon: any
-      }>
-    }
+    }>
+  }
 
 export const navigationConfig: Array<NavItemConfig> = [
   {
@@ -37,6 +37,18 @@ export const navigationConfig: Array<NavItemConfig> = [
     label: 'HEI General Information',
     to: '/heiinfo',
     icon: Info,
+  },
+  {
+    type: 'item',
+    label: 'Student Profile',
+    to: '/studentprofile',
+    icon: GraduationCapIcon,
+  },
+  {
+    type: 'item',
+    label: 'Law Faculty Profile',
+    to: '/facultyprofile',
+    icon: GraduationCapIcon,
   },
   {
     type: 'group',

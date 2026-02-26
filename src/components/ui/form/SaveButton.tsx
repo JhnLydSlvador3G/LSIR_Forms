@@ -1,12 +1,21 @@
 import { cn } from '@/lib/utils'
+import { saveFormToLocal } from '@/lib/formLocalStorage'
+import z from 'zod'
 
-type SaveButtonProps = {
-  saveToLocal: () => void
+type SaveButtonProps<T> = {
+  storageKey: string
+  getValue: () => T
+  schema?: z.ZodType<T>
 }
 
-const SaveButton = ({ saveToLocal }: SaveButtonProps) => {
+const SaveButton = <T,>({
+  storageKey,
+  getValue,
+  schema
+}: SaveButtonProps<T>) => {
   return (
     <button
+      type="button"
       className={cn(
         'flex-2 md:flex-none',
         'px-2 py-1.5 md:px-8 md:py-3',
@@ -19,7 +28,11 @@ const SaveButton = ({ saveToLocal }: SaveButtonProps) => {
       )}
       onClick={(event) => {
         event.preventDefault()
-        saveToLocal()
+        saveFormToLocal({
+          key: storageKey,
+          value: getValue(),
+          schema: schema
+        })
       }}
     >
       Save

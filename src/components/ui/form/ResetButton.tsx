@@ -1,12 +1,16 @@
-import { heiFormDefaultValues } from '@/components/form/hei/HeiForm.types'
 import { useFormContext } from '@/hooks/form-context'
 import { cn } from '@/lib/utils'
 
-const ResetButton = () => {
+type ResetButtonProps<T> = {
+  defaultVal: T
+}
+
+const ResetButton = <T,>({ defaultVal }: ResetButtonProps<T>) => {
   const form = useFormContext()
+
   return (
     <button
-      type="reset"
+      type="button"
       className={cn(
         'flex-2 md:flex-none',
         'px-2 py-1.5 md:px-8 md:py-3',
@@ -17,12 +21,11 @@ const ResetButton = () => {
         'hover:scale-105 md:hover:scale-105',
         'disabled:opacity-60 disabled:cursor-not-allowed',
       )}
-      onClick={(event) => {
-        event.preventDefault()
-        form.reset(heiFormDefaultValues as never)
+      onClick={() => {
+        console.log('reset')
+        form.reset(defaultVal as any)
       }}
     >
-      {' '}
       Reset
     </button>
   )

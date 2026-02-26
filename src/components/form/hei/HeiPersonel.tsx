@@ -5,9 +5,10 @@ const HeiPersonel = withFieldGroup({
   defaultValues: heiPersonelDefaulVal,
   props: {
     title: 'HEI Personel',
+    type: '',
   },
 
-  render({ group }) {
+  render({ group, type }) {
     return (
       <fieldset className="flex flex-col gap-2 mb-4">
         <div className="flex flex-row gap-3">
@@ -15,7 +16,7 @@ const HeiPersonel = withFieldGroup({
             {(field) => (
               <field.TextField
                 label="First Name"
-                htmlForVal="firstName"
+                htmlForVal={`${type}.firstName`}
                 className="flex-3"
                 required
               />
@@ -25,7 +26,7 @@ const HeiPersonel = withFieldGroup({
             {(field) => (
               <field.TextField
                 label="Middle Name"
-                htmlForVal="middleName"
+                htmlForVal={`${type}.middleName`}
                 className="flex-3"
               />
             )}
@@ -34,7 +35,7 @@ const HeiPersonel = withFieldGroup({
             {(field) => (
               <field.TextField
                 label="Last Name"
-                htmlForVal="lastName"
+                htmlForVal={`${type}.lastName`}
                 className="flex-3"
                 required
               />
@@ -44,7 +45,7 @@ const HeiPersonel = withFieldGroup({
             {(field) => (
               <field.TextField
                 label="Suffix"
-                htmlForVal="suffix"
+                htmlForVal={`${type}.suffix`}
                 className="flex-1"
               />
             )}
@@ -55,7 +56,7 @@ const HeiPersonel = withFieldGroup({
             {(field) => (
               <field.TextField
                 label="Email"
-                htmlForVal="email"
+                htmlForVal={`${type}.email`}
                 className="shrink"
                 required
               />
@@ -65,7 +66,7 @@ const HeiPersonel = withFieldGroup({
             {(field) => (
               <field.TextField
                 label="Mobile Number"
-                htmlForVal="telNum"
+                htmlForVal={`${type}.telNum`}
                 required
               />
             )}

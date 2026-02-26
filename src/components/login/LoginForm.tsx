@@ -1,3 +1,5 @@
+"use client"
+
 import { z } from 'zod'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/form-context'
@@ -20,7 +22,6 @@ export default function LoginForm() {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
   const redirectTo = searchParams.get('redirect') || '/dashboard'
-  console.log(redirectTo)
 
   const form = useAppForm({
     defaultValues,

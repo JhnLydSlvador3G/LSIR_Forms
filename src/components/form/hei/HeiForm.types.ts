@@ -2,30 +2,40 @@ import { z } from 'zod'
 import { AddressSchema } from '../address/AddressForm.type'
 import { heiPersonelSchema } from './HeiPersonel.type'
 
-export const heiFormSchema = z
-  .object({
-    heiName: z.string().nonempty('Required'),
-    heiTelNumber: z.string().nonempty('Required'),
-    heiAdd: AddressSchema,
-    heiEmail: z.email('Invalid Email'),
-    heiPres: heiPersonelSchema,
-    heiReg: heiPersonelSchema,
-    heiOwnership: z.string().nonempty('Required'),
+export const HeiOwnershipEnum = z.enum(['private', 'public'])
+export type HeiOwnership = z.infer<typeof HeiOwnershipEnum>
+
+export const HeiTypeEnum = z.enum([
+  'university',
+  'college',
+  'others',
+])
+export type HeiType = z.infer<typeof HeiTypeEnum>
+
+const baseSchema = z.object({
+  heiName: z.string().min(1, 'Required'),
+  heiTelNumber: z.string().min(1, 'Required'),
+  heiAdd: AddressSchema,
+  heiEmail: z.email('Invalid Email'),
+  heiPres: heiPersonelSchema,
+  heiReg: heiPersonelSchema,
+  heiType: HeiTypeEnum, // ✅ enum here
+  heiOther: z.string(),
+  startSem: z.string().optional(),
+  heiWebsite: z.union([z.literal(''), z.url().trim()]),
+})
+
+export const heiFormSchema = z.discriminatedUnion('heiOwnership', [
+  baseSchema.extend({
+    heiOwnership: z.literal('private'),
+    privateOwnerShip: z.string().min(1, 'Required'),
+  }),
+
+  baseSchema.extend({
+    heiOwnership: z.literal('public'),
     privateOwnerShip: z.string().optional(),
-    heiType: z.string().nonempty('Required'),
-    heiOther: z.string(),
-    startSem: z.string().optional(),
-    heiWebsite: z.union([z.literal(''), z.url().trim()]),
-  })
-  .superRefine((data, ctx) => {
-    if (data.heiOwnership === 'private' && data.privateOwnerShip === '') {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['privateOwnerShip'], // points to the nested field
-        message: 'Required',
-      })
-    }
-  })
+  }),
+])
 
 export const heiFormDefaultValues: heiFormData = {
   heiName: '',
@@ -58,12 +68,19 @@ export const heiFormDefaultValues: heiFormData = {
     email: '',
     telNum: '', // optional
   },
-  heiOwnership: '', // e.g. "Private" or "Public"
+  heiOwnership: 'public', // e.g. "Private" or "Public"
   privateOwnerShip: '', // optional but include if you want
-  heiType: '',
+  heiType: 'university',
   heiOther: '',
   startSem: '', // optional
   heiWebsite: '', // optional
 }
 
 export type heiFormData = z.infer<typeof heiFormSchema>
+
+export const heiFormDraftSchema = baseSchema
+  .extend({
+    heiOwnership: HeiOwnershipEnum.optional(),
+    privateOwnerShip: z.string().optional(),
+  })
+  .partial()

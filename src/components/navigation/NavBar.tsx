@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { NavGroup, NavItem } from './NavBarItem'
 import { navigationConfig } from './NavBar.constant'
@@ -21,7 +21,7 @@ export default function NavigationBar() {
     }))
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const onScroll = () => {
       setIsScrolled(window.scrollY > 10)
     }

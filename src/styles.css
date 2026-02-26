@@ -67,4 +67,14 @@ code {
   .no-hover {
     @apply hover:bg-white hover:text-black hover:shadow-md hover:border-leb;
   }
+
+  .no-spinner {
+    appearance: textfield;
+  }
+
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
 }

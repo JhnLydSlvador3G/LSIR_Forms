@@ -1,34 +1,37 @@
+import { useEffect } from 'react'
 import AddressForm from '../address/AddressForm'
 import { FormWrapper } from '../FormWrapper'
 import { heiFormDefaultValues, heiFormSchema } from './HeiForm.types'
 import HeiGeneral from './HeiGeneralInfo'
 import HeiPersonel from './HeiPersonel'
 import { SectionWrapper } from './HeiSectionWrapper'
-import type z from 'zod'
 import { useAppForm } from '@/hooks/form-context'
 import SubscribeButton from '@/components/ui/form/SubscribeButton'
 import ResetButton from '@/components/ui/form/ResetButton'
 import SaveButton from '@/components/ui/form/SaveButton'
-
-function saveToLocal({ value }: { value: z.infer<typeof heiFormSchema> }) {
-  console.log('Parsing...')
-  localStorage.setItem('hei', JSON.stringify(value))
-}
+import { loadFormFromLocal } from '@/lib/formLocalStorage'
 
 export default function HeiForm() {
-  const data = localStorage.getItem('hei')
-  let prevFormValues: z.infer<typeof heiFormSchema>
-  prevFormValues = JSON.parse(data as string)
-
   const form = useAppForm({
-    defaultValues: prevFormValues ?? heiFormDefaultValues,
+    defaultValues: heiFormDefaultValues,
     validators: {
       onChange: heiFormSchema,
+      onMount: heiFormSchema
     },
     onSubmit: async ({ value }) => {
       console.log(value)
     },
   })
+
+  // load persisted values only on the client after mount; the server will
+  // always render using the fallback, avoiding a hydration mismatch.
+  useEffect(() => {
+    const prev = loadFormFromLocal({
+      key: 'hei',
+      fallback: heiFormDefaultValues,
+    })
+    form.reset(prev ?? heiFormDefaultValues)
+  }, [form])
 
   return (
     <FormWrapper title="HEI General Information">
@@ -37,6 +40,11 @@ export default function HeiForm() {
         onSubmit={(e) => {
           e.preventDefault()
           e.stopPropagation()
+
+          const isValid = form.validateAllFields('submit')
+
+          if (!isValid) return
+
           form.handleSubmit()
         }}
       >
@@ -62,6 +70,7 @@ export default function HeiForm() {
           <HeiPersonel
             form={form}
             title="HEI President"
+            type='heiPres'
             fields={{
               firstName: 'heiPres.firstName',
               middleName: 'heiPres.middleName',
@@ -76,7 +85,8 @@ export default function HeiForm() {
         <SectionWrapper title="HEI Registrar">
           <HeiPersonel
             form={form}
-            title="HEI President"
+            title="HEI Registrar"
+            type="heiReg"
             fields={{
               firstName: 'heiReg.firstName',
               middleName: 'heiReg.middleName',
@@ -91,12 +101,8 @@ export default function HeiForm() {
         <form.AppForm>
           <div className="flex justify-between mt-5">
             <div className="flex flex-row gap-4">
-              <ResetButton />
-              <SaveButton
-                saveToLocal={() =>
-                  saveToLocal({ value: form.store.state.values })
-                }
-              />
+              <ResetButton defaultVal={heiFormDefaultValues} />
+              <SaveButton getValue={() => form.state.values} storageKey='hei' />
             </div>
 
             <SubscribeButton label="Submit" />

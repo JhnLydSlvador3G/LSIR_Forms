@@ -27,6 +27,7 @@ export function PasswordField({ label }: { label: string }) {
           outline-none border-none"
             value={field.state.value}
             onChange={(e) => field.handleChange(e.target.value)}
+            autoCapitalize="none"
           />
 
           <PasswordToggleField.Toggle
