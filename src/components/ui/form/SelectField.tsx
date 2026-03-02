@@ -22,9 +22,7 @@ export function SelectField({
   required = false,
 }: SelectFieldProps) {
   const field = useFieldContext<string>()
-  const hasError =
-    field.state.meta.isTouched &&
-    !field.state.meta.isValid
+  const hasError = field.state.meta.isTouched && !field.state.meta.isValid
   return (
     <label className="flex flex-col gap-0">
       <LabelForm label={label} htmlForVal={htmlForVal} required={required} />

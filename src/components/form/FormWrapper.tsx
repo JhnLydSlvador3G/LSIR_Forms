@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 type FormWrapperProps = {
   title: string
@@ -7,7 +7,12 @@ type FormWrapperProps = {
   noPadding?: boolean
 }
 
-export function FormWrapper({ title, subtitle, children, noPadding = false }: FormWrapperProps) {
+export function FormWrapper({
+  title,
+  subtitle,
+  children,
+  noPadding = false,
+}: FormWrapperProps) {
   return (
     <div className="max-w-5xl mx-auto my-10 rounded-xl overflow-auto shadow-xl border border-[#937bd0]/20 bg-white">
       {/* Header */}
@@ -20,10 +25,9 @@ export function FormWrapper({ title, subtitle, children, noPadding = false }: Fo
       </div>
 
       {/* Body */}
-      <div className={cn(
-        `bg-white space-y-10`,
-        noPadding ? '' : 'px-8 py-5'
-      )}>{children}</div>
+      <div className={cn(`bg-white space-y-10`, noPadding ? '' : 'px-8 py-5')}>
+        {children}
+      </div>
     </div>
   )
 }

@@ -17,6 +17,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedFormStudentprofileRouteImport } from './routes/_protected/_form/studentprofile'
 import { Route as ProtectedFormHeiinfoRouteImport } from './routes/_protected/_form/heiinfo'
 import { Route as ProtectedFormFacultyprofileRouteImport } from './routes/_protected/_form/facultyprofile'
+import { Route as ProtectedFormFacultydevelopmentRouteImport } from './routes/_protected/_form/facultydevelopment'
 
 const ProtectedRoute = ProtectedRouteImport.update({
   id: '/_protected',
@@ -59,10 +60,17 @@ const ProtectedFormFacultyprofileRoute =
     path: '/facultyprofile',
     getParentRoute: () => ProtectedRoute,
   } as any)
+const ProtectedFormFacultydevelopmentRoute =
+  ProtectedFormFacultydevelopmentRouteImport.update({
+    id: '/_form/facultydevelopment',
+    path: '/facultydevelopment',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
@@ -72,6 +80,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
@@ -83,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteWithChildren
   '/_protected/dashboard': typeof ProtectedDashboardRoute
+  '/_protected/_form/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/_protected/_form/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/_protected/_form/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/_protected/_form/studentprofile': typeof ProtectedFormStudentprofileRoute
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/facultydevelopment'
     | '/facultyprofile'
     | '/heiinfo'
     | '/studentprofile'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
+    | '/facultydevelopment'
     | '/facultyprofile'
     | '/heiinfo'
     | '/studentprofile'
@@ -113,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_protected'
     | '/_protected/dashboard'
+    | '/_protected/_form/facultydevelopment'
     | '/_protected/_form/facultyprofile'
     | '/_protected/_form/heiinfo'
     | '/_protected/_form/studentprofile'
@@ -185,11 +198,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedFormFacultyprofileRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/_form/facultydevelopment': {
+      id: '/_protected/_form/facultydevelopment'
+      path: '/facultydevelopment'
+      fullPath: '/facultydevelopment'
+      preLoaderRoute: typeof ProtectedFormFacultydevelopmentRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
   }
 }
 
 interface ProtectedRouteChildren {
   ProtectedDashboardRoute: typeof ProtectedDashboardRoute
+  ProtectedFormFacultydevelopmentRoute: typeof ProtectedFormFacultydevelopmentRoute
   ProtectedFormFacultyprofileRoute: typeof ProtectedFormFacultyprofileRoute
   ProtectedFormHeiinfoRoute: typeof ProtectedFormHeiinfoRoute
   ProtectedFormStudentprofileRoute: typeof ProtectedFormStudentprofileRoute
@@ -197,6 +218,7 @@ interface ProtectedRouteChildren {
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedDashboardRoute: ProtectedDashboardRoute,
+  ProtectedFormFacultydevelopmentRoute: ProtectedFormFacultydevelopmentRoute,
   ProtectedFormFacultyprofileRoute: ProtectedFormFacultyprofileRoute,
   ProtectedFormHeiinfoRoute: ProtectedFormHeiinfoRoute,
   ProtectedFormStudentprofileRoute: ProtectedFormStudentprofileRoute,

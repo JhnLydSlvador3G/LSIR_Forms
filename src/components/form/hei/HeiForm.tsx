@@ -16,7 +16,7 @@ export default function HeiForm() {
     defaultValues: heiFormDefaultValues,
     validators: {
       onChange: heiFormSchema,
-      onMount: heiFormSchema
+      onMount: heiFormSchema,
     },
     onSubmit: async ({ value }) => {
       console.log(value)
@@ -70,7 +70,7 @@ export default function HeiForm() {
           <HeiPersonel
             form={form}
             title="HEI President"
-            type='heiPres'
+            type="heiPres"
             fields={{
               firstName: 'heiPres.firstName',
               middleName: 'heiPres.middleName',
@@ -102,7 +102,7 @@ export default function HeiForm() {
           <div className="flex justify-between mt-5">
             <div className="flex flex-row gap-4">
               <ResetButton defaultVal={heiFormDefaultValues} />
-              <SaveButton getValue={() => form.state.values} storageKey='hei' />
+              <SaveButton getValue={() => form.state.values} storageKey="hei" />
             </div>
 
             <SubscribeButton label="Submit" />

@@ -10,7 +10,7 @@ type TextFieldProps = {
   required?: boolean
 }
 
-export function TextField({
+export function DateField({
   label,
   htmlForVal,
   className,
@@ -25,7 +25,9 @@ export function TextField({
       <LabelForm label={label} htmlForVal={htmlForVal} required={required} />
 
       <input
+        type="date"
         id={htmlForVal}
+        placeholder="Select a Start Date"
         className={cn(
           'input-text w-full',
           hasError

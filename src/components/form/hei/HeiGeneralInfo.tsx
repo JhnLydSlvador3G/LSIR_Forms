@@ -22,7 +22,6 @@ const HeiGeneral = withForm({
                 }
               },
             }}
-
             children={(field) => (
               <field.SelectField
                 label="Ownership Type"
@@ -38,9 +37,7 @@ const HeiGeneral = withForm({
           <form.Subscribe selector={(state) => state.values.heiOwnership}>
             {(ownership) => {
               return (
-                <form.AppField
-                  name="privateOwnerShip"
-                >
+                <form.AppField name="privateOwnerShip">
                   {(field) => {
                     return (
                       <field.SelectField

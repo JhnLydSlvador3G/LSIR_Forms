@@ -5,11 +5,7 @@ import { heiPersonelSchema } from './HeiPersonel.type'
 export const HeiOwnershipEnum = z.enum(['private', 'public'])
 export type HeiOwnership = z.infer<typeof HeiOwnershipEnum>
 
-export const HeiTypeEnum = z.enum([
-  'university',
-  'college',
-  'others',
-])
+export const HeiTypeEnum = z.enum(['university', 'college', 'others'])
 export type HeiType = z.infer<typeof HeiTypeEnum>
 
 const baseSchema = z.object({
@@ -19,7 +15,7 @@ const baseSchema = z.object({
   heiEmail: z.email('Invalid Email'),
   heiPres: heiPersonelSchema,
   heiReg: heiPersonelSchema,
-  heiType: HeiTypeEnum, // ✅ enum here
+  heiType: HeiTypeEnum,
   heiOther: z.string(),
   startSem: z.string().optional(),
   heiWebsite: z.union([z.literal(''), z.url().trim()]),
@@ -55,25 +51,25 @@ export const heiFormDefaultValues: heiFormData = {
     lastName: '',
     middleName: '',
     suffix: '',
-    credential: [], // empty array
+    credential: [],
     email: '',
-    telNum: '', // optional, but you can initialize as empty if you prefer
+    telNum: '',
   },
   heiReg: {
     firstName: '',
     lastName: '',
     middleName: '',
     suffix: '',
-    credential: [], // empty array
+    credential: [],
     email: '',
-    telNum: '', // optional
+    telNum: '',
   },
-  heiOwnership: 'public', // e.g. "Private" or "Public"
-  privateOwnerShip: '', // optional but include if you want
+  heiOwnership: 'public',
+  privateOwnerShip: '',
   heiType: 'university',
   heiOther: '',
-  startSem: '', // optional
-  heiWebsite: '', // optional
+  startSem: '',
+  heiWebsite: '',
 }
 
 export type heiFormData = z.infer<typeof heiFormSchema>

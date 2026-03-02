@@ -1,6 +1,6 @@
+import type z from 'zod'
 import { cn } from '@/lib/utils'
 import { saveFormToLocal } from '@/lib/formLocalStorage'
-import z from 'zod'
 
 type SaveButtonProps<T> = {
   storageKey: string
@@ -11,7 +11,7 @@ type SaveButtonProps<T> = {
 const SaveButton = <T,>({
   storageKey,
   getValue,
-  schema
+  schema,
 }: SaveButtonProps<T>) => {
   return (
     <button
@@ -31,7 +31,7 @@ const SaveButton = <T,>({
         saveFormToLocal({
           key: storageKey,
           value: getValue(),
-          schema: schema
+          schema: schema,
         })
       }}
     >
