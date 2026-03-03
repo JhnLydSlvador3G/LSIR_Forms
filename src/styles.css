@@ -137,4 +137,33 @@ code {
   [data-state='open'].animate-contentShow {
     animation: contentShow 1s cubic-bezier(0.16, 1, 0.3, 1);
   }
+
+  @keyframes overlayHide {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes contentHide {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+
+
+  [data-state='closed'].animate-overlayShow {
+    animation: overlayHide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  [data-state='closed'].animate-contentShow {
+    animation: contentHide 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
 }

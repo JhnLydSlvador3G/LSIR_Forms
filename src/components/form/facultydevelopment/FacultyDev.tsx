@@ -74,7 +74,7 @@ export default function FacultyActivity() {
         <form.AppForm>
           <div className="flex justify-between mt-5 m-5">
             <div className="flex flex-row gap-4">
-              <ResetButton defaultVal={defaultValues} />
+              <ResetButton defaultValues={defaultValues} storageKey='facultyactivity' />
               <SaveButton
                 storageKey={'facultyactivity'}
                 getValue={() => form.state.values}

@@ -39,6 +39,8 @@ export default function StudentProfile() {
     form.reset(prev ?? defaultValues)
   }, [form])
 
+
+
   return (
     <FormWrapper title={"Students' Profile"} noPadding={true}>
       <form
@@ -57,7 +59,10 @@ export default function StudentProfile() {
 
           <div className="flex justify-between mt-5 m-5">
             <div className="flex flex-row gap-4">
-              <ResetButton defaultVal={defaultValues} />
+              <ResetButton storageKey='studentprofile' defaultValues={
+                defaultValues
+              } />
+
 
               <SaveButton
                 storageKey={'studentprofile'}

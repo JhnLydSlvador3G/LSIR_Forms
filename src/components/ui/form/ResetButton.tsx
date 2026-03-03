@@ -1,14 +1,38 @@
 import { AlertDialog } from 'radix-ui'
+import { useState } from 'react'
 import { useFormContext } from '@/hooks/form-context'
 import { cn } from '@/lib/utils'
 
-const ResetButton = () => {
+type ResetButtonProps = {
+  defaultValues: Record<string, any>
+  storageKey?: string
+  label?: string
+}
+
+//Uses as any bad type but can't cast DefaultValues as <Record, never>
+
+const ResetButton = ({
+  defaultValues,
+  storageKey,
+  label = 'Reset',
+}: ResetButtonProps) => {
   const form = useFormContext()
+  const [open, setOpen] = useState(false)
+
+  const handleReset = () => {
+    if (storageKey) {
+      localStorage.removeItem(storageKey)
+    }
+
+    form.reset(defaultValues as Record<string, never>)
+    setOpen(false)
+  }
 
   return (
-    <AlertDialog.Root>
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Trigger asChild>
         <button
+          type="button"
           className={cn(
             'flex-2 md:flex-none',
             'px-2 py-1.5 md:px-8 md:py-3',
@@ -16,37 +40,37 @@ const ResetButton = () => {
             'rounded-xl',
             'text-black shadow-lg bg-lebSecond ring-2 ring-[#937bd0]/40',
             'transition-all duration-300 ease-out',
-            'hover:scale-105 md:hover:scale-105',
-            'disabled:opacity-60 disabled:cursor-not-allowed',
+            'hover:scale-105',
           )}
         >
-          Reset
+          {label}
         </button>
       </AlertDialog.Trigger>
+
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="fixed inset-0 bg-blackBackground animate-overlayShow" />
-        <AlertDialog.Content className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-[25px] shadow-[var(--shadow-6)] focus:outline-none animate-contentShow">
-          <AlertDialog.Title className="m-0 text-[17px] text-black font-bold">
+        <AlertDialog.Content className="fixed left-1/2 top-1/2 w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-6 shadow-lg animate-contentShow">
+          <AlertDialog.Title className="text-lg font-bold">
             Are you absolutely sure?
           </AlertDialog.Title>
-          <AlertDialog.Description className="mb-5 mt-[15px] text-[15px] leading-normal text-mauve11">
-            This action will clear all the data you’ve entered in this form. All
-            unsaved changes will be lost. This cannot be undone.
+          <AlertDialog.Description className="mt-4 mb-6">
+            This will clear all unsaved changes. This cannot be undone.
           </AlertDialog.Description>
-          <div className="flex justify-end gap-[25px]">
+
+          <div className="flex justify-end gap-4">
             <AlertDialog.Cancel asChild>
-              <button className="inline-flex h-[35px] items-center justify-center rounded bg-mauve4 px-[15px] font-medium leading-none text-leb outline-none outline-offset-1 hover:bg-blackBackground hover:text-white transition-colors ease-in focus-visible:outline-2 focus-visible:outline-mauve7 select-none">
+              <button className="px-4 py-2 rounded bg-gray-200">
                 Cancel
               </button>
             </AlertDialog.Cancel>
+
             <AlertDialog.Action asChild>
               <button
-                onClick={() => {
-                  form.reset()
-                }}
-                className="inline-flex h-[35px] items-center justify-center rounded bg-red-400 px-[15px] font-medium leading-none text-black outline-none outline-offset-1 hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-red-700 select-none transition-colors ease-in"
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-2 rounded bg-red-500 text-white"
               >
-                Yes, reset form
+                Yes, reset
               </button>
             </AlertDialog.Action>
           </div>
