@@ -1,0 +1,145 @@
+// Higher Education Institution
+Table HEI {
+  hei_id integer [pk, increment]
+  hei_name varchar
+  ownership_type varchar
+  hei_type varchar
+  email varchar
+  telephone varchar
+  region varchar
+}
+
+Table LAW_SCHOOL {
+  law_school_id integer [pk, increment]
+  hei_id integer
+  law_school_name varchar
+  email varchar
+  telephone varchar
+  recognition_status varchar
+  accreditation_status varchar
+}
+
+Table REPORTING_PERIOD {
+  reporting_period_id integer [pk, increment]
+  law_school_id integer
+  school_year varchar
+  semester_term varchar
+  submission_date date
+  status varchar
+}
+
+Table PROGRAM {
+  program_id integer [pk, increment]
+  law_school_id integer
+  program_type varchar
+  permit_number varchar
+  year_issued integer
+}
+
+Table FINANCIAL_REPORT {
+  financial_report_id integer [pk, increment]
+  reporting_period_id integer
+  tuition_per_unit decimal
+  total_average_tuition decimal
+  total_recurring_fees decimal
+  total_non_recurring_fees decimal
+}
+
+Table ENROLLMENT_STATISTICS {
+  enrollment_id integer [pk, increment]
+  reporting_period_id integer
+  program_type varchar
+  year_level integer
+  male_count integer
+  female_count integer
+  total_count integer
+}
+
+Table CURRICULUM {
+  curriculum_id integer [pk, increment]
+  reporting_period_id integer
+  leb_approval_date date
+}
+
+Table ACADEMIC_LOAD {
+  academic_load_id integer [pk, increment]
+  curriculum_id integer
+  year_level integer
+  total_units integer
+}
+
+Table FACULTY {
+  faculty_id integer [pk, increment]
+  law_school_id integer
+  full_name varchar
+  gender varchar
+  employment_status varchar
+  years_teaching integer
+}
+
+Table FACULTY_DEGREE {
+  faculty_degree_id integer [pk, increment]
+  faculty_id integer
+  degree_type varchar
+  granting_hei varchar
+  graduation_year integer
+}
+
+Table FACULTY_ASSIGNMENT {
+  assignment_id integer [pk, increment]
+  faculty_id integer
+  reporting_period_id integer
+  subject_title varchar
+  year_level integer
+  number_of_units integer
+}
+
+Table FACULTY_TRAINING {
+  training_id integer [pk, increment]
+  reporting_period_id integer
+  training_title varchar
+  training_hours integer
+  participants integer
+  training_date date
+}
+
+Table CERTIFICATION {
+  certification_id integer [pk, increment]
+  reporting_period_id integer
+  certification_year integer
+  certification_month varchar
+}
+
+Table PRESIDENT_ATTESTATION {
+  attestation_id integer [pk, increment]
+  certification_id integer
+  printed_name varchar
+  id_type varchar
+  id_number varchar
+}
+
+Table DEAN_ATTESTATION {
+  attestation_id integer [pk, increment]
+  certification_id integer
+  printed_name varchar
+  id_type varchar
+  id_number varchar
+}
+
+// --- Relationships ---
+
+Ref: LAW_SCHOOL.hei_id > HEI.hei_id
+Ref: REPORTING_PERIOD.law_school_id > LAW_SCHOOL.law_school_id
+Ref: PROGRAM.law_school_id > LAW_SCHOOL.law_school_id
+Ref: FINANCIAL_REPORT.reporting_period_id > REPORTING_PERIOD.reporting_period_id
+Ref: ENROLLMENT_STATISTICS.reporting_period_id > REPORTING_PERIOD.reporting_period_id
+Ref: CURRICULUM.reporting_period_id > REPORTING_PERIOD.reporting_period_id
+Ref: ACADEMIC_LOAD.curriculum_id > CURRICULUM.curriculum_id
+Ref: FACULTY.law_school_id > LAW_SCHOOL.law_school_id
+Ref: FACULTY_DEGREE.faculty_id > FACULTY.faculty_id
+Ref: FACULTY_ASSIGNMENT.faculty_id > FACULTY.faculty_id
+Ref: FACULTY_ASSIGNMENT.reporting_period_id > REPORTING_PERIOD.reporting_period_id
+Ref: FACULTY_TRAINING.reporting_period_id > REPORTING_PERIOD.reporting_period_id
+Ref: CERTIFICATION.reporting_period_id > REPORTING_PERIOD.reporting_period_id
+Ref: PRESIDENT_ATTESTATION.certification_id > CERTIFICATION.certification_id
+Ref: DEAN_ATTESTATION.certification_id > CERTIFICATION.certification_id
