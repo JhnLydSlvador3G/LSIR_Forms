@@ -1,6 +1,4 @@
-'use client'
-
-import Footer from '../footer'
+import Footer from '../Footer'
 import ContentSection from '@/components/login/ContentSection'
 
 export default function LoginPageContent() {

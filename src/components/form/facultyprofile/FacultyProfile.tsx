@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect  } from 'react'
+import { useEffect } from 'react'
 import { FormWrapper } from '../FormWrapper'
 import {
   FacultyDefaultValues,
@@ -54,7 +54,7 @@ export default function FacultyProfile() {
           </div>
           <div className="flex justify-between mt-5 m-5">
             <div className="flex flex-row gap-4">
-              <ResetButton defaultVal={defaultValues} />
+              <ResetButton />
               <SaveButton
                 storageKey={'facultyprofile'}
                 getValue={() => form.state.values}

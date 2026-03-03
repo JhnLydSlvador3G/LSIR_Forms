@@ -14,7 +14,6 @@ import SubscribeButton from '@/components/ui/form/SubscribeButton'
 import { cn } from '@/lib/utils'
 import { loadFormFromLocal } from '@/lib/formLocalStorage'
 
-
 const defaultValues = {
   activities: FacultyActivityDefaultValues,
 }

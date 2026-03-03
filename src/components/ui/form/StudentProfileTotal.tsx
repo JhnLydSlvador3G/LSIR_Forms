@@ -16,7 +16,9 @@ export function ProfileRowTotal({ index }: { index: number }) {
 export function ProfileColumnTotal({ targetCol }: { targetCol: string }) {
   const form = useFormContext()
   return (
-    <form.Subscribe selector={(state) => state.values.profiles as Array<ProfileRow>}>
+    <form.Subscribe
+      selector={(state) => state.values.profiles as Array<ProfileRow>}
+    >
       {(profiles) => {
         const total = profiles.reduce((sum, row) => {
           const val = Number(row[targetCol as keyof ProfileRow] || 0)
@@ -31,7 +33,9 @@ export function ProfileColumnTotal({ targetCol }: { targetCol: string }) {
 export function ProfileGrandTotal() {
   const form = useFormContext()
   return (
-    <form.Subscribe selector={(state) => state.values.profiles as Array<ProfileRow>}>
+    <form.Subscribe
+      selector={(state) => state.values.profiles as Array<ProfileRow>}
+    >
       {(profiles) => {
         const total = profiles.reduce((sum, row) => {
           const rowTotal = calculateTotalStudRow(row)

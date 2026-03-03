@@ -1,3 +1,4 @@
+import Spinner from '../feedback/Spinner'
 import { useFormContext } from '@/hooks/form-context'
 import { cn } from '@/lib/utils'
 
@@ -14,9 +15,9 @@ export default function SubscribeButton({ label }: { label: string }) {
       {([isSubmitting, canSubmit, isPristine]) => (
         <button
           type="submit"
-          aria-disabled={isSubmitting || !canSubmit || isPristine}
+          disabled={isSubmitting || !canSubmit || isPristine}
           className={cn(
-            'flex-2 md:flex-none',
+            'flex-2 md:flex-none justify-center flex items-center',
             'px-3 py-1.5 md:px-12 md:py-4',
             'text-xs md:text-lg',
             'rounded-xl',
@@ -26,7 +27,7 @@ export default function SubscribeButton({ label }: { label: string }) {
             'disabled:opacity-60 disabled:cursor-not-allowed',
           )}
         >
-          {isSubmitting ? 'Logging in' : label}
+          {isSubmitting ? <Spinner /> : label}
         </button>
       )}
     </form.Subscribe>

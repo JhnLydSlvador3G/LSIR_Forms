@@ -101,7 +101,7 @@ export default function HeiForm() {
         <form.AppForm>
           <div className="flex justify-between mt-5">
             <div className="flex flex-row gap-4">
-              <ResetButton defaultVal={heiFormDefaultValues} />
+              <ResetButton />
               <SaveButton getValue={() => form.state.values} storageKey="hei" />
             </div>
 

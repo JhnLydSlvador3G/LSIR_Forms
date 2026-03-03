@@ -18,15 +18,24 @@ code {
   --color-leb: #4d248a;
   --color-lebSecond: #dbd3e8;
   --color-lebThird: #e3dfeb;
+  --color-violet-100: #d4a0ff;
+  --color-violet-200: #9e67ff;
+  --color-violet-300: #5f2f99;
+  --color-blackBackground: rgba(0, 0, 0, 0.2);
+  --color-blackA-200: rgba(0, 0, 0, 0.2);
+  --color-mauve-100: #e2d4ff;
+  --color-mauve-200: #d1a7ff;
+  --color-green-100: #a4ff8d;
+  --color-green-200: #68b174;
+  --color-gray-100: #e0e0e0;
+  --color-gray-200: #b3b3b3;
 }
 
 @layer components {
   .input-text {
     @apply w-full px-3 py-2 border border-leb rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-leb focus:border-leb transition-colors duration-150;
   }
-}
 
-@layer components {
   .select-trigger {
     @apply whitespace-nowrap inline-flex self-start shrink-0 w-fit h-10 items-center justify-center gap-1.25 rounded-md bg-white px-3.75 text-[16px] leading-none shadow-md outline-none border-leb border hover:bg-lebSecond focus:ring-2 focus:ring-leb data-placeholder:text-black text-black;
   }
@@ -76,5 +85,56 @@ code {
   .no-spinner::-webkit-inner-spin-button {
     appearance: none;
     margin: 0;
+  }
+}
+
+@layer utilities {
+  @keyframes overlayShow {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes contentShow {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes overlayShowClose {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes contentShowClose {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* Apply animation to classes */
+  [data-state='open'].animate-overlayShow {
+    animation: overlayShow 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-state='open'].animate-contentShow {
+    animation: contentShow 1s cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
