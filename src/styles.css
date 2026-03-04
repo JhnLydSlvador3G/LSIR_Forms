@@ -160,10 +160,10 @@ code {
 
 
   [data-state='closed'].animate-overlayShow {
-    animation: overlayHide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: overlayHide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   [data-state='closed'].animate-contentShow {
-    animation: contentHide 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: contentHide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 }
