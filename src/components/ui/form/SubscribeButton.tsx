@@ -8,14 +8,12 @@ export default function SubscribeButton({ label }: { label: string }) {
     <form.Subscribe
       selector={(state) => [
         state.isSubmitting,
-        state.canSubmit,
-        state.isPristine,
       ]}
     >
-      {([isSubmitting, canSubmit, isPristine]) => (
+      {([isSubmitting]) => (
         <button
           type="submit"
-          disabled={isSubmitting || !canSubmit || isPristine}
+          disabled={isSubmitting}
           className={cn(
             'flex-2 md:flex-none justify-center flex items-center',
             'px-3 py-1.5 md:px-12 md:py-4',

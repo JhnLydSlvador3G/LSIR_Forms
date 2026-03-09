@@ -1,10 +1,13 @@
 import { z } from "zod";
 
+// Enums
 export const genderEnum = z.enum(["Male", "Female", "Other"]);
 export const employmentStatusEnum = z.enum(["Regular", "Part-Time"]);
+
+// Utility schemas
 const DigitString = z
     .string()
-    .regex(/^\d+$/, { message: "Digits only" })
+    .regex(/^\d+$/, { message: "Digits only" });
 
 const YearString = z
     .string()
@@ -12,13 +15,13 @@ const YearString = z
         message: "Digits only",
     })
     .refine((val) => {
-        const yearNum = Number(val)
-        return val === "" || yearNum <= new Date().getFullYear()
+        const yearNum = Number(val);
+        return val === "" || yearNum <= new Date().getFullYear();
     }, {
         message: "Year cannot be in the future",
-    })
+    });
 
-
+// Single faculty schema
 export const facultySchema = z.object({
     lastName: z.string().min(1, { message: "Required" }),
     firstName: z.string().min(1, { message: "Required" }),
@@ -27,36 +30,40 @@ export const facultySchema = z.object({
     rollNumber: z.string().optional(),
     heiEmploymentStatus: employmentStatusEnum,
     yearsTeaching: DigitString,
-
     highestLawDegree: z.object({
         degree: z.string().optional(),
         grantingHEI: z.string().optional(),
         year: YearString,
     }),
-
     professionalExperienceYears: DigitString,
 });
 
+// Arrays and subfields
 export const subjectsArraySchema = z
     .array(z.string().min(1, { message: "Subject is required" }))
     .min(1, { message: "At least one subject is required" });
 
 export const relevantExperienceSchema = z
     .array(z.string().min(1, { message: "Cannot be empty" }))
-    .optional()
+    .optional();
 
+// Faculty roster schema (includes subjects & relevant experience)
 export const facultyRosterSchema = facultySchema.extend({
     subjects: subjectsArraySchema,
-    relevantToTeachingLoad: relevantExperienceSchema
+    relevantToTeachingLoad: relevantExperienceSchema,
 });
 
+// Types
 export type FacultyRosterData = z.infer<typeof facultyRosterSchema>;
+export const facultyRosterArraySchema = z.array(facultyRosterSchema);
+export type FacultyRosterArrayData = z.infer<typeof facultyRosterArraySchema>;
 
+// Default values
 export const defaultFacultyValues: FacultyRosterData = {
     lastName: "",
     firstName: "",
     middleName: "",
-    gender: "Male", // you can change this default if desired
+    gender: "Male",
     rollNumber: "",
     heiEmploymentStatus: "Part-Time",
     yearsTeaching: "0",
@@ -67,21 +74,28 @@ export const defaultFacultyValues: FacultyRosterData = {
     },
     professionalExperienceYears: "0",
     relevantToTeachingLoad: [""],
-
-    // start as empty so user must add at least 1 subject
     subjects: [""],
 };
 
-
-export const facultyRosterArraySchema = z
-    .array(facultyRosterSchema)
-    .min(1, { message: "At least one faculty member is required" });
-
-export type FacultyRosterArrayData = z.infer<
-    typeof facultyRosterArraySchema
->;
-
-
+// Main form schema with draftFaculty
 export const facultyRosterFormSchema = z.object({
-    facultyRoster: facultyRosterArraySchema,
+    facultyRoster: facultyRosterArraySchema,  // submitted array
+    draftFaculty: facultyRosterSchema,       // current subform draft
+}).superRefine((data, ctx) => {
+
+    // 1. NEW: Ensure at least one faculty member is in the roster array
+    if (data.facultyRoster.length === 0) {
+        ctx.addIssue({
+            code: 'custom',
+            message: "You must add at least one faculty member to the roster.",
+            path: ["facultyRoster"], // This attaches the error to the main table/array
+        });
+    }
 });
+export type FacultyRosterFormValues = z.infer<typeof facultyRosterFormSchema>;
+
+// Default form values
+export const defaultFacultyRosterFormValues: FacultyRosterFormValues = {
+    facultyRoster: [],
+    draftFaculty: defaultFacultyValues,
+};
