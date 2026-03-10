@@ -44,7 +44,7 @@ export const subjectsArraySchema = z
     .min(1, { message: "At least one subject is required" });
 
 export const relevantExperienceSchema = z
-    .array(z.string().min(1, { message: "Cannot be empty" }))
+    .array(z.string().min(1, { message: "Experience is required" }))
     .optional();
 
 // Faculty roster schema (includes subjects & relevant experience)
@@ -56,7 +56,7 @@ export const facultyRosterSchema = facultySchema.extend({
 // Types
 export type FacultyRosterData = z.infer<typeof facultyRosterSchema>;
 export const facultyRosterArraySchema = z.array(facultyRosterSchema);
-export type FacultyRosterArrayData = z.infer<typeof facultyRosterArraySchema>;
+
 
 // Default values
 export const defaultFacultyValues: FacultyRosterData = {
@@ -77,25 +77,20 @@ export const defaultFacultyValues: FacultyRosterData = {
     subjects: [""],
 };
 
-// Main form schema with draftFaculty
+// Main form schema
 export const facultyRosterFormSchema = z.object({
-    facultyRoster: facultyRosterArraySchema,  // submitted array
-    draftFaculty: facultyRosterSchema,       // current subform draft
+    facultyRoster: facultyRosterArraySchema,
 }).superRefine((data, ctx) => {
-
-    // 1. NEW: Ensure at least one faculty member is in the roster array
     if (data.facultyRoster.length === 0) {
         ctx.addIssue({
             code: 'custom',
             message: "You must add at least one faculty member to the roster.",
-            path: ["facultyRoster"], // This attaches the error to the main table/array
+            path: ["facultyRoster"],
         });
     }
 });
 export type FacultyRosterFormValues = z.infer<typeof facultyRosterFormSchema>;
 
-// Default form values
 export const defaultFacultyRosterFormValues: FacultyRosterFormValues = {
     facultyRoster: [],
-    draftFaculty: defaultFacultyValues,
 };

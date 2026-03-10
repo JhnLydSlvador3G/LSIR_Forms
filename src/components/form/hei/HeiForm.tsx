@@ -16,8 +16,7 @@ export default function HeiForm() {
     defaultValues: heiFormDefaultValues,
     validators: {
       onChange: heiFormSchema,
-      onMount: heiFormSchema,
-      onBlur: heiFormSchema
+      onBlur: heiFormSchema,
     },
     onSubmit: async ({ value }) => {
       console.log(value)
