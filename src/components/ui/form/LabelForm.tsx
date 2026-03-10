@@ -1,8 +1,8 @@
 import * as Label from '@radix-ui/react-label'
 
 type LabelFormProps = {
-  label: string
-  htmlForVal: string
+  label?: string
+  htmlForVal?: string
   required?: boolean
 }
 

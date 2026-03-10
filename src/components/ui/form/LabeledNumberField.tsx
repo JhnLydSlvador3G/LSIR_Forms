@@ -4,8 +4,8 @@ import { useFieldContext } from '@/hooks/form-context'
 import { cn } from '@/lib/utils'
 
 type NumberFieldProps = {
-  label: string
-  htmlForVal: string
+  label?: string
+  htmlForVal?: string
   className?: string
   required?: boolean
 }

@@ -4,10 +4,12 @@ import { useFieldContext } from '@/hooks/form-context'
 import { cn } from '@/lib/utils'
 
 type TextFieldProps = {
-  label: string
-  htmlForVal: string
+  label?: string
+  htmlForVal?: string
   className?: string
   required?: boolean
+  noLabel?: boolean
+  placeHolder?: string
 }
 
 export function TextField({
@@ -15,6 +17,8 @@ export function TextField({
   htmlForVal,
   className,
   required = false,
+  noLabel = false,
+  placeHolder
 }: TextFieldProps) {
   const field = useFieldContext<string>()
 
@@ -22,7 +26,7 @@ export function TextField({
 
   return (
     <label className={cn('flex flex-col grow', className)}>
-      <LabelForm label={label} htmlForVal={htmlForVal} required={required} />
+      {!noLabel && <LabelForm label={label} htmlForVal={htmlForVal} required={required} />}
 
       <input
         id={htmlForVal}
@@ -35,6 +39,7 @@ export function TextField({
         value={field.state.value}
         onChange={(e) => field.handleChange(e.target.value)}
         onBlur={field.handleBlur}
+        placeholder={placeHolder}
       />
       <FieldInfo field={field} />
     </label>

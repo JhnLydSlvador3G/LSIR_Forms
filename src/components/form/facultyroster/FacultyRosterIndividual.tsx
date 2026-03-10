@@ -15,6 +15,7 @@ export function FacultyModalForm({ handleSubmit }: FacultyRosterModalFormProps) 
         defaultValues: defaultFacultyValues,
         validators: {
             onChange: facultyRosterSchema,
+            onBlur: facultyRosterSchema,
         },
         onSubmit: async ({ value }) => {
             console.log(value)

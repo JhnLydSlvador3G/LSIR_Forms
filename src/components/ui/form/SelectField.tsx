@@ -7,9 +7,9 @@ import { useFieldContext } from '@/hooks/form-context'
 import { cn } from '@/lib/utils'
 
 type SelectFieldProps = {
-  label: string
+  label?: string
   options: Array<{ value: string; label: string }>
-  htmlForVal: string
+  htmlForVal?: string
   disabled?: boolean
   required?: boolean
 }
@@ -35,6 +35,7 @@ export function SelectField({
           aria-label={label}
           className={cn(
             'select-trigger',
+            'grow',
             disabled && 'no-hover bg-gray-200 text-gray-400',
             hasError
               ? 'border-red-500 ring-2 ring-red-200 focus:ring-red-400'
