@@ -1,5 +1,5 @@
 import Spinner from '../feedback/Spinner'
-import { useFormContext } from '@/hooks/form-context'
+import { useFormContext } from '@/hooks/useFormContext'
 import { cn } from '@/lib/utils'
 
 export default function SubscribeButton({ label }: { label: string }) {

@@ -1,7 +1,7 @@
 import { unstable_PasswordToggleField as PasswordToggleField } from 'radix-ui'
 import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons'
 import FieldInfo from './FieldInfo'
-import { useFieldContext } from '@/hooks/form-context'
+import { useFieldContext } from '@/hooks/useFormContext'
 
 export function PasswordField({ label }: { label: string }) {
   const field = useFieldContext<string>()

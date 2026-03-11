@@ -1,5 +1,5 @@
 import type { StudentProfileFormData } from '@/components/form/studentprofile/StudentProfile.types'
-import { useFormContext } from '@/hooks/form-context'
+import { useFormContext } from '@/hooks/useFormContext'
 import { calculateTotalStudRow } from '@/lib/utils'
 
 type ProfileRow = StudentProfileFormData['profiles'][number]

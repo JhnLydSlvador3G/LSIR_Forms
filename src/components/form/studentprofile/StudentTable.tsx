@@ -1,5 +1,5 @@
 import { StudentDefaultValues } from './StudentProfile.types'
-import { withForm } from '@/hooks/form-context'
+import { withForm } from '@/hooks/useFormContext'
 import {
   ProfileColumnTotal,
   ProfileGrandTotal,

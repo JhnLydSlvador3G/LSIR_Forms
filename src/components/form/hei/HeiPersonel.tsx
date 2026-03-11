@@ -1,5 +1,5 @@
 import { heiPersonelDefaulVal } from './HeiPersonel.type'
-import { withFieldGroup } from '@/hooks/form-context'
+import { withFieldGroup } from '@/hooks/useFormContext'
 
 const HeiPersonel = withFieldGroup({
   defaultValues: heiPersonelDefaulVal,

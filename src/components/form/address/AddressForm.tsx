@@ -1,5 +1,5 @@
 import { AddressDefaultValues } from './AddressForm.type'
-import { withFieldGroup } from '@/hooks/form-context'
+import { withFieldGroup } from '@/hooks/useFormContext'
 
 // The defaultValues here are *only used for type inference*
 const AddressGroup = withFieldGroup({

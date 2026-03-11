@@ -2,7 +2,7 @@ import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 import { getSession } from '@/lib/auth.server'
 import NavigationBar from '@/components/navigation/NavBar'
 import Footer from '@/components/Footer'
-import { SidebarProvider } from '@/hooks/SideBarContext'
+import { SidebarProvider } from '@/hooks/useSideBar'
 
 export const Route = createFileRoute('/_protected')({
   beforeLoad: async ({ location }) => {

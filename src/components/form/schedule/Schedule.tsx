@@ -1,4 +1,4 @@
-import { useAppForm } from "@/hooks/form-context";
+import { useAppForm } from "@/hooks/useFormContext";
 import { ScheduleDefaultValues, ScheduleSchema, BlockValues } from "./Schedule.type";
 import { ScheduleInstance } from "./ScheduleInstance";
 import { useStore } from "@tanstack/react-form";

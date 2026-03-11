@@ -1,6 +1,6 @@
 import { AlertDialog } from 'radix-ui'
 import { useState } from 'react'
-import { useFormContext } from '@/hooks/form-context'
+import { useFormContext } from '@/hooks/useFormContext'
 import { cn } from '@/lib/utils'
 
 type ResetButtonProps = {

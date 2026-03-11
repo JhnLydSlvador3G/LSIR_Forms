@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 // 1️⃣ Define the context type
 type FacultyRosterModalContextType = {

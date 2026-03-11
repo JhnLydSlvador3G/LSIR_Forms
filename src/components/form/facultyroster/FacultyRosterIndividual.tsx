@@ -1,7 +1,7 @@
-import { useAppForm, withForm } from "@/hooks/form-context"
+import { useAppForm, withForm } from "@/hooks/useFormContext"
 import { defaultFacultyValues, FacultyRosterData, facultyRosterSchema } from "./FacultyRoster.type"
 import { Plus, Trash2 } from "lucide-react";
-import { useFacultyRosterModal } from "@/hooks/FacultyRosterModalContext";
+import { useFacultyRosterModal } from "@/hooks/useFacultyModalContext";
 
 type FacultyRosterModalFormProps = {
     handleSubmit: (draft: FacultyRosterData) => void

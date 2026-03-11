@@ -4,7 +4,7 @@ import {
   FacultyGrandTotal,
   FacultyRowTotal,
 } from '@/components/ui/form/FacultyProfileTotal'
-import { withForm } from '@/hooks/form-context'
+import { withForm } from '@/hooks/useFormContext'
 
 const categoryFields = [
   ['basic', 'master', 'doctor'],

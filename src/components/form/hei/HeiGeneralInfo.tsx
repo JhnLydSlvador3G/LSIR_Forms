@@ -1,5 +1,5 @@
 import { heiFormDefaultValues } from './HeiForm.types'
-import { withForm } from '@/hooks/form-context'
+import { withForm } from '@/hooks/useFormContext'
 
 const HeiGeneral = withForm({
   defaultValues: heiFormDefaultValues,
