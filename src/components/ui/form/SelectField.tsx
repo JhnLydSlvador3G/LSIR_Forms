@@ -12,6 +12,7 @@ type SelectFieldProps = {
   htmlForVal?: string
   disabled?: boolean
   required?: boolean
+  placeHolder?: string
 }
 
 export function SelectField({
@@ -20,6 +21,7 @@ export function SelectField({
   htmlForVal,
   disabled = false,
   required = false,
+  placeHolder = "Select Value",
 }: SelectFieldProps) {
   const field = useFieldContext<string>()
   const hasError = field.state.meta.isTouched && !field.state.meta.isValid
@@ -42,7 +44,7 @@ export function SelectField({
               : 'border-gray-200 focus:ring-2 focus:ring-leb/40 focus:border-leb',
           )}
         >
-          <Select.Value placeholder="Select Value" />
+          <Select.Value placeholder={placeHolder} />
           <Select.Icon className="text-leb">
             <ChevronDownIcon />
           </Select.Icon>

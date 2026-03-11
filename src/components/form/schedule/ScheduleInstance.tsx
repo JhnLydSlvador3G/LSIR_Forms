@@ -80,6 +80,7 @@ export const ScheduleInstance = withFieldGroup({
                                                 <td className="px-1">
                                                     <group.AppField name={`schedules[${i}].day`}>
                                                         {(f) => <f.SelectField
+                                                            placeHolder="Select Day"
                                                             options={daysOfWeekOptions}
                                                         />}
                                                     </group.AppField>
