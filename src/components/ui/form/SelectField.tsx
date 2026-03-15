@@ -29,8 +29,14 @@ export function SelectField({
     <label className="flex flex-col gap-0">
       <LabelForm label={label} htmlForVal={htmlForVal} required={required} />
       <Select.Root
-        value={field.state.value}
-        onValueChange={field.handleChange}
+        value={field.state.value || undefined}
+        onValueChange={(val) => {
+          field.handleChange(val)
+          field.handleBlur()
+        }}
+        onOpenChange={(open) => {
+          if (!open) field.handleBlur()
+        }}
         disabled={disabled}
       >
         <Select.Trigger

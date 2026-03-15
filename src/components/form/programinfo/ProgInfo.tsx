@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import { useAppForm } from '@/hooks/useFormContext'
 import { FormWrapper } from '../FormWrapper'
-import { SectionWrapper } from '../hei/HeiSectionWrapper'
+import { ProgInfoSectionWrapper } from './ProgInfoSectionWrapper'
 import { progInfoDefaultValues, ProgInfoSchema } from './ProgInfo.types'
 import ProgInfoProgOffered from './ProgInfoProgOffered'
+import ProgInfoAcadCalendar from './ProgInfoAcadCalendar'
+import ProgInfoCurricularSched from './ProgInfoCurricularSched'
 import SubscribeButton from '@/components/ui/form/SubscribeButton'
 import ResetButton from '@/components/ui/form/ResetButton'
 import SaveButton from '@/components/ui/form/SaveButton'
@@ -29,8 +31,9 @@ export default function ProgramInfo() {
       key: 'programinfo',
       fallback: progInfoDefaultValues,
     })
-    form.reset(prev ?? progInfoDefaultValues)
-  }, [form])
+    if (prev) form.reset(prev)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.store])
 
   return (
     <FormWrapper title="Program Information">
@@ -42,9 +45,17 @@ export default function ProgramInfo() {
           form.handleSubmit()
         }}
       >
-        <SectionWrapper title="Program Offered">
+        <ProgInfoSectionWrapper title="Program Offered">
           <ProgInfoProgOffered form={form} />
-        </SectionWrapper>
+        </ProgInfoSectionWrapper>
+
+        <ProgInfoSectionWrapper title="Academic Calendar">
+          <ProgInfoAcadCalendar form={form} />
+        </ProgInfoSectionWrapper>
+
+        <ProgInfoSectionWrapper title="Curricular Schedule">
+          <ProgInfoCurricularSched form={form} />
+        </ProgInfoSectionWrapper>
 
         <form.AppForm>
           <div className="flex justify-between mt-5">

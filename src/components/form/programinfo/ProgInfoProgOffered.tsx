@@ -6,8 +6,6 @@ const ProgInfoProgOffered = withForm({
   render: function Render({ form }) {
     return (
       <div className="flex flex-col gap-4">
-        <p className="text-sm font-semibold text-gray-700">A. Program Offered</p>
-
         {/* Checkboxes */}
         <form.Subscribe selector={(state) => state.values.programType}>
           {(programType) => (
