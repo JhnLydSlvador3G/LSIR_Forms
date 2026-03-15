@@ -40,6 +40,12 @@ export const navigationConfig: Array<NavItemConfig> = [
   },
   {
     type: 'item',
+    label: 'Program Information',
+    to: '/programinfo',
+    icon: StickyNote, 
+  },
+  {
+    type: 'item',
     label: 'Student Profile',
     to: '/studentprofile',
     icon: GraduationCapIcon,

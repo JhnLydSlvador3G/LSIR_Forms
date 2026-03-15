@@ -28,12 +28,42 @@ export default function LoginForm() {
     validators: {
       onChange: LoginFormSchema,
     },
+    /* Note: The login form calls authClient.signIn.username(...) which hits the Better Auth API endpoint, which hits the DB. This will error out.
     onSubmit: async ({ value, formApi }) => {
       const { userName, password } = value
       const { data, error } = await authClient.signIn.username({
         username: userName,
         password: password,
       })
+
+      if (error) {
+        formApi.setErrorMap({ onSubmit: error.message })
+      } else {
+        navigate({ to: redirectTo })
+      }
+    },
+    */
+   // Note: Before calling authClient, check if the entered credentials match the env vars and short-circuit with a direct navigate().
+    onSubmit: async ({ value, formApi }) => {
+      const { userName, password } = value
+
+      // DEV BYPASS
+      if (import.meta.env.VITE_AUTH_BYPASS === 'true') {
+        if (
+          userName === import.meta.env.VITE_DEV_LOGIN_USER &&
+          password === import.meta.env.VITE_DEV_LOGIN_PASS
+        ) {
+          navigate({ to: redirectTo })
+          return
+        } else {
+          formApi.setErrorMap({ onSubmit: { message: 'Invalid dev credentials' } as never })
+          return
+        }
+      }
+
+      // normal auth flow below...
+      // @ts-expect-error username plugin not reflected in client type
+      const { error } = await authClient.signIn.username({ username: userName, password })
 
       if (error) {
         formApi.setErrorMap({ onSubmit: error.message })
