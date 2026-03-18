@@ -25,11 +25,13 @@ export function SelectField({
 }: SelectFieldProps) {
   const field = useFieldContext<string>()
   const hasError = field.state.meta.isTouched && !field.state.meta.isValid
+  const value = field.state.value || undefined
   return (
     <label className="flex flex-col gap-0">
       <LabelForm label={label} htmlForVal={htmlForVal} required={required} />
       <Select.Root
-        value={field.state.value || undefined}
+        key={value ?? '__empty__'}
+        value={value}
         onValueChange={(val) => {
           field.handleChange(val)
           field.handleBlur()
