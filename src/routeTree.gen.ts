@@ -17,6 +17,7 @@ import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login.index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedFormStudentprofileRouteImport } from './routes/_protected/_form/studentprofile'
 import { Route as ProtectedFormScheduleRouteImport } from './routes/_protected/_form/schedule'
+import { Route as ProtectedFormPrograminfoSubmissionsRouteImport } from './routes/_protected/_form/programinfo-submissions'
 import { Route as ProtectedFormPrograminfoRouteImport } from './routes/_protected/_form/programinfo'
 import { Route as ProtectedFormHeiinfoRouteImport } from './routes/_protected/_form/heiinfo'
 import { Route as ProtectedFormFacultyrosterRouteImport } from './routes/_protected/_form/facultyroster'
@@ -63,6 +64,12 @@ const ProtectedFormScheduleRoute = ProtectedFormScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const ProtectedFormPrograminfoSubmissionsRoute =
+  ProtectedFormPrograminfoSubmissionsRouteImport.update({
+    id: '/_form/programinfo-submissions',
+    path: '/programinfo-submissions',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 const ProtectedFormPrograminfoRoute =
   ProtectedFormPrograminfoRouteImport.update({
     id: '/_form/programinfo',
@@ -102,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/programinfo': typeof ProtectedFormPrograminfoRoute
+  '/programinfo-submissions': typeof ProtectedFormPrograminfoSubmissionsRoute
   '/schedule': typeof ProtectedFormScheduleRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -116,6 +124,7 @@ export interface FileRoutesByTo {
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/programinfo': typeof ProtectedFormPrograminfoRoute
+  '/programinfo-submissions': typeof ProtectedFormPrograminfoSubmissionsRoute
   '/schedule': typeof ProtectedFormScheduleRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -132,6 +141,7 @@ export interface FileRoutesById {
   '/_protected/_form/facultyroster': typeof ProtectedFormFacultyrosterRoute
   '/_protected/_form/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/_protected/_form/programinfo': typeof ProtectedFormPrograminfoRoute
+  '/_protected/_form/programinfo-submissions': typeof ProtectedFormPrograminfoSubmissionsRoute
   '/_protected/_form/schedule': typeof ProtectedFormScheduleRoute
   '/_protected/_form/studentprofile': typeof ProtectedFormStudentprofileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/facultyroster'
     | '/heiinfo'
     | '/programinfo'
+    | '/programinfo-submissions'
     | '/schedule'
     | '/studentprofile'
     | '/api/auth/$'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/facultyroster'
     | '/heiinfo'
     | '/programinfo'
+    | '/programinfo-submissions'
     | '/schedule'
     | '/studentprofile'
     | '/api/auth/$'
@@ -177,6 +189,7 @@ export interface FileRouteTypes {
     | '/_protected/_form/facultyroster'
     | '/_protected/_form/heiinfo'
     | '/_protected/_form/programinfo'
+    | '/_protected/_form/programinfo-submissions'
     | '/_protected/_form/schedule'
     | '/_protected/_form/studentprofile'
     | '/api/auth/$'
@@ -249,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedFormScheduleRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/_form/programinfo-submissions': {
+      id: '/_protected/_form/programinfo-submissions'
+      path: '/programinfo-submissions'
+      fullPath: '/programinfo-submissions'
+      preLoaderRoute: typeof ProtectedFormPrograminfoSubmissionsRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
     '/_protected/_form/programinfo': {
       id: '/_protected/_form/programinfo'
       path: '/programinfo'
@@ -294,6 +314,7 @@ interface ProtectedRouteChildren {
   ProtectedFormFacultyrosterRoute: typeof ProtectedFormFacultyrosterRoute
   ProtectedFormHeiinfoRoute: typeof ProtectedFormHeiinfoRoute
   ProtectedFormPrograminfoRoute: typeof ProtectedFormPrograminfoRoute
+  ProtectedFormPrograminfoSubmissionsRoute: typeof ProtectedFormPrograminfoSubmissionsRoute
   ProtectedFormScheduleRoute: typeof ProtectedFormScheduleRoute
   ProtectedFormStudentprofileRoute: typeof ProtectedFormStudentprofileRoute
 }
@@ -305,6 +326,8 @@ const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedFormFacultyrosterRoute: ProtectedFormFacultyrosterRoute,
   ProtectedFormHeiinfoRoute: ProtectedFormHeiinfoRoute,
   ProtectedFormPrograminfoRoute: ProtectedFormPrograminfoRoute,
+  ProtectedFormPrograminfoSubmissionsRoute:
+    ProtectedFormPrograminfoSubmissionsRoute,
   ProtectedFormScheduleRoute: ProtectedFormScheduleRoute,
   ProtectedFormStudentprofileRoute: ProtectedFormStudentprofileRoute,
 }

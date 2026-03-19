@@ -1,45 +1,62 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/useFormContext'
 import { FormWrapper } from '../FormWrapper'
 import { ProgInfoSectionWrapper } from './ProgInfoSectionWrapper'
 import {
   progInfoDefaultValues,
   ProgInfoSchema,
-  ProgInfoDraftSchema,
   STEP_FIELDS,
   STEP_TITLES,
 } from './ProgInfo.types'
 import ProgInfoProgOffered from './ProgInfoProgOffered'
 import ProgInfoAcadCalendar from './ProgInfoAcadCalendar'
+import ProgInfoClassOperatingSchedule from './ProgInfoClassOperatingSchedule'
 import ProgInfoCurricularSched from './ProgInfoCurricularSched'
+import ProgInfoCurriculum from './ProgInfoCurriculum'
 import ProgInfoProgDuration from './ProgInfoProgDuration'
 import ResetButton from '@/components/ui/form/ResetButton'
 import SaveButton from '@/components/ui/form/SaveButton'
+import { appendProgramInfoSubmission } from '@/lib/programInfoSubmissions'
 
 const STEPS = [
   ProgInfoProgOffered,
   ProgInfoAcadCalendar,
   ProgInfoCurricularSched,
   ProgInfoProgDuration,
+  ProgInfoClassOperatingSchedule,
+  ProgInfoCurriculum,
 ]
 
 const LAST_STEP = STEPS.length - 1
 
+const issuePathToFieldName = (path: Array<string | number>) =>
+  path.reduce((acc, segment) => {
+    if (typeof segment === 'number') {
+      return `${acc}[${segment}]`
+    }
+    return acc ? `${acc}.${segment}` : segment
+  }, '')
+
 export default function ProgramInfo() {
+  const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
   const [initialValues, setInitialValues] = useState(progInfoDefaultValues)
 
   const form = useAppForm({
     defaultValues: initialValues,
-    validators: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange: ProgInfoDraftSchema as any,
-    },
+    // validators: {
+    //   onChange: ProgInfoSchema,
+    // },
     onSubmit: async ({ value }) => {
-      console.log(value)
+      appendProgramInfoSubmission(value)
+      localStorage.removeItem('programinfo')
+      setInitialValues(progInfoDefaultValues)
+      setCurrentStep(0)
+      navigate({ to: '/programinfo-submissions' })
     },
   })
-
+  // Note: On component mount, we attempt to restore any saved draft from localStorage.
   useEffect(() => {
     const raw = localStorage.getItem('programinfo')
     if (!raw) return
@@ -50,33 +67,46 @@ export default function ProgramInfo() {
       ...parsed,
       programType: parsed.programType ?? '',
       programDuration: parsed.programDuration ?? '',
+      curricula: parsed.curricula ?? progInfoDefaultValues.curricula,
     }
     setInitialValues(restored)
-  }, [])
+    form.reset(restored)
+  }, [form])
 
+  // Note: The handleNext function performs light validation on the current step's fields before allowing progression.
   const handleNext = async () => {
-    const fields = STEP_FIELDS[currentStep] as readonly string[]
-    const currentValues = form.state.values
-
-    // pick only the current step's fields from the strict schema
-    const stepData = Object.fromEntries(
-      fields.map((f) => [f, currentValues[f as keyof typeof currentValues]])
-    )
-    const stepSchema = ProgInfoSchema.pick(
-      Object.fromEntries(fields.map((f) => [f, true])) as any
-    )
-    const result = stepSchema.safeParse(stepData)
-
-    if (result.success) {
-      setCurrentStep((s) => s + 1)
-    } else {
-      // touch all fields in this step so errors show
-      fields.forEach((f) => form.validateField(f as any, 'change'))
-    }
+    // const fields = STEP_FIELDS[currentStep] as readonly string[]
+    // const currentValues = form.state.values
+    // const result = ProgInfoSchema.safeParse(currentValues)
+    // const stepIssues = result.success
+    //   ? []
+    //   : result.error.issues.filter((issue) =>
+    //       fields.includes(String(issue.path[0] || ''))
+    //     )
+    //
+    // if (stepIssues.length === 0) {
+    //   setCurrentStep((s) => s + 1)
+    // } else {
+    //   const invalidFields = Array.from(
+    //     new Set(
+    //       stepIssues
+    //         .map((issue) => issuePathToFieldName(issue.path as Array<string | number>))
+    //         .filter(Boolean),
+    //     )
+    //   )
+    //   invalidFields.forEach((field) => form.validateField(field as any, 'change'))
+    // }
+    setCurrentStep((s) => s + 1)
   }
 
   const handlePrev = () => {
     setCurrentStep((s) => s - 1)
+  }
+  // Note: Resetting the wizard should also clear any validation errors that may be blocking progress.
+  const handleResetWizard = () => {
+    setCurrentStep(0) 
+    setInitialValues(progInfoDefaultValues)
+    ;(form as any).setErrorMap?.({ onSubmit: undefined })
   }
 
   return (
@@ -102,13 +132,24 @@ export default function ProgramInfo() {
         onSubmit={(e) => {
           e.preventDefault()
           e.stopPropagation()
+          ;(form as any).setErrorMap?.({ onSubmit: undefined })
           const result = ProgInfoSchema.safeParse(form.state.values)
           if (!result.success) {
-            const firstFailedField = result.error.issues[0]?.path[0] as string
+            const firstIssue = result.error.issues[0]
+            const firstFailedField = firstIssue?.path[0] as string
+            const firstFailedFieldPath = firstIssue
+              ? issuePathToFieldName(firstIssue.path as Array<string | number>)
+              : ''
             const failedStep = STEP_FIELDS.findIndex((fields) =>
               (fields as readonly string[]).includes(firstFailedField)
             )
             if (failedStep !== -1) setCurrentStep(failedStep)
+            if (firstFailedFieldPath) {
+              form.validateField(firstFailedFieldPath as any, 'change')
+            }
+            ;(form as any).setErrorMap?.({
+              onSubmit: firstIssue?.message || 'Please complete the required field.',
+            })
             return
           }
           form.handleSubmit()
@@ -123,10 +164,17 @@ export default function ProgramInfo() {
         ))}
 
         <form.AppForm>
+          <div className="px-6">
+            <form.FormErrorMessage />
+          </div>
           <div className="flex justify-between items-center px-6 py-5">
             {/* Left — Reset + Save */}
             <div className="flex flex-row gap-4">
-              <ResetButton defaultValues={progInfoDefaultValues} storageKey="programinfo" />
+              <ResetButton
+                defaultValues={progInfoDefaultValues}
+                storageKey="programinfo"
+                onReset={handleResetWizard} 
+              />
               <SaveButton
                 getValue={() => ({
                   ...progInfoDefaultValues,

@@ -3,18 +3,22 @@ import { useState } from 'react'
 import { useFormContext } from '@/hooks/useFormContext'
 import { cn } from '@/lib/utils'
 
+// Note: This component is designed to be reusable across different forms, so it accepts defaultValues and an optional storageKey for localStorage management. 
+// The onReset callback allows parent components to perform additional reset logic, such as resetting the wizard step in ProgInfo.
 type ResetButtonProps = {
   defaultValues: Record<string, any>
   storageKey?: string
   label?: string
+  onReset?: () => void // Optional callback for additional reset logic (e.g., resetting wizard step)
 }
 
 //Uses as any bad type but can't cast DefaultValues as <Record, never>
 
 const ResetButton = ({
-  defaultValues,
-  storageKey,
+  defaultValues,   
+  storageKey, 
   label = 'Reset',
+  onReset, // Optional callback for additional reset logic (e.g., resetting wizard step)
 }: ResetButtonProps) => {
   const form = useFormContext()
   const [open, setOpen] = useState(false)
@@ -25,6 +29,7 @@ const ResetButton = ({
     }
 
     form.reset(defaultValues as Record<string, never>)
+    onReset?.()
     setOpen(false)
   }
 
