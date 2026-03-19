@@ -1,5 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { hei_info } from "./HEI_GENERAL_INFO/hei"
+import { lawSchool } from './LAW_SCHOOL_GENERAL_INFO/lawSchool'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -75,9 +77,11 @@ export const verification = pgTable(
   (table) => [index('verification_identifier_idx').on(table.identifier)],
 )
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({many }) => ({
   sessions: many(session),
   accounts: many(account),
+  hei_info: many(hei_info),
+  lawSchools: many(lawSchool)
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -93,3 +97,5 @@ export const accountRelations = relations(account, ({ one }) => ({
     references: [user.id],
   }),
 }))
+
+

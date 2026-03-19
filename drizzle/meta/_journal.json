@@ -1,1 +1,83 @@
-{ "version": "7", "dialect": "postgresql", "entries": [] }
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1773279745882,
+      "tag": "0000_perfect_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773279968261,
+      "tag": "0001_panoramic_stingray",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773280055120,
+      "tag": "0002_tired_absorbing_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773280485288,
+      "tag": "0003_needy_praxagora",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1773280563942,
+      "tag": "0004_lonely_nitro",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1773280649946,
+      "tag": "0005_peaceful_chronomancer",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1773299473472,
+      "tag": "0006_sudden_ghost_rider",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1773891710910,
+      "tag": "0007_clever_madame_web",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1773891810808,
+      "tag": "0008_lucky_quicksilver",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1773898346383,
+      "tag": "0009_left_leader",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1773898922166,
+      "tag": "0010_calm_liz_osborn",
+      "breakpoints": true
+    }
+  ]
+}
