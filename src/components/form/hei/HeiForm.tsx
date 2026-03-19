@@ -10,6 +10,8 @@ import SubscribeButton from '@/components/ui/form/SubscribeButton'
 import ResetButton from '@/components/ui/form/ResetButton'
 import SaveButton from '@/components/ui/form/SaveButton'
 import { loadFormFromLocal } from '@/lib/formLocalStorage'
+import { useStore } from '@tanstack/react-form'
+import FormLeaveGuard from '@/components/navigation/FormLeaveGuard'
 
 export default function HeiForm() {
   const form = useAppForm({
@@ -22,7 +24,6 @@ export default function HeiForm() {
       console.log(value)
     },
   })
-
   // load persisted values only on the client after mount; the server will
   // always render using the fallback, avoiding a hydration mismatch.
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function HeiForm() {
   }, [form])
 
   return (
+
     <FormWrapper title="HEI General Information">
       <form
         className="w-full flex flex-col"
