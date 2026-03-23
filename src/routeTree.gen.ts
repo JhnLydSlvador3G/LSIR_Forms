@@ -16,6 +16,7 @@ import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dash
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login.index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedFormStudentprofileRouteImport } from './routes/_protected/_form/studentprofile'
+import { Route as ProtectedFormLawschoolinfoRouteImport } from './routes/_protected/_form/lawschoolinfo'
 import { Route as ProtectedFormHeiinfoRouteImport } from './routes/_protected/_form/heiinfo'
 import { Route as ProtectedFormFacultyrosterRouteImport } from './routes/_protected/_form/facultyroster'
 import { Route as ProtectedFormFacultyprofileRouteImport } from './routes/_protected/_form/facultyprofile'
@@ -56,6 +57,12 @@ const ProtectedFormStudentprofileRoute =
     path: '/studentprofile',
     getParentRoute: () => ProtectedRoute,
   } as any)
+const ProtectedFormLawschoolinfoRoute =
+  ProtectedFormLawschoolinfoRouteImport.update({
+    id: '/_form/lawschoolinfo',
+    path: '/lawschoolinfo',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 const ProtectedFormHeiinfoRoute = ProtectedFormHeiinfoRouteImport.update({
   id: '/_form/heiinfo',
   path: '/heiinfo',
@@ -88,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
+  '/lawschoolinfo': typeof ProtectedFormLawschoolinfoRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/login/': typeof AuthLoginIndexRoute
@@ -100,6 +108,7 @@ export interface FileRoutesByTo {
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
+  '/lawschoolinfo': typeof ProtectedFormLawschoolinfoRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/login': typeof AuthLoginIndexRoute
@@ -114,6 +123,7 @@ export interface FileRoutesById {
   '/_protected/_form/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/_protected/_form/facultyroster': typeof ProtectedFormFacultyrosterRoute
   '/_protected/_form/heiinfo': typeof ProtectedFormHeiinfoRoute
+  '/_protected/_form/lawschoolinfo': typeof ProtectedFormLawschoolinfoRoute
   '/_protected/_form/studentprofile': typeof ProtectedFormStudentprofileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/facultyprofile'
     | '/facultyroster'
     | '/heiinfo'
+    | '/lawschoolinfo'
     | '/studentprofile'
     | '/api/auth/$'
     | '/login/'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/facultyprofile'
     | '/facultyroster'
     | '/heiinfo'
+    | '/lawschoolinfo'
     | '/studentprofile'
     | '/api/auth/$'
     | '/login'
@@ -153,6 +165,7 @@ export interface FileRouteTypes {
     | '/_protected/_form/facultyprofile'
     | '/_protected/_form/facultyroster'
     | '/_protected/_form/heiinfo'
+    | '/_protected/_form/lawschoolinfo'
     | '/_protected/_form/studentprofile'
     | '/api/auth/$'
     | '/_auth/login/'
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedFormStudentprofileRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/_form/lawschoolinfo': {
+      id: '/_protected/_form/lawschoolinfo'
+      path: '/lawschoolinfo'
+      fullPath: '/lawschoolinfo'
+      preLoaderRoute: typeof ProtectedFormLawschoolinfoRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
     '/_protected/_form/heiinfo': {
       id: '/_protected/_form/heiinfo'
       path: '/heiinfo'
@@ -254,6 +274,7 @@ interface ProtectedRouteChildren {
   ProtectedFormFacultyprofileRoute: typeof ProtectedFormFacultyprofileRoute
   ProtectedFormFacultyrosterRoute: typeof ProtectedFormFacultyrosterRoute
   ProtectedFormHeiinfoRoute: typeof ProtectedFormHeiinfoRoute
+  ProtectedFormLawschoolinfoRoute: typeof ProtectedFormLawschoolinfoRoute
   ProtectedFormStudentprofileRoute: typeof ProtectedFormStudentprofileRoute
 }
 
@@ -263,6 +284,7 @@ const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedFormFacultyprofileRoute: ProtectedFormFacultyprofileRoute,
   ProtectedFormFacultyrosterRoute: ProtectedFormFacultyrosterRoute,
   ProtectedFormHeiinfoRoute: ProtectedFormHeiinfoRoute,
+  ProtectedFormLawschoolinfoRoute: ProtectedFormLawschoolinfoRoute,
   ProtectedFormStudentprofileRoute: ProtectedFormStudentprofileRoute,
 }
 

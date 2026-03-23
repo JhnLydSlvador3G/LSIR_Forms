@@ -38,6 +38,13 @@ export const navigationConfig: Array<NavItemConfig> = [
     to: '/heiinfo',
     icon: Info,
   },
+  // Law School form page (see `src/routes/_protected/_form/lawschoolinfo.tsx`)
+  {
+    type: 'item',
+    label: 'Law School General Information',
+    to: '/lawschoolinfo',
+    icon: Info,
+  },
   {
     type: 'item',
     label: 'Student Profile',

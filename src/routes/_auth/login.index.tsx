@@ -7,6 +7,13 @@ import { getSession } from '@/lib/auth.server'
 export const Route = createFileRoute('/_auth/login/')({
   component: RouteComponent,
   beforeLoad: async ({ location }) => {
+    const skipAuth = import.meta.env.VITE_SKIP_AUTH === 'true'
+    if (skipAuth) {
+      throw redirect({
+        to: '/dashboard',
+      })
+    }
+
     const session = await getSession()
 
     if (session) {

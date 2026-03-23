@@ -6,6 +6,11 @@ import { SidebarProvider } from '@/hooks/SideBarContext'
 
 export const Route = createFileRoute('/_protected')({
   beforeLoad: async ({ location }) => {
+    const skipAuth = import.meta.env.VITE_SKIP_AUTH === 'true'
+    if (skipAuth) {
+      return { user: { id: 'dev', name: 'Dev User' } }
+    }
+
     const session = await getSession()
 
     if (!session) {
