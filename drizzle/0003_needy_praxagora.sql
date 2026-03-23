@@ -1,0 +1,1 @@
+-- No-op: basic_law_course enum naming conflict resolved in baseline migration.

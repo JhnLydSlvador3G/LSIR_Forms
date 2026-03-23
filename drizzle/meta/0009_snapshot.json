@@ -1,0 +1,3358 @@
+{
+  "id": "372cf23d-e7d0-47e1-bbef-4a0a1bf81adf",
+  "prevId": "f60d2bf8-04ab-40b4-a483-fbdd11cf51ab",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.account": {
+      "name": "account",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "account_id": {
+          "name": "account_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_id": {
+          "name": "provider_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token_expires_at": {
+          "name": "access_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token_expires_at": {
+          "name": "refresh_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "account_userId_idx": {
+          "name": "account_userId_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "account_user_id_user_id_fk": {
+          "name": "account_user_id_user_id_fk",
+          "tableFrom": "account",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.session": {
+      "name": "session",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_address": {
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_agent": {
+          "name": "user_agent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "session_userId_idx": {
+          "name": "session_userId_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "session_user_id_user_id_fk": {
+          "name": "session_user_id_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "session_token_unique": {
+          "name": "session_token_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "display_username": {
+          "name": "display_username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_email_unique": {
+          "name": "user_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        },
+        "user_username_unique": {
+          "name": "user_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.verification": {
+      "name": "verification",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "identifier": {
+          "name": "identifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "verification_identifier_idx": {
+          "name": "verification_identifier_idx",
+          "columns": [
+            {
+              "expression": "identifier",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.faculty": {
+      "name": "faculty",
+      "schema": "",
+      "columns": {
+        "faculty_id": {
+          "name": "faculty_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "law_school_id": {
+          "name": "law_school_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "employment_status": {
+          "name": "employment_status",
+          "type": "employment_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "years_teaching": {
+          "name": "years_teaching",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "years_professional_experience": {
+          "name": "years_professional_experience",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "roll_number": {
+          "name": "roll_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "faculty_law_school_id_law_school_law_school_id_fk": {
+          "name": "faculty_law_school_id_law_school_law_school_id_fk",
+          "tableFrom": "faculty",
+          "tableTo": "law_school",
+          "columnsFrom": [
+            "law_school_id"
+          ],
+          "columnsTo": [
+            "law_school_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "faculty_info_required_when_not_draft_chk": {
+          "name": "faculty_info_required_when_not_draft_chk",
+          "value": "\"faculty\".\"form_status\" = 'Draft' OR (\"faculty\".\"first_name\" IS NOT NULL AND\n                \"faculty\".\"last_name\" IS NOT NULL AND\n                \"faculty\".\"gender\" IS NOT NULL AND\n                \"faculty\".\"employment_status\" IS NOT NULL AND\n                \"faculty\".\"years_teaching\" IS NOT NULL AND\n                \"faculty\".\"years_professional_experience\" IS NOT NULL AND\n                \"faculty\".\"roll_number\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.faculty_experience": {
+      "name": "faculty_experience",
+      "schema": "",
+      "columns": {
+        "faculty_experience_id": {
+          "name": "faculty_experience_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "faculty_id": {
+          "name": "faculty_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "experience": {
+          "name": "experience",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "faculty_experience_faculty_id_faculty_faculty_id_fk": {
+          "name": "faculty_experience_faculty_id_faculty_faculty_id_fk",
+          "tableFrom": "faculty_experience",
+          "tableTo": "faculty",
+          "columnsFrom": [
+            "faculty_id"
+          ],
+          "columnsTo": [
+            "faculty_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "faculty_experience_required_when_not_draft_chk": {
+          "name": "faculty_experience_required_when_not_draft_chk",
+          "value": "\"faculty_experience\".\"form_status\" = 'Draft' OR (\"faculty_experience\".\"experience\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.faculty_submission": {
+      "name": "faculty_submission",
+      "schema": "",
+      "columns": {
+        "faculty_submission_id": {
+          "name": "faculty_submission_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "faculty_id": {
+          "name": "faculty_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "submission_id": {
+          "name": "submission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "faculty_submission_faculty_id_faculty_faculty_id_fk": {
+          "name": "faculty_submission_faculty_id_faculty_faculty_id_fk",
+          "tableFrom": "faculty_submission",
+          "tableTo": "faculty",
+          "columnsFrom": [
+            "faculty_id"
+          ],
+          "columnsTo": [
+            "faculty_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "faculty_submission_submission_id_submission_submission_id_fk": {
+          "name": "faculty_submission_submission_id_submission_submission_id_fk",
+          "tableFrom": "faculty_submission",
+          "tableTo": "submission",
+          "columnsFrom": [
+            "submission_id"
+          ],
+          "columnsTo": [
+            "submission_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.faculty_teaching_load": {
+      "name": "faculty_teaching_load",
+      "schema": "",
+      "columns": {
+        "faculty_teaching_load_id": {
+          "name": "faculty_teaching_load_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "faculty_id": {
+          "name": "faculty_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "assigned_subject": {
+          "name": "assigned_subject",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "number_units": {
+          "name": "number_units",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "faculty_teaching_load_faculty_id_faculty_faculty_id_fk": {
+          "name": "faculty_teaching_load_faculty_id_faculty_faculty_id_fk",
+          "tableFrom": "faculty_teaching_load",
+          "tableTo": "faculty",
+          "columnsFrom": [
+            "faculty_id"
+          ],
+          "columnsTo": [
+            "faculty_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "faculty_teaching_load_required_when_not_draft_chk": {
+          "name": "faculty_teaching_load_required_when_not_draft_chk",
+          "value": "\"faculty_teaching_load\".\"form_status\" = 'Draft' OR (\n                \"faculty_teaching_load\".\"assigned_subject\" IS NOT NULL AND \n                \"faculty_teaching_load\".\"number_units\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.hei_info": {
+      "name": "hei_info",
+      "schema": "",
+      "columns": {
+        "hei_id": {
+          "name": "hei_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hei_name": {
+          "name": "hei_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ownership_type": {
+          "name": "ownership_type",
+          "type": "ownership",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hei_type": {
+          "name": "hei_type",
+          "type": "hei_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "private_type": {
+          "name": "private_type",
+          "type": "private_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telephone": {
+          "name": "telephone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "building": {
+          "name": "building",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "street": {
+          "name": "street",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barangay": {
+          "name": "barangay",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "district": {
+          "name": "district",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "province": {
+          "name": "province",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "region": {
+          "name": "region",
+          "type": "region",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website": {
+          "name": "website",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "hei_info_user_id_user_id_fk": {
+          "name": "hei_info_user_id_user_id_fk",
+          "tableFrom": "hei_info",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "address_required_when_not_draft_chk": {
+          "name": "address_required_when_not_draft_chk",
+          "value": "\"hei_info\".\"form_status\" = 'Draft' OR (\n        \"hei_info\".\"hei_name\" IS NOT NULL AND\n        \"hei_info\".\"ownership_type\" IS NOT NULL AND\n        \"hei_info\".\"hei_type\" IS NOT NULL AND\n        \"hei_info\".\"email\" IS NOT NULL AND\n        \"hei_info\".\"telephone\" IS NOT NULL AND\n        \"hei_info\".\"building\" IS NOT NULL AND\n        \"hei_info\".\"street\" IS NOT NULL AND\n        \"hei_info\".\"barangay\" IS NOT NULL AND\n        \"hei_info\".\"city\" IS NOT NULL AND\n        \"hei_info\".\"province\" IS NOT NULL AND\n        \"hei_info\".\"region\" IS NOT NULL\n      )"
+        },
+        "private_type_required_if_private_chk": {
+          "name": "private_type_required_if_private_chk",
+          "value": "\"hei_info\".\"ownership_type\" != 'Private' OR \"hei_info\".\"private_type\" IS NOT NULL"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.president": {
+      "name": "president",
+      "schema": "",
+      "columns": {
+        "president_id": {
+          "name": "president_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telephone_number": {
+          "name": "telephone_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "president_info_required_when_not_draft_chk": {
+          "name": "president_info_required_when_not_draft_chk",
+          "value": "\"president\".\"form_status\" = 'Draft' OR (\"president\".\"first_name\" IS NOT NULL AND\n        \"president\".\"last_name\" IS NOT NULL AND\n        \"president\".\"telephone_number\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.president_assignment": {
+      "name": "president_assignment",
+      "schema": "",
+      "columns": {
+        "president_assignment_id": {
+          "name": "president_assignment_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "president_id": {
+          "name": "president_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "president_assignment_president_id_president_president_id_fk": {
+          "name": "president_assignment_president_id_president_president_id_fk",
+          "tableFrom": "president_assignment",
+          "tableTo": "president",
+          "columnsFrom": [
+            "president_id"
+          ],
+          "columnsTo": [
+            "president_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "president_assignment_user_id_user_id_fk": {
+          "name": "president_assignment_user_id_user_id_fk",
+          "tableFrom": "president_assignment",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.registrar": {
+      "name": "registrar",
+      "schema": "",
+      "columns": {
+        "registrar_id": {
+          "name": "registrar_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telephone_number": {
+          "name": "telephone_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "registrar_info_required_when_not_draft_chk": {
+          "name": "registrar_info_required_when_not_draft_chk",
+          "value": "\"registrar\".\"form_status\" = 'Draft' OR (\"registrar\".\"first_name\" IS NOT NULL AND\n                \"registrar\".\"last_name\" IS NOT NULL AND\n                \"registrar\".\"telephone_number\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.registrar_assignment": {
+      "name": "registrar_assignment",
+      "schema": "",
+      "columns": {
+        "assignment_id": {
+          "name": "assignment_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "registrar_id": {
+          "name": "registrar_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "registrar_assignment_registrar_id_registrar_registrar_id_fk": {
+          "name": "registrar_assignment_registrar_id_registrar_registrar_id_fk",
+          "tableFrom": "registrar_assignment",
+          "tableTo": "registrar",
+          "columnsFrom": [
+            "registrar_id"
+          ],
+          "columnsTo": [
+            "registrar_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "registrar_assignment_user_id_user_id_fk": {
+          "name": "registrar_assignment_user_id_user_id_fk",
+          "tableFrom": "registrar_assignment",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "registrar_assignment_info_required_when_not_draft_chk": {
+          "name": "registrar_assignment_info_required_when_not_draft_chk",
+          "value": "\"registrar_assignment\".\"form_status\" = 'Draft' OR (\"registrar_assignment\".\"start_date\" IS NOT NULL AND\n                \"registrar_assignment\".\"end_date\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.dean": {
+      "name": "dean",
+      "schema": "",
+      "columns": {
+        "dean_id": {
+          "name": "dean_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mobile_number": {
+          "name": "mobile_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_appointed": {
+          "name": "date_appointed",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email_address": {
+          "name": "email_address",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "highest_legal_educational_attainment": {
+          "name": "highest_legal_educational_attainment",
+          "type": "highest_academic_degree",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "roll_number": {
+          "name": "roll_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "year_teaching_experience": {
+          "name": "year_teaching_experience",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "year_admin_experience": {
+          "name": "year_admin_experience",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "dean_info_required_when_not_draft_chk": {
+          "name": "dean_info_required_when_not_draft_chk",
+          "value": "\"dean\".\"form_status\" = 'Draft' OR (\"dean\".\"first_name\" IS NOT NULL AND\n                \"dean\".\"last_name\" IS NOT NULL AND\n                \"dean\".\"mobile_number\" IS NOT NULL AND\n                \"dean\".\"date_appointed\" IS NOT NULL AND\n                \"dean\".\"email_address\" IS NOT NULL AND\n                \"dean\".\"highest_legal_educational_attainment\" IS NOT NULL AND\n                \"dean\".\"year_admin_experience\" IS NOT NULL AND\n                \"dean\".\"roll_number\" IS NOT NULL AND\n                \"dean\".\"year_teaching_experience\" IS NOT NULL                              \n                )"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.dean_assignment": {
+      "name": "dean_assignment",
+      "schema": "",
+      "columns": {
+        "assignment_id": {
+          "name": "assignment_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "dean_id": {
+          "name": "dean_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "law_school_id": {
+          "name": "law_school_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "dean_assignment_dean_id_dean_dean_id_fk": {
+          "name": "dean_assignment_dean_id_dean_dean_id_fk",
+          "tableFrom": "dean_assignment",
+          "tableTo": "dean",
+          "columnsFrom": [
+            "dean_id"
+          ],
+          "columnsTo": [
+            "dean_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "dean_assignment_law_school_id_law_school_law_school_id_fk": {
+          "name": "dean_assignment_law_school_id_law_school_law_school_id_fk",
+          "tableFrom": "dean_assignment",
+          "tableTo": "law_school",
+          "columnsFrom": [
+            "law_school_id"
+          ],
+          "columnsTo": [
+            "law_school_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "dean_assignment_info_required_when_not_draft_chk": {
+          "name": "dean_assignment_info_required_when_not_draft_chk",
+          "value": "\"dean_assignment\".\"form_status\" = 'Draft' OR (\"dean_assignment\".\"dean_id\" IS NOT NULL AND\n                \"dean_assignment\".\"law_school_id\" IS NOT NULL AND\n                \"dean_assignment\".\"start_date\" IS NOT NULL AND\n                \"dean_assignment\".\"end_date\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.law_school": {
+      "name": "law_school",
+      "schema": "",
+      "columns": {
+        "law_school_id": {
+          "name": "law_school_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "hei_id": {
+          "name": "hei_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "law_school_hei_id_hei_info_hei_id_fk": {
+          "name": "law_school_hei_id_hei_info_hei_id_fk",
+          "tableFrom": "law_school",
+          "tableTo": "hei_info",
+          "columnsFrom": [
+            "hei_id"
+          ],
+          "columnsTo": [
+            "hei_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.law_school_info": {
+      "name": "law_school_info",
+      "schema": "",
+      "columns": {
+        "law_school_info_id": {
+          "name": "law_school_info_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "law_school_id": {
+          "name": "law_school_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "building": {
+          "name": "building",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "street": {
+          "name": "street",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barangay": {
+          "name": "barangay",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "district": {
+          "name": "district",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "province": {
+          "name": "province",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "region": {
+          "name": "region",
+          "type": "region",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telephone": {
+          "name": "telephone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "accreditation_status": {
+          "name": "accreditation_status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recognition_status": {
+          "name": "recognition_status",
+          "type": "law_school_program_classification",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "accredication_status": {
+          "name": "accredication_status",
+          "type": "accreditation_classification",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "law_school_info_law_school_id_law_school_law_school_id_fk": {
+          "name": "law_school_info_law_school_id_law_school_law_school_id_fk",
+          "tableFrom": "law_school_info",
+          "tableTo": "law_school",
+          "columnsFrom": [
+            "law_school_id"
+          ],
+          "columnsTo": [
+            "law_school_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "hei_id_required_when_not_draft_chk": {
+          "name": "hei_id_required_when_not_draft_chk",
+          "value": "\"law_school_info\".\"form_status\" = 'Draft' OR (\"law_school_info\".\"law_school_id\" IS NOT NULL AND\n                \"law_school_info\".\"email\" IS NOT NULL AND\n                \"law_school_info\".\"telephone\" IS NOT NULL AND\n                \"law_school_info\".\"recognition_status\" IS NOT NULL AND\n                \"law_school_info\".\"accreditation_status\" IS NOT NULL AND\n                \"law_school_info\".\"building\" IS NOT NULL AND\n                \"law_school_info\".\"street\" IS NOT NULL AND\n                \"law_school_info\".\"barangay\" IS NOT NULL AND\n                \"law_school_info\".\"district\" IS NOT NULL AND\n                \"law_school_info\".\"city\" IS NOT NULL AND\n                \"law_school_info\".\"region\" IS NOT NULL AND\n                \"law_school_info\".\"province\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.academic_load": {
+      "name": "academic_load",
+      "schema": "",
+      "columns": {
+        "academic_load_id": {
+          "name": "academic_load_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "curriculum_id": {
+          "name": "curriculum_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year_level": {
+          "name": "year_level",
+          "type": "year_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_units": {
+          "name": "total_units",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "semester": {
+          "name": "semester",
+          "type": "semester",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "academic_load_curriculum_id_curriculum_curriculum_id_fk": {
+          "name": "academic_load_curriculum_id_curriculum_curriculum_id_fk",
+          "tableFrom": "academic_load",
+          "tableTo": "curriculum",
+          "columnsFrom": [
+            "curriculum_id"
+          ],
+          "columnsTo": [
+            "curriculum_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "academic_load_info_required_when_not_draft_chk": {
+          "name": "academic_load_info_required_when_not_draft_chk",
+          "value": "\"academic_load\".\"form_status\" = 'Draft' OR (\"academic_load\".\"year_level\" IS NOT NULL AND\n                \"academic_load\".\"total_units\" IS NOT NULL AND\n                \"academic_load\".\"semester\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.curriculum": {
+      "name": "curriculum",
+      "schema": "",
+      "columns": {
+        "curriculum_id": {
+          "name": "curriculum_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "leb_approval_date": {
+          "name": "leb_approval_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {
+        "curriculum_submission_id_idx": {
+          "name": "curriculum_submission_id_idx",
+          "columns": [
+            {
+              "expression": "program_information_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "curriculum_program_information_id_program_information_program_information_id_fk": {
+          "name": "curriculum_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "curriculum",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "curriculum_program_information_id_unique": {
+          "name": "curriculum_program_information_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "program_information_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "curriculum_info_required_when_not_draft_chk": {
+          "name": "curriculum_info_required_when_not_draft_chk",
+          "value": "\"curriculum\".\"form_status\" = 'Draft' OR (\"curriculum\".\"leb_approval_date\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.graduate_studies_duration": {
+      "name": "graduate_studies_duration",
+      "schema": "",
+      "columns": {
+        "graduate_studies_duration_id": {
+          "name": "graduate_studies_duration_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration": {
+          "name": "duration",
+          "type": "graduate_studies_duration_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "graduate_studies_duration_program_information_id_program_information_program_information_id_fk": {
+          "name": "graduate_studies_duration_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "graduate_studies_duration",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.juris_doctor_duration": {
+      "name": "juris_doctor_duration",
+      "schema": "",
+      "columns": {
+        "juris_doctor_duration_id": {
+          "name": "juris_doctor_duration_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration": {
+          "name": "duration",
+          "type": "juris_doctor_duration_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "juris_doctor_duration_program_information_id_program_information_program_information_id_fk": {
+          "name": "juris_doctor_duration_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "juris_doctor_duration",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.academic_calendar": {
+      "name": "academic_calendar",
+      "schema": "",
+      "columns": {
+        "academic_calendare_id": {
+          "name": "academic_calendare_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "starting_month": {
+          "name": "starting_month",
+          "type": "month",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ending_month": {
+          "name": "ending_month",
+          "type": "month",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "academic_calendar_program_information_id_program_information_program_information_id_fk": {
+          "name": "academic_calendar_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "academic_calendar",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "academic_calendar_program_information_id_unique": {
+          "name": "academic_calendar_program_information_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "program_information_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "academic_calendar_required_when_not_draft_chk": {
+          "name": "academic_calendar_required_when_not_draft_chk",
+          "value": "\"academic_calendar\".\"form_status\" = 'Draft' OR (\"academic_calendar\".\"starting_month\" IS NOT NULL AND\n                \"academic_calendar\".\"ending_month\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.program_information": {
+      "name": "program_information",
+      "schema": "",
+      "columns": {
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "law_school_id": {
+          "name": "law_school_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "submission_id": {
+          "name": "submission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "program_classification": {
+          "name": "program_classification",
+          "type": "law_program_classification",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "doctorate_classification": {
+          "name": "doctorate_classification",
+          "type": "doctorate_program_classification",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "curricular_schedule": {
+          "name": "curricular_schedule",
+          "type": "curricular_schedule",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "operating_schedule": {
+          "name": "operating_schedule",
+          "type": "days[]",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {
+        "program_information_submission_id_idx": {
+          "name": "program_information_submission_id_idx",
+          "columns": [
+            {
+              "expression": "submission_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "program_information_law_school_id_law_school_law_school_id_fk": {
+          "name": "program_information_law_school_id_law_school_law_school_id_fk",
+          "tableFrom": "program_information",
+          "tableTo": "law_school",
+          "columnsFrom": [
+            "law_school_id"
+          ],
+          "columnsTo": [
+            "law_school_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "program_information_submission_id_submission_submission_id_fk": {
+          "name": "program_information_submission_id_submission_submission_id_fk",
+          "tableFrom": "program_information",
+          "tableTo": "submission",
+          "columnsFrom": [
+            "submission_id"
+          ],
+          "columnsTo": [
+            "submission_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "program_information_required_when_not_draft_chk": {
+          "name": "program_information_required_when_not_draft_chk",
+          "value": "\"program_information\".\"form_status\" = 'Draft' OR \n                (\"program_information\".\"curricular_schedule\" IS NOT NULL AND\n                \"program_information\".\"operating_schedule\" IS NOT NULL AND\n                \"program_information\".\"program_classification\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.certification": {
+      "name": "certification",
+      "schema": "",
+      "columns": {
+        "certification_id": {
+          "name": "certification_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "submission_id": {
+          "name": "submission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "certification_year": {
+          "name": "certification_year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "certification_month": {
+          "name": "certification_month",
+          "type": "month",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {
+        "certification_submission_id_idx": {
+          "name": "certification_submission_id_idx",
+          "columns": [
+            {
+              "expression": "submission_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "certification_submission_id_submission_submission_id_fk": {
+          "name": "certification_submission_id_submission_submission_id_fk",
+          "tableFrom": "certification",
+          "tableTo": "submission",
+          "columnsFrom": [
+            "submission_id"
+          ],
+          "columnsTo": [
+            "submission_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "certification_info_required_when_not_draft_chk": {
+          "name": "certification_info_required_when_not_draft_chk",
+          "value": "\"certification\".\"form_status\" = 'Draft' OR (\"certification\".\"certification_year\" IS NOT NULL AND\n                \"certification\".\"certification_month\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.dean_attestation": {
+      "name": "dean_attestation",
+      "schema": "",
+      "columns": {
+        "attestation_id": {
+          "name": "attestation_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "certification_id": {
+          "name": "certification_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "printed_name": {
+          "name": "printed_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_type": {
+          "name": "id_type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_number": {
+          "name": "id_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "dean_attestation_certification_id_certification_certification_id_fk": {
+          "name": "dean_attestation_certification_id_certification_certification_id_fk",
+          "tableFrom": "dean_attestation",
+          "tableTo": "certification",
+          "columnsFrom": [
+            "certification_id"
+          ],
+          "columnsTo": [
+            "certification_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "dean_attestation_certification_id_unique": {
+          "name": "dean_attestation_certification_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "certification_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "dean_attestation_info_required_when_not_draft_chk": {
+          "name": "dean_attestation_info_required_when_not_draft_chk",
+          "value": "\"dean_attestation\".\"form_status\" = 'Draft' OR (\"dean_attestation\".\"printed_name\" IS NOT NULL AND\n                \"dean_attestation\".\"id_type\" IS NOT NULL AND\n                \"dean_attestation\".\"id_number\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.president_attestation": {
+      "name": "president_attestation",
+      "schema": "",
+      "columns": {
+        "attestation_id": {
+          "name": "attestation_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "certification_id": {
+          "name": "certification_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "printed_name": {
+          "name": "printed_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_type": {
+          "name": "id_type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_number": {
+          "name": "id_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "president_attestation_certification_id_certification_certification_id_fk": {
+          "name": "president_attestation_certification_id_certification_certification_id_fk",
+          "tableFrom": "president_attestation",
+          "tableTo": "certification",
+          "columnsFrom": [
+            "certification_id"
+          ],
+          "columnsTo": [
+            "certification_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "president_attestation_certification_id_unique": {
+          "name": "president_attestation_certification_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "certification_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "president_attestation_info_required_when_not_draft_chk": {
+          "name": "president_attestation_info_required_when_not_draft_chk",
+          "value": "\"president_attestation\".\"form_status\" = 'Draft' OR (\"president_attestation\".\"printed_name\" IS NOT NULL AND\n                \"president_attestation\".\"id_type\" IS NOT NULL AND\n                \"president_attestation\".\"id_number\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.faculty_development": {
+      "name": "faculty_development",
+      "schema": "",
+      "columns": {
+        "faculty_development_id": {
+          "name": "faculty_development_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "training_title": {
+          "name": "training_title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "training_hours": {
+          "name": "training_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "number_of_participants": {
+          "name": "number_of_participants",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "competencies_covered": {
+          "name": "competencies_covered",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_conducted": {
+          "name": "date_conducted",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {
+        "faculty_development_submission_id_idx": {
+          "name": "faculty_development_submission_id_idx",
+          "columns": [
+            {
+              "expression": "program_information_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "faculty_development_program_information_id_program_information_program_information_id_fk": {
+          "name": "faculty_development_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "faculty_development",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "faculty_development_info_required_when_not_draft_chk": {
+          "name": "faculty_development_info_required_when_not_draft_chk",
+          "value": "\"faculty_development\".\"form_status\" = 'Draft' OR (\"faculty_development\".\"training_title\" IS NOT NULL AND\n                \"faculty_development\".\"training_hours\" IS NOT NULL AND\n                \"faculty_development\".\"number_of_participants\" IS NOT NULL AND\n                \"faculty_development\".\"competencies_covered\" IS NOT NULL AND\n                \"faculty_development\".\"date_conducted\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.faculty_statistics": {
+      "name": "faculty_statistics",
+      "schema": "",
+      "columns": {
+        "faculty_statistics_id": {
+          "name": "faculty_statistics_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "basic": {
+          "name": "basic",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "master": {
+          "name": "master",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "doctor": {
+          "name": "doctor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "regular": {
+          "name": "regular",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "part_time": {
+          "name": "part_time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "retired": {
+          "name": "retired",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "private": {
+          "name": "private",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "judges": {
+          "name": "judges",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prosecutor": {
+          "name": "prosecutor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "other_government": {
+          "name": "other_government",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {
+        "faculty_statistics_submission_id_idx": {
+          "name": "faculty_statistics_submission_id_idx",
+          "columns": [
+            {
+              "expression": "program_information_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "faculty_statistics_program_information_id_program_information_program_information_id_fk": {
+          "name": "faculty_statistics_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "faculty_statistics",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "faculty_statistics_info_required_when_not_draft_chk": {
+          "name": "faculty_statistics_info_required_when_not_draft_chk",
+          "value": "\"faculty_statistics\".\"form_status\" = 'Draft' OR (\"faculty_statistics\".\"gender\" IS NOT NULL AND\n                \"faculty_statistics\".\"basic\" IS NOT NULL AND\n                \"faculty_statistics\".\"master\" IS NOT NULL AND\n                \"faculty_statistics\".\"doctor\" IS NOT NULL AND\n                \"faculty_statistics\".\"regular\" IS NOT NULL AND\n                \"faculty_statistics\".\"part_time\" IS NOT NULL AND\n                \"faculty_statistics\".\"retired\" IS NOT NULL AND\n                \"faculty_statistics\".\"private\" IS NOT NULL AND\n                \"faculty_statistics\".\"judges\" IS NOT NULL AND\n                \"faculty_statistics\".\"prosecutor\" IS NOT NULL AND\n                \"faculty_statistics\".\"other_government\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.fees": {
+      "name": "fees",
+      "schema": "",
+      "columns": {
+        "fees_id": {
+          "name": "fees_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "year_level_report_id": {
+          "name": "year_level_report_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fee_description": {
+          "name": "fee_description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fee_amount": {
+          "name": "fee_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "fee_category",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_draft": {
+          "name": "is_draft",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "fees_year_level_report_id_year_level_report_year_level_report_id_fk": {
+          "name": "fees_year_level_report_id_year_level_report_year_level_report_id_fk",
+          "tableFrom": "fees",
+          "tableTo": "year_level_report",
+          "columnsFrom": [
+            "year_level_report_id"
+          ],
+          "columnsTo": [
+            "year_level_report_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "fees_info_required_when_not_draft_chk": {
+          "name": "fees_info_required_when_not_draft_chk",
+          "value": "\"fees\".\"is_draft\" = true OR (\"fees\".\"fee_description\" IS NOT NULL AND\n                \"fees\".\"fee_amount\" IS NOT NULL AND\n                \"fees\".\"category\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.financial_report": {
+      "name": "financial_report",
+      "schema": "",
+      "columns": {
+        "financial_report_id": {
+          "name": "financial_report_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_fee_increase_sy": {
+          "name": "last_fee_increase_sy",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "course": {
+          "name": "course",
+          "type": "program_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {
+        "financial_report_submission_id_idx": {
+          "name": "financial_report_submission_id_idx",
+          "columns": [
+            {
+              "expression": "program_information_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "financial_report_program_information_id_program_information_program_information_id_fk": {
+          "name": "financial_report_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "financial_report",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "financial_report_program_information_id_unique": {
+          "name": "financial_report_program_information_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "program_information_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "financial_report_info_required_when_not_draft_chk": {
+          "name": "financial_report_info_required_when_not_draft_chk",
+          "value": "\"financial_report\".\"form_status\" = 'Draft' OR (\"financial_report\".\"last_fee_increase_sy\" IS NOT NULL AND\n                \"financial_report\".\"course\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.year_level_report": {
+      "name": "year_level_report",
+      "schema": "",
+      "columns": {
+        "year_level_report_id": {
+          "name": "year_level_report_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "financial_report_id": {
+          "name": "financial_report_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year_level": {
+          "name": "year_level",
+          "type": "year_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tuition_per_unit": {
+          "name": "tuition_per_unit",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_draft": {
+          "name": "is_draft",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "year_level_report_financial_report_id_financial_report_financial_report_id_fk": {
+          "name": "year_level_report_financial_report_id_financial_report_financial_report_id_fk",
+          "tableFrom": "year_level_report",
+          "tableTo": "financial_report",
+          "columnsFrom": [
+            "financial_report_id"
+          ],
+          "columnsTo": [
+            "financial_report_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "year_level_report_info_required_when_not_draft_chk": {
+          "name": "year_level_report_info_required_when_not_draft_chk",
+          "value": "\"year_level_report\".\"is_draft\" = true OR (\"year_level_report\".\"year_level\" IS NOT NULL AND\n                \"year_level_report\".\"tuition_per_unit\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.block_section": {
+      "name": "block_section",
+      "schema": "",
+      "columns": {
+        "block_section_id": {
+          "name": "block_section_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year_level": {
+          "name": "year_level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "section": {
+          "name": "section",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "block_section_submission_id_idx": {
+          "name": "block_section_submission_id_idx",
+          "columns": [
+            {
+              "expression": "program_information_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "block_section_program_information_id_program_information_program_information_id_fk": {
+          "name": "block_section_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "block_section",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.class_schedule": {
+      "name": "class_schedule",
+      "schema": "",
+      "columns": {
+        "class_schedule_id": {
+          "name": "class_schedule_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "block_section_id": {
+          "name": "block_section_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "faculty_name": {
+          "name": "faculty_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "faculty_id": {
+          "name": "faculty_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subject_title": {
+          "name": "subject_title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "day": {
+          "name": "day",
+          "type": "days",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "time_start": {
+          "name": "time_start",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "time_end": {
+          "name": "time_end",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "class_schedule_block_section_id_block_section_block_section_id_fk": {
+          "name": "class_schedule_block_section_id_block_section_block_section_id_fk",
+          "tableFrom": "class_schedule",
+          "tableTo": "block_section",
+          "columnsFrom": [
+            "block_section_id"
+          ],
+          "columnsTo": [
+            "block_section_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "class_schedule_faculty_id_faculty_faculty_id_fk": {
+          "name": "class_schedule_faculty_id_faculty_faculty_id_fk",
+          "tableFrom": "class_schedule",
+          "tableTo": "faculty",
+          "columnsFrom": [
+            "faculty_id"
+          ],
+          "columnsTo": [
+            "faculty_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "class_schedule_required_when_not_draft_chk": {
+          "name": "class_schedule_required_when_not_draft_chk",
+          "value": "\"class_schedule\".\"form_status\" = 'Draft' OR (\n                \"class_schedule\".\"faculty_name\" IS NOT NULL AND\n                \"class_schedule\".\"faculty_id\" IS NOT NULL AND\n                \"class_schedule\".\"subject_title\" IS NOT NULL AND\n                \"class_schedule\".\"day\" IS NOT NULL AND\n                \"class_schedule\".\"time_start\" IS NOT NULL AND\n                \"class_schedule\".\"time_end\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.enrollment_statistics": {
+      "name": "enrollment_statistics",
+      "schema": "",
+      "columns": {
+        "enrollment_statistics_id": {
+          "name": "enrollment_statistics_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "program_type": {
+          "name": "program_type",
+          "type": "program_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "year_level": {
+          "name": "year_level",
+          "type": "year_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "male_count": {
+          "name": "male_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "female_count": {
+          "name": "female_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "full_time_count": {
+          "name": "full_time_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "working_count": {
+          "name": "working_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scholars_count": {
+          "name": "scholars_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "transfer_count": {
+          "name": "transfer_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "form_status": {
+          "name": "form_status",
+          "type": "form_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Draft'"
+        }
+      },
+      "indexes": {
+        "enrollment_statistics_submission_id_idx": {
+          "name": "enrollment_statistics_submission_id_idx",
+          "columns": [
+            {
+              "expression": "program_information_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "enrollment_statistics_program_information_id_program_information_program_information_id_fk": {
+          "name": "enrollment_statistics_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "enrollment_statistics",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "enrollment_statistics_required_when_not_draft_chk": {
+          "name": "enrollment_statistics_required_when_not_draft_chk",
+          "value": "\"enrollment_statistics\".\"form_status\" = 'Draft' OR (\n            \"enrollment_statistics\".\"program_type\" IS NOT NULL AND\n            \"enrollment_statistics\".\"year_level\" IS NOT NULL AND\n            \"enrollment_statistics\".\"male_count\" IS NOT NULL AND\n            \"enrollment_statistics\".\"female_count\" IS NOT NULL AND\n            \"enrollment_statistics\".\"full_time_count\" IS NOT NULL AND\n            \"enrollment_statistics\".\"scholars_count\" IS NOT NULL AND\n            \"enrollment_statistics\".\"working_count\" IS NOT NULL AND\n            \"enrollment_statistics\".\"transfer_count\" IS NOT NULL\n        )"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.submission": {
+      "name": "submission",
+      "schema": "",
+      "columns": {
+        "submission_id": {
+          "name": "submission_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "law_school_id": {
+          "name": "law_school_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deanAssignment_id": {
+          "name": "deanAssignment_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "president_assignment_id": {
+          "name": "president_assignment_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "registrar_assignment_id": {
+          "name": "registrar_assignment_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "school_year": {
+          "name": "school_year",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "semester": {
+          "name": "semester",
+          "type": "semester",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "submitted_at": {
+          "name": "submitted_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_draft": {
+          "name": "is_draft",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "submission_law_school_id_law_school_law_school_id_fk": {
+          "name": "submission_law_school_id_law_school_law_school_id_fk",
+          "tableFrom": "submission",
+          "tableTo": "law_school",
+          "columnsFrom": [
+            "law_school_id"
+          ],
+          "columnsTo": [
+            "law_school_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "submission_deanAssignment_id_dean_assignment_assignment_id_fk": {
+          "name": "submission_deanAssignment_id_dean_assignment_assignment_id_fk",
+          "tableFrom": "submission",
+          "tableTo": "dean_assignment",
+          "columnsFrom": [
+            "deanAssignment_id"
+          ],
+          "columnsTo": [
+            "assignment_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "submission_president_assignment_id_president_assignment_president_assignment_id_fk": {
+          "name": "submission_president_assignment_id_president_assignment_president_assignment_id_fk",
+          "tableFrom": "submission",
+          "tableTo": "president_assignment",
+          "columnsFrom": [
+            "president_assignment_id"
+          ],
+          "columnsTo": [
+            "president_assignment_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "submission_registrar_assignment_id_registrar_assignment_assignment_id_fk": {
+          "name": "submission_registrar_assignment_id_registrar_assignment_assignment_id_fk",
+          "tableFrom": "submission",
+          "tableTo": "registrar_assignment",
+          "columnsFrom": [
+            "registrar_assignment_id"
+          ],
+          "columnsTo": [
+            "assignment_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "submission_info_required_when_not_draft_chk": {
+          "name": "submission_info_required_when_not_draft_chk",
+          "value": "\"submission\".\"is_draft\" = true OR (\"submission\".\"school_year\" IS NOT NULL AND\n                \"submission\".\"semester\" IS NOT NULL AND\n                \"submission\".\"submitted_at\" IS NOT NULL AND\n                \"submission\".\"status\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.faculty_training": {
+      "name": "faculty_training",
+      "schema": "",
+      "columns": {
+        "training_id": {
+          "name": "training_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program_information_id": {
+          "name": "program_information_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "training_year": {
+          "name": "training_year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "training_month": {
+          "name": "training_month",
+          "type": "month",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_draft": {
+          "name": "is_draft",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {
+        "faculty_training_submission_id_idx": {
+          "name": "faculty_training_submission_id_idx",
+          "columns": [
+            {
+              "expression": "program_information_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "faculty_training_program_information_id_program_information_program_information_id_fk": {
+          "name": "faculty_training_program_information_id_program_information_program_information_id_fk",
+          "tableFrom": "faculty_training",
+          "tableTo": "program_information",
+          "columnsFrom": [
+            "program_information_id"
+          ],
+          "columnsTo": [
+            "program_information_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "faculty_training_info_required_when_not_draft_chk": {
+          "name": "faculty_training_info_required_when_not_draft_chk",
+          "value": "\"faculty_training\".\"is_draft\" = true OR (\"faculty_training\".\"training_year\" IS NOT NULL AND\n                \"faculty_training\".\"training_month\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.year_level": {
+      "name": "year_level",
+      "schema": "public",
+      "values": [
+        "First Year basic law course",
+        "Second Year basic law course",
+        "Third Year basic law course",
+        "Fourth Year basic law course",
+        "Fifth Year basic law course",
+        "Refresher students",
+        "Masteral degree level",
+        "Doctoral degree level"
+      ]
+    },
+    "public.accreditation_classification": {
+      "name": "accreditation_classification",
+      "schema": "public",
+      "values": [
+        "Level I",
+        "Level II",
+        "Level III",
+        "Center of Development",
+        "Center of Excellence",
+        "Deregulated Status",
+        "Autonomous Status"
+      ]
+    },
+    "public.basic_law_course_enum": {
+      "name": "basic_law_course_enum",
+      "schema": "public",
+      "values": [
+        "Ladderized Master in Legal Studies - Juris Doctor ",
+        "Juris Doctor"
+      ]
+    },
+    "public.curricular_schedule": {
+      "name": "curricular_schedule",
+      "schema": "public",
+      "values": [
+        "Semestral",
+        "Trimesteral",
+        "Summer"
+      ]
+    },
+    "public.days": {
+      "name": "days",
+      "schema": "public",
+      "values": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
+    },
+    "public.doctorate_program_classification": {
+      "name": "doctorate_program_classification",
+      "schema": "public",
+      "values": [
+        "Doctor of Civil Law",
+        "Doctor of Juridical Science",
+        "Others"
+      ]
+    },
+    "public.employment_status": {
+      "name": "employment_status",
+      "schema": "public",
+      "values": [
+        "Regular",
+        "Part-time"
+      ]
+    },
+    "public.fee_category": {
+      "name": "fee_category",
+      "schema": "public",
+      "values": [
+        "Other school fees",
+        "Miscellaneous fees",
+        "New Fee"
+      ]
+    },
+    "public.form_status": {
+      "name": "form_status",
+      "schema": "public",
+      "values": [
+        "Draft",
+        "Submitted",
+        "Approved"
+      ]
+    },
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": [
+        "Male",
+        "Female",
+        "Other"
+      ]
+    },
+    "public.graduate_law_course_enum": {
+      "name": "graduate_law_course_enum",
+      "schema": "public",
+      "values": [
+        "Master of Laws",
+        "DCL/SJD"
+      ]
+    },
+    "public.graduate_studies_duration_enum": {
+      "name": "graduate_studies_duration_enum",
+      "schema": "public",
+      "values": [
+        "with Thesis/Dissertation",
+        "Non-thesis",
+        "Online/Hybrid"
+      ]
+    },
+    "public.hei_type": {
+      "name": "hei_type",
+      "schema": "public",
+      "values": [
+        "University",
+        "College",
+        "Others"
+      ]
+    },
+    "public.highest_academic_degree": {
+      "name": "highest_academic_degree",
+      "schema": "public",
+      "values": [
+        "Basic Law Course",
+        "Units in Masteral level degree in law",
+        "Units in Doctoral level degree in law",
+        "Doctoral degree in law"
+      ]
+    },
+    "public.juris_doctor_duration_enum": {
+      "name": "juris_doctor_duration_enum",
+      "schema": "public",
+      "values": [
+        "4 years",
+        "5 years",
+        "Both"
+      ]
+    },
+    "public.law_program_classification": {
+      "name": "law_program_classification",
+      "schema": "public",
+      "values": [
+        "Juris Doctor",
+        "Master of Laws",
+        "Doctorate"
+      ]
+    },
+    "public.month": {
+      "name": "month",
+      "schema": "public",
+      "values": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ]
+    },
+    "public.ownership": {
+      "name": "ownership",
+      "schema": "public",
+      "values": [
+        "Private",
+        "Public"
+      ]
+    },
+    "public.private_type": {
+      "name": "private_type",
+      "schema": "public",
+      "values": [
+        "Sectarian",
+        "Non-Sectarian"
+      ]
+    },
+    "public.program_type": {
+      "name": "program_type",
+      "schema": "public",
+      "values": [
+        "Bachelor of Laws",
+        "Juris Doctor",
+        "Master of Laws",
+        "DCL/SJD",
+        "Refresher Course"
+      ]
+    },
+    "public.law_school_program_classification": {
+      "name": "law_school_program_classification",
+      "schema": "public",
+      "values": [
+        "Government Permit I",
+        "Government Permit II",
+        "Government Permit III",
+        "Government Recognition",
+        "Others"
+      ]
+    },
+    "public.region": {
+      "name": "region",
+      "schema": "public",
+      "values": [
+        "Ilocos Region (Region I)",
+        "Cagayan Valley (Region II)",
+        "Central Luzon (Region III)",
+        "CALABARZON (Region IV-A)",
+        "MIMAROPA (Region IV-B)",
+        "Bicol Region (Region V)",
+        "Western Visayas (Region VI)",
+        "Central Visayas (Region VII)",
+        "Eastern Visayas (Region VIII)",
+        "Zamboanga Peninsula (Region IX)",
+        "Northern Mindanao (Region X)",
+        "Davao Region (Region XI)",
+        "SOCCSKSARGEN (Region XII)",
+        "Caraga (Region XIII)",
+        "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)",
+        "Cordillera Administrative Region (CAR)",
+        "National Capital Region (NCR)"
+      ]
+    },
+    "public.semester": {
+      "name": "semester",
+      "schema": "public",
+      "values": [
+        "First Semester",
+        "Second Semester",
+        "Third Semester"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

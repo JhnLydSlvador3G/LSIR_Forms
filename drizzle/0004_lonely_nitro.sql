@@ -1,0 +1,1 @@
+-- No-op: graduate_law_course enum and column shape are handled in baseline migration.

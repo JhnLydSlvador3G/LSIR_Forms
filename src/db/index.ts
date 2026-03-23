@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 
-import * as schema from './schema.ts'
+import * as schema from './accounts.ts'
 
 /* This tries to connect to PostgreSQL immediately when the server starts. 
 

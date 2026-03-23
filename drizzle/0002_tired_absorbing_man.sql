@@ -1,0 +1,2 @@
+ALTER TABLE "curriculum" DROP CONSTRAINT "curriculum_info_required_when_not_draft_chk";--> statement-breakpoint
+ALTER TABLE "curriculum" ADD CONSTRAINT "curriculum_info_required_when_not_draft_chk" CHECK ("curriculum"."form_status" = 'Draft' OR ("curriculum"."leb_approval_date" IS NOT NULL));
