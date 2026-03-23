@@ -19,12 +19,13 @@ const ProgInfoProgDuration = withForm({
                       <input
                         type="checkbox"
                         checked={field.state.value === 'online'}
-                        onChange={() =>
+                        onChange={() => {
                           form.setFieldValue(
                             'programDuration',
                             field.state.value === 'online' ? '' : 'online'
                           )
-                        }
+                          field.handleBlur()
+                        }}
                         className="w-4 h-4 accent-leb"
                       />
                       <span className="text-sm">Online</span>
@@ -34,12 +35,13 @@ const ProgInfoProgDuration = withForm({
                       <input
                         type="checkbox"
                         checked={field.state.value === 'hybrid'}
-                        onChange={() =>
+                        onChange={() => {
                           form.setFieldValue(
                             'programDuration',
                             field.state.value === 'hybrid' ? '' : 'hybrid'
                           )
-                        }
+                          field.handleBlur()
+                        }}
                         className="w-4 h-4 accent-leb"
                       />
                       <span className="text-sm">Hybrid</span>

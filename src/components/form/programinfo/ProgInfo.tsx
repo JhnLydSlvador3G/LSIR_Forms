@@ -10,6 +10,7 @@ import {
   STEP_TITLES,
 } from './ProgInfo.types'
 import ProgInfoProgOffered from './ProgInfoProgOffered'
+import ProgInfoLawProgramClassification from './ProgInfoLawProgramClassification'
 import ProgInfoAcadCalendar from './ProgInfoAcadCalendar'
 import ProgInfoClassOperatingSchedule from './ProgInfoClassOperatingSchedule'
 import ProgInfoCurricularSched from './ProgInfoCurricularSched'
@@ -20,6 +21,7 @@ import SaveButton from '@/components/ui/form/SaveButton'
 import { appendProgramInfoSubmission } from '@/lib/programInfoSubmissions'
 
 const STEPS = [
+  ProgInfoLawProgramClassification,
   ProgInfoProgOffered,
   ProgInfoAcadCalendar,
   ProgInfoCurricularSched,
@@ -45,9 +47,9 @@ export default function ProgramInfo() {
 
   const form = useAppForm({
     defaultValues: initialValues,
-    // validators: {
-    //   onChange: ProgInfoSchema,
-    // },
+     validators: {
+       onChange: ProgInfoSchema,
+     },
     onSubmit: async ({ value }) => {
       appendProgramInfoSubmission(value)
       localStorage.removeItem('programinfo')
@@ -56,6 +58,7 @@ export default function ProgramInfo() {
       navigate({ to: '/programinfo-submissions' })
     },
   })
+
   // Note: On component mount, we attempt to restore any saved draft from localStorage.
   useEffect(() => {
     const raw = localStorage.getItem('programinfo')
@@ -65,6 +68,8 @@ export default function ProgramInfo() {
     const restored = {
       ...progInfoDefaultValues,
       ...parsed,
+      lawProgramClassification: parsed.lawProgramClassification ?? '',
+      doctorateProgram: parsed.doctorateProgram ?? '',
       programType: parsed.programType ?? '',
       programDuration: parsed.programDuration ?? '',
       curricula: parsed.curricula ?? progInfoDefaultValues.curricula,
@@ -75,33 +80,44 @@ export default function ProgramInfo() {
 
   // Note: The handleNext function performs light validation on the current step's fields before allowing progression.
   const handleNext = async () => {
-    // const fields = STEP_FIELDS[currentStep] as readonly string[]
-    // const currentValues = form.state.values
-    // const result = ProgInfoSchema.safeParse(currentValues)
-    // const stepIssues = result.success
-    //   ? []
-    //   : result.error.issues.filter((issue) =>
-    //       fields.includes(String(issue.path[0] || ''))
-    //     )
-    //
-    // if (stepIssues.length === 0) {
-    //   setCurrentStep((s) => s + 1)
-    // } else {
-    //   const invalidFields = Array.from(
-    //     new Set(
-    //       stepIssues
-    //         .map((issue) => issuePathToFieldName(issue.path as Array<string | number>))
-    //         .filter(Boolean),
-    //     )
-    //   )
-    //   invalidFields.forEach((field) => form.validateField(field as any, 'change'))
-    // }
-    setCurrentStep((s) => s + 1)
+    ;(form as any).setErrorMap?.({ onSubmit: undefined })
+    const fields = STEP_FIELDS[currentStep] as readonly string[]
+    const currentValues = form.state.values
+    const result = ProgInfoSchema.safeParse(currentValues)
+    const stepIssues = result.success
+      ? []
+      : result.error.issues.filter((issue) =>
+          fields.includes(String(issue.path[0] || ''))
+        )
+
+    if (stepIssues.length === 0) {
+      setCurrentStep((s) => s + 1)
+      return
+    }
+
+    const invalidFields = Array.from(
+      new Set(
+        stepIssues
+          .map((issue) => issuePathToFieldName(issue.path as Array<string | number>))
+          .filter(Boolean),
+      )
+    )
+
+    invalidFields.forEach((field) => form.validateField(field as any, 'change'))
+    ;(form as any).setErrorMap?.({
+      onSubmit: stepIssues[0]?.message || 'Please complete the required field.',
+    })
   }
 
+  /*
+  const handleNext = () => { // Remove this after testing
+    setCurrentStep((s) => s + 1)
+  }
+  */
   const handlePrev = () => {
     setCurrentStep((s) => s - 1)
   }
+
   // Note: Resetting the wizard should also clear any validation errors that may be blocking progress.
   const handleResetWizard = () => {
     setCurrentStep(0) 
@@ -114,8 +130,8 @@ export default function ProgramInfo() {
       {/* Step indicator */}
       <div className="flex items-center justify-center gap-2 px-8 pt-6">
         {STEP_TITLES.map((title, i) => (
-          <div key={title} className="flex items-center gap-2">
-            <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold
+            <div key={title} className="flex items-center gap-2">
+            <div className={`flex shrink-0 items-center justify-center w-7 h-7 min-w-7 min-h-7 rounded-full text-xs font-bold leading-none
               ${i === currentStep ? 'bg-leb text-white' : i < currentStep ? 'bg-leb/40 text-white' : 'bg-gray-200 text-gray-500'}`}>
               {i + 1}
             </div>
@@ -132,6 +148,7 @@ export default function ProgramInfo() {
         onSubmit={(e) => {
           e.preventDefault()
           e.stopPropagation()
+          //onSubmit Validation
           ;(form as any).setErrorMap?.({ onSubmit: undefined })
           const result = ProgInfoSchema.safeParse(form.state.values)
           if (!result.success) {

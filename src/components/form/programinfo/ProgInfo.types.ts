@@ -38,6 +38,22 @@ export const RECOGNITION_STATUSES = [
 
 export type RecognitionStatus = typeof RECOGNITION_STATUSES[number]
 
+export const LAW_PROGRAM_CLASSIFICATIONS = [
+  'juris-doctor',
+  'master-of-laws',
+  'doctorate',
+] as const
+
+export type LawProgramClassification = typeof LAW_PROGRAM_CLASSIFICATIONS[number]
+
+export const DOCTORATE_PROGRAM_OPTIONS = [
+  'Doctor in Civil Law',
+  'Doctor in Juridical Science',
+  'Others',
+] as const
+
+export type DoctorateProgramOption = typeof DOCTORATE_PROGRAM_OPTIONS[number]
+
 //Note: Base schema for each curriculum entry
 const CurriculumEntryBaseSchema = z.object({
   lebApprovalDate: z.string(),
@@ -70,6 +86,8 @@ export type CurriculumEntry = z.infer<typeof CurriculumEntryBaseSchema>
 // wizard step, so light step validation can check only the current section
 // instead of the whole form at once.
 const ProgInfoBaseSchema = z.object({
+  lawProgramClassification: z.enum(LAW_PROGRAM_CLASSIFICATIONS),
+  doctorateProgram: z.enum(DOCTORATE_PROGRAM_OPTIONS).or(z.literal('')),
   programType: z.enum(['extension', 'branch']),
   permitNumber: z.string().min(1, 'Permit number is required'),
   governmentAuthority: z.string(),
@@ -98,6 +116,14 @@ export const ProgInfoSchema = ProgInfoBaseSchema.superRefine((values, ctx) => {
       code: z.ZodIssueCode.custom,
       path: ['curricula', curriculumIndex, field],
       message: `${label} is required`,
+    })
+  }
+
+  if (values.lawProgramClassification === 'doctorate' && !values.doctorateProgram) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['doctorateProgram'],
+      message: 'Doctorate program is required',
     })
   }
 
@@ -244,15 +270,17 @@ export const ProgInfoDraftSchema = ProgInfoBaseSchema.partial()
 // each step and which title should be shown for that step.
 // Fields belonging to each step: used to scope light step validation on Next.
 export const STEP_FIELDS = [
-  ['programType', 'governmentAuthority', 'validity', 'locationSite', 'recognitionStatus', 'recognitionNumber', 'permitNumber'], // Step 0 - Program Offered
-  ['startMonth', 'endMonth'],                // Step 1 - Academic Calendar
-  ['curricularSchedule'],                    // Step 2 - Curricular Schedule
-  ['programDuration'],                       // Step 3 - Program Duration
-  ['classOperatingFrom', 'classOperatingTo'], // Step 4 - Class Operating Schedule
-  ['curricula'],                             // Step 5 - Curriculum
+  ['lawProgramClassification', 'doctorateProgram'], // Step 0 - Law Program Classification
+  ['programType', 'governmentAuthority', 'validity', 'locationSite', 'recognitionStatus', 'recognitionNumber', 'permitNumber'], // Step 1 - Program Offered
+  ['startMonth', 'endMonth'],                // Step 2 - Academic Calendar
+  ['curricularSchedule'],                    // Step 3 - Curricular Schedule
+  ['programDuration'],                       // Step 4 - Program Duration
+  ['classOperatingFrom', 'classOperatingTo'], // Step 5 - Class Operating Schedule
+  ['curricula'],                             // Step 6 - Curriculum
 ] as const
 
 export const STEP_TITLES = [
+  'Law Program Classification',
   'Program Offered',
   'Academic Calendar',
   'Curricular Schedule',
@@ -263,6 +291,8 @@ export const STEP_TITLES = [
 
 // Note: This is the in-memory TypeScript shape of the form data.
 export type ProgInfoFormData = {
+  lawProgramClassification: LawProgramClassification | ''
+  doctorateProgram: DoctorateProgramOption | ''
   programType: 'extension' | 'branch' | ''
   permitNumber: string
   governmentAuthority: string
@@ -279,8 +309,18 @@ export type ProgInfoFormData = {
   curricula: CurriculumEntry[]
 }
 
+export const ProgramInfoSubmissionSchema = z.object({
+  id: z.string(),
+  submittedAt: z.string(),
+  data: ProgInfoSchema,
+})
+
+export type ProgramInfoSubmission = z.infer<typeof ProgramInfoSubmissionSchema>
+
 // Note: Default values used when the form is first initialized or reset.
 export const progInfoDefaultValues: ProgInfoFormData = {
+  lawProgramClassification: '',
+  doctorateProgram: '',
   programType: '',
   permitNumber: '',
   governmentAuthority: '',
