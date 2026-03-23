@@ -7,6 +7,7 @@ type ResetButtonProps = {
   defaultValues: Record<string, any>
   storageKey?: string
   label?: string
+  onReset?: () => void
 }
 
 //Uses as any bad type but can't cast DefaultValues as <Record, never>
@@ -15,6 +16,7 @@ const ResetButton = ({
   defaultValues,
   storageKey,
   label = 'Reset',
+  onReset,
 }: ResetButtonProps) => {
   const form = useFormContext()
   const [open, setOpen] = useState(false)
@@ -25,6 +27,7 @@ const ResetButton = ({
     }
 
     form.reset(defaultValues as Record<string, never>)
+    onReset?.()
     setOpen(false)
   }
 

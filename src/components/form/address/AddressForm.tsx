@@ -1,68 +1,118 @@
-import { AddressDefaultValues } from './AddressForm.type'
-import { withFieldGroup } from '@/hooks/form-context'
+﻿import { AddressDefaultValues } from './AddressForm.type'
+import { withForm } from '@/hooks/form-context'
 
-// The defaultValues here are *only used for type inference*
-const AddressGroup = withFieldGroup({
+/**
+ * Field path map -- callers pass the full dot-notation paths that exist in
+ * their own form schema. This lets one AddressForm component be reused under
+ * any parent key (heiAdd.*, mailingAddress.*, etc.) without duplicating UI.
+ *
+ * Example (HEI form):
+ *   fields={{ building: 'heiAdd.building', street: 'heiAdd.street', ... }}
+ *
+ * Example (Law School form):
+ *   fields={{ building: 'mailingAddress.building', street: 'mailingAddress.street', ... }}
+ */
+export type AddressFieldPaths = {
+  building: string
+  street: string
+  barangay: string
+  district: string
+  cityMult: string
+  province: string
+  region: string
+}
+
+/**
+ * Default paths -- used as the withForm defaultValues type anchor only.
+ * The actual paths used at runtime always come from the `fields` prop.
+ */
+const AddressGroup = withForm({
   defaultValues: AddressDefaultValues,
-  render({ group }) {
+  props: {
+    fields: {
+      building: 'building',
+      street: 'street',
+      barangay: 'barangay',
+      district: 'district',
+      cityMult: 'cityMult',
+      province: 'province',
+      region: 'region',
+    } as AddressFieldPaths,
+  },
+  render({ form, fields }) {
     return (
       <fieldset className="flex flex-col gap-2 mb-4">
-        <group.AppField name="building">
+        {/* Building -- optional */}
+        <form.AppField name={fields.building as any}>
           {(field) => (
-            <field.TextField label="Building" htmlForVal="building" />
+            <field.TextField label="Building" htmlForVal={fields.building} />
           )}
-        </group.AppField>
+        </form.AppField>
 
-        <group.AppField name="street">
+        {/* Street -- required */}
+        <form.AppField name={fields.street as any}>
           {(field) => (
-            <field.TextField label="Street" htmlForVal="street" required />
+            <field.TextField
+              label="Street"
+              htmlForVal={fields.street}
+              required
+            />
           )}
-        </group.AppField>
+        </form.AppField>
 
         <div className="flex flex-row gap-3">
-          <group.AppField name="barangay">
+          {/* Barangay -- required */}
+          <form.AppField name={fields.barangay as any}>
             {(field) => (
               <field.TextField
                 label="Barangay"
-                htmlForVal="barangay"
+                htmlForVal={fields.barangay}
                 required
               />
             )}
-          </group.AppField>
+          </form.AppField>
 
-          <group.AppField name="district">
+          {/* District -- optional */}
+          <form.AppField name={fields.district as any}>
             {(field) => (
-              <field.TextField label="District" htmlForVal="District" />
+              <field.TextField label="District" htmlForVal={fields.district} />
             )}
-          </group.AppField>
+          </form.AppField>
 
-          <group.AppField name="cityMult">
+          {/* City/Municipality -- required */}
+          <form.AppField name={fields.cityMult as any}>
             {(field) => (
               <field.TextField
                 label="City/Municipality"
-                htmlForVal="cityMult"
+                htmlForVal={fields.cityMult}
                 required
               />
             )}
-          </group.AppField>
+          </form.AppField>
         </div>
 
         <div className="flex flex-row gap-3">
-          <group.AppField name="province">
+          {/* Province -- required */}
+          <form.AppField name={fields.province as any}>
             {(field) => (
               <field.TextField
                 label="Province"
-                htmlForVal="province"
+                htmlForVal={fields.province}
                 required
               />
             )}
-          </group.AppField>
+          </form.AppField>
 
-          <group.AppField name="region">
+          {/* Region -- required */}
+          <form.AppField name={fields.region as any}>
             {(field) => (
-              <field.TextField label="Region" htmlForVal="region" required />
+              <field.TextField
+                label="Region"
+                htmlForVal={fields.region}
+                required
+              />
             )}
-          </group.AppField>
+          </form.AppField>
         </div>
       </fieldset>
     )
@@ -70,3 +120,4 @@ const AddressGroup = withFieldGroup({
 })
 
 export default AddressGroup
+
