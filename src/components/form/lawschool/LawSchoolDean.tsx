@@ -1,47 +1,73 @@
-import { lawSchoolFormDefaultValues } from './LawSchoolForm.types'
+import {
+  lawSchoolFormDefaultValues,
+  type LawSchoolDeanFieldPaths,
+} from './LawSchoolForm.types'
 import { withForm } from '@/hooks/form-context'
 
 const LawSchoolDean = withForm({
   defaultValues: lawSchoolFormDefaultValues,
-  render: function Render({ form }) {
+  props: {
+    fields: {
+      firstName: 'dean.firstName',
+      middleName: 'dean.middleName',
+      lastName: 'dean.lastName',
+      suffix: 'dean.suffix',
+      dateOfAppointment: 'dean.dateOfAppointment',
+      email: 'dean.email',
+      mobileNumber: 'dean.mobileNumber',
+    } as LawSchoolDeanFieldPaths,
+  },
+  render: function Render({ form, fields }) {
     return (
       <div className="flex flex-col gap-6">
         {/* Row 1: Name */}
         <div className="flex flex-row gap-3">
-          <form.AppField name="dean.firstName">
+          <form.AppField
+            name={fields.firstName as any}
+            validators={{
+              onBlur: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+              onChange: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="First Name"
-                htmlForVal="dean.firstName"
+                htmlForVal={fields.firstName}
                 className="flex-3"
                 required
               />
             )}
           </form.AppField>
-          <form.AppField name="dean.middleName">
+          <form.AppField name={fields.middleName as any}>
             {(field) => (
               <field.TextField
                 label="Middle Name"
-                htmlForVal="dean.middleName"
+                htmlForVal={fields.middleName}
                 className="flex-3"
               />
             )}
           </form.AppField>
-          <form.AppField name="dean.lastName">
+          <form.AppField
+            name={fields.lastName as any}
+            validators={{
+              onBlur: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+              onChange: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="Last Name"
-                htmlForVal="dean.lastName"
+                htmlForVal={fields.lastName}
                 className="flex-3"
                 required
               />
             )}
           </form.AppField>
-          <form.AppField name="dean.suffix">
+          <form.AppField name={fields.suffix as any}>
             {(field) => (
               <field.TextField
                 label="Suffix"
-                htmlForVal="dean.suffix"
+                htmlForVal={fields.suffix}
                 className="flex-1"
               />
             )}
@@ -50,22 +76,42 @@ const LawSchoolDean = withForm({
 
         {/* Row 2: Date of Appointment + Email */}
         <div className="flex flex-row gap-4">
-          <form.AppField name="dean.dateOfAppointment">
+          <form.AppField
+            name={fields.dateOfAppointment as any}
+            validators={{
+              onBlur: ({ value }) => (!value ? 'Required' : undefined),
+              onChange: ({ value }) => (!value ? 'Required' : undefined),
+            }}
+          >
             {(field) => (
               <field.DateField
                 label="Date of Appointment"
-                htmlForVal="dean.dateOfAppointment"
+                htmlForVal={fields.dateOfAppointment}
                 required
                 className="flex-1"
               />
             )}
           </form.AppField>
           <form.AppField
-            name="dean.email"
+            name={fields.email as any}
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value?.trim()) return 'Required'
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                  ? undefined
+                  : 'Invalid Email'
+              },
+              onChange: ({ value }) => {
+                if (!value?.trim()) return 'Required'
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                  ? undefined
+                  : 'Invalid Email'
+              },
+            }}
             children={(field) => (
               <field.TextField
                 label="Email Address"
-                htmlForVal="dean.email"
+                htmlForVal={fields.email}
                 required
                 className="flex-1"
               />
@@ -76,11 +122,27 @@ const LawSchoolDean = withForm({
         {/* Row 3: Mobile */}
         <div className="flex flex-row gap-4">
           <form.AppField
-            name="dean.mobileNumber"
+            name={fields.mobileNumber as any}
+            validators={{
+              onBlur: ({ value }) => {
+                const trimmed = value?.trim() ?? ''
+                if (!trimmed) return 'Required'
+                return /^(09|\+639)\d{9}$/.test(trimmed)
+                  ? undefined
+                  : 'Invalid Number'
+              },
+              onChange: ({ value }) => {
+                const trimmed = value?.trim() ?? ''
+                if (!trimmed) return 'Required'
+                return /^(09|\+639)\d{9}$/.test(trimmed)
+                  ? undefined
+                  : 'Invalid Number'
+              },
+            }}
             children={(field) => (
               <field.TextField
                 label="Mobile Number"
-                htmlForVal="dean.mobileNumber"
+                htmlForVal={fields.mobileNumber}
                 required
                 className="flex-1"
               />

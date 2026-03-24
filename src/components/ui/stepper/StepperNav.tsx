@@ -4,12 +4,15 @@ import Spinner from '@/components/ui/feedback/Spinner'
 import { useFormContext } from '@/hooks/form-context'
 import ResetButton from '@/components/ui/form/ResetButton'
 import SaveButton from '@/components/ui/form/SaveButton'
+import type z from 'zod'
 
 type StepperNavProps = {
   stepper: UseStepperReturn
   storageKey: string
   defaultValues: Record<string, any>
   getValue: () => any
+  savePreferGetValueFirst?: boolean
+  saveSchema?: z.ZodTypeAny
   submitLabel?: string
   onNext?: () => boolean | Promise<boolean>
   onReset?: () => void
@@ -20,6 +23,8 @@ export function StepperNav({
   storageKey,
   defaultValues,
   getValue,
+  savePreferGetValueFirst = false,
+  saveSchema,
   submitLabel = 'Submit',
   onNext,
   onReset,
@@ -58,7 +63,12 @@ export function StepperNav({
               storageKey={storageKey}
               onReset={onReset}
             />
-            <SaveButton storageKey={storageKey} getValue={getValue} />
+            <SaveButton
+              storageKey={storageKey}
+              getValue={getValue}
+              preferGetValueFirst={savePreferGetValueFirst}
+              schema={saveSchema}
+            />
           </div>
 
           {/* Right: step navigation */}

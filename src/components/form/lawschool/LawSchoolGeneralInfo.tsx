@@ -18,7 +18,7 @@ const LawSchoolGeneralInfo = withForm({
             }}
             listeners={{
               onChange: ({ value }) => {
-                if (value !== 'others') {
+                if (value !== 'Others') {
                   form.setFieldValue('lawSchoolUnitNameOtherText', '')
                 }
                 void Promise.all([
@@ -33,9 +33,9 @@ const LawSchoolGeneralInfo = withForm({
                 label="Law School Unit Name"
                 htmlForVal="lawSchoolUnitName"
                 options={[
-                  { value: 'lawSchoolGeneralInformation', label: 'Law School General Information' },
-                  { value: 'graduateSchoolOfLaw', label: 'Graduate School of Law' },
-                  { value: 'others', label: 'Others' },
+                  { value: 'College/School of Law', label: 'College/School of Law' },
+                  { value: 'Graduate School of Law', label: 'Graduate School of Law' },
+                  { value: 'Others', label: 'Others' },
                 ]}
               />
             )}
@@ -43,7 +43,7 @@ const LawSchoolGeneralInfo = withForm({
 
           <form.Subscribe selector={(state) => state.values.lawSchoolUnitName}>
             {(lawSchoolUnitName) =>
-              lawSchoolUnitName === 'others' ? (
+              lawSchoolUnitName === 'Others' ? (
                 <form.AppField
                   name="lawSchoolUnitNameOtherText"
                   validators={{
@@ -51,7 +51,7 @@ const LawSchoolGeneralInfo = withForm({
                       const unitName = fieldApi.form.getFieldValue(
                         'lawSchoolUnitName',
                       )
-                      if (unitName === 'others' && !value?.trim())
+                      if (unitName === 'Others' && !value?.trim())
                         return 'Required'
                       return undefined
                     },
@@ -81,7 +81,7 @@ const LawSchoolGeneralInfo = withForm({
             }}
             listeners={{
               onChange: ({ value }) => {
-                if (value !== 'doctorate') {
+                if (value !== 'Doctorate') {
                   form.setFieldValue('doctoralType', undefined)
                   form.setFieldValue('doctoralOtherText', '')
                 }
@@ -99,9 +99,9 @@ const LawSchoolGeneralInfo = withForm({
                 orientation="horizontal"
                 required
                 options={[
-                  { value: 'jurisDoctor', label: 'Juris Doctor' },
-                  { value: 'masterOfLaws', label: 'Master of Laws' },
-                  { value: 'doctorate', label: 'Doctorate' },
+                  { value: 'Juris Doctor', label: 'Juris Doctor' },
+                  { value: 'Master of Laws', label: 'Master of Laws' },
+                  { value: 'Doctorate', label: 'Doctorate' },
                 ]}
               />
             )}
@@ -109,24 +109,24 @@ const LawSchoolGeneralInfo = withForm({
 
           <form.Subscribe selector={(state) => state.values.lawProgram}>
             {(lawProgram) =>
-              lawProgram === 'doctorate' ? (
+              lawProgram === 'Doctorate' ? (
                 <form.AppField
                   name="doctoralType"
                   validators={{
                     onBlur: ({ value, fieldApi }) => {
                       const lp = fieldApi.form.getFieldValue('lawProgram')
-                      if (lp === 'doctorate' && !value) return 'Required'
+                      if (lp === 'Doctorate' && !value) return 'Required'
                       return undefined
                     },
                     onChange: ({ value, fieldApi }) => {
                       const lp = fieldApi.form.getFieldValue('lawProgram')
-                      if (lp === 'doctorate' && !value) return 'Required'
+                      if (lp === 'Doctorate' && !value) return 'Required'
                       return undefined
                     },
                   }}
                   listeners={{
                     onChange: ({ value }) => {
-                      if (value !== 'others') {
+                      if (value !== 'Others') {
                         form.setFieldValue('doctoralOtherText', '')
                       }
                       void Promise.all([
@@ -141,12 +141,12 @@ const LawSchoolGeneralInfo = withForm({
                       label="Doctorate Type"
                       htmlForVal="doctoralType"
                       options={[
-                        { value: 'doctorCivilLaw', label: 'Doctor in Civil Law' },
+                        { value: 'Doctor of Civil Law', label: 'Doctor in Civil Law' },
                         {
-                          value: 'doctorJuridicalScience',
+                          value: 'Doctor of Juridical Science',
                           label: 'Doctor in Juridical Science',
                         },
-                        { value: 'others', label: 'Others' },
+                        { value: 'Others', label: 'Others' },
                       ]}
                     />
                   )}
@@ -157,7 +157,7 @@ const LawSchoolGeneralInfo = withForm({
 
           <form.Subscribe selector={(state) => state.values.doctoralType}>
             {(doctoralType) =>
-              doctoralType === 'others' ? (
+              doctoralType === 'Others' ? (
                 <form.AppField
                   name="doctoralOtherText"
                   validators={{
@@ -166,8 +166,8 @@ const LawSchoolGeneralInfo = withForm({
                         fieldApi.form.getFieldValue('lawProgram')
                       const docType = fieldApi.form.getFieldValue('doctoralType')
                       if (
-                        lawProgram === 'doctorate' &&
-                        docType === 'others' &&
+                        lawProgram === 'Doctorate' &&
+                        docType === 'Others' &&
                         !value?.trim()
                       )
                         return 'Required'
@@ -199,7 +199,7 @@ const LawSchoolGeneralInfo = withForm({
             }}
             listeners={{
               onChange: ({ value }) => {
-                if (value !== 'others') {
+                if (value !== 'Others') {
                   form.setFieldValue('recognitionStatusOtherText', '')
                 }
                 void Promise.all([
@@ -215,11 +215,11 @@ const LawSchoolGeneralInfo = withForm({
                 htmlForVal="recognitionStatus"
                 required
                 options={[
-                  { value: 'govPermit1', label: 'Government Permit I' },
-                  { value: 'govPermit2', label: 'Government Permit II' },
-                  { value: 'govPermit3', label: 'Government Permit III' },
-                  { value: 'govRecognition', label: 'Government Recognition' },
-                  { value: 'others', label: 'Others' },
+                  { value: 'Government Permit I', label: 'Government Permit I' },
+                  { value: 'Government Permit II', label: 'Government Permit II' },
+                  { value: 'Government Permit III', label: 'Government Permit III' },
+                  { value: 'Government Recognition', label: 'Government Recognition' },
+                  { value: 'Others', label: 'Others' },
                 ]}
               />
             )}
@@ -227,14 +227,14 @@ const LawSchoolGeneralInfo = withForm({
 
           <form.Subscribe selector={(state) => state.values.recognitionStatus}>
             {(recognitionStatus) =>
-              recognitionStatus === 'others' ? (
+              recognitionStatus === 'Others' ? (
                 <form.AppField
                   name="recognitionStatusOtherText"
                   validators={{
                     onBlur: ({ value, fieldApi }) => {
                       const status =
                         fieldApi.form.getFieldValue('recognitionStatus')
-                      if (status === 'others' && !value?.trim())
+                      if (status === 'Others' && !value?.trim())
                         return 'Required'
                       return undefined
                     },
@@ -274,16 +274,16 @@ const LawSchoolGeneralInfo = withForm({
                 htmlForVal="accreditationStatus"
                 required
                 options={[
-                  { value: 'level1', label: 'Level 1' },
-                  { value: 'level2', label: 'Level 2' },
-                  { value: 'level3', label: 'Level 3' },
+                  { value: 'Level I', label: 'Level 1' },
+                  { value: 'Level II', label: 'Level 2' },
+                  { value: 'Level III', label: 'Level 3' },
                   {
-                    value: 'centerDevelopment',
+                    value: 'Center of Development',
                     label: 'Center of Development',
                   },
-                  { value: 'centerExcellence', label: 'Center of Excellence' },
-                  { value: 'deregulatedStatus', label: 'Deregulated Status' },
-                  { value: 'autonomousStatus', label: 'Autonomous Status' },
+                  { value: 'Center of Excellence', label: 'Center of Excellence' },
+                  { value: 'Deregulated Status', label: 'Deregulated Status' },
+                  { value: 'Autonomous Status', label: 'Autonomous Status' },
                 ]}
               />
             )}

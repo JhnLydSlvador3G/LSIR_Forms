@@ -2,41 +2,65 @@ import { z } from 'zod'
 import { AddressSchema } from '../address/AddressForm.type'
 import type { StepConfig } from '@/hooks/useStepper'
 
+export type LawSchoolDeanFieldPaths = {
+  firstName: string
+  middleName: string
+  lastName: string
+  suffix: string
+  dateOfAppointment: string
+  email: string
+  mobileNumber: string
+}
+
+export type LawSchoolDeanDegreeFieldPaths = {
+  highestDegreeType: string
+  rollNumber: string
+  yearsTeachingExp: string
+  yearsAdminExp: string
+}
+
+export const lawSchoolUnitNameEnum = z.enum([
+  '',
+  'College/School of Law',
+  'Graduate School of Law',
+  'Others',
+])
+
 // Law program offered (single choice)
 export const lawProgramEnum = z.enum([
   '',
-  'jurisDoctor',
-  'masterOfLaws',
-  'doctorate',
+  'Juris Doctor',
+  'Master of Laws',
+  'Doctorate',
 ])
 
 // Recognition status (single choice)
 export const recognitionStatusEnum = z.enum([
   '',
-  'govPermit1',
-  'govPermit2',
-  'govPermit3',
-  'govRecognition',
-  'others',
+  'Government Permit I',
+  'Government Permit II',
+  'Government Permit III',
+  'Government Recognition',
+  'Others'
 ])
 
 // Accreditation status (single choice)
 export const accreditationStatusEnum = z.enum([
   '',
-  'level1',
-  'level2',
-  'level3',
-  'centerDevelopment',
-  'centerExcellence',
-  'deregulatedStatus',
-  'autonomousStatus',
+  'Level I',
+  'Level II',
+  'Level III',
+  'Center of Development',
+  'Center of Excellence',
+  'Deregulated Status',
+  'Autonomous Status'
 ])
 
 // Doctorate type (only when Doctorate is selected)
 export const doctoralTypeEnum = z.enum([
-  'doctorCivilLaw',
-  'doctorJuridicalScience',
-  'others',
+   'Doctor of Civil Law',
+  'Doctor of Juridical Science',
+  'Others'
 ])
 
 // Nested schema for the Dean's degree details (Step 4).
@@ -129,6 +153,23 @@ export const LAW_SCHOOL_ADDRESS_FIELDS = {
   region: 'mailingAddress.region',
 } as const
 
+export const LAW_SCHOOL_DEAN_FIELDS = {
+  firstName: 'dean.firstName',
+  middleName: 'dean.middleName',
+  lastName: 'dean.lastName',
+  suffix: 'dean.suffix',
+  dateOfAppointment: 'dean.dateOfAppointment',
+  email: 'dean.email',
+  mobileNumber: 'dean.mobileNumber',
+} as const satisfies LawSchoolDeanFieldPaths
+
+export const LAW_SCHOOL_DEAN_DEGREE_FIELDS = {
+  highestDegreeType: 'dean.degree.highestDegreeType',
+  rollNumber: 'dean.degree.rollNumber',
+  yearsTeachingExp: 'dean.degree.yearsTeachingExp',
+  yearsAdminExp: 'dean.degree.yearsAdminExp',
+} as const satisfies LawSchoolDeanDegreeFieldPaths
+
 // Base schema for the Law School page (no cross-field superRefine here).
 export const lawSchoolBaseSchema = z.object({
   mailingAddress: AddressSchema,
@@ -139,7 +180,7 @@ export const lawSchoolBaseSchema = z.object({
     .trim()
     .nonempty('Required')
     .regex(/^(09|\+639)\d{9}$/, 'Invalid Number'),
-  lawSchoolUnitName: z.string().min(1, 'Required'),
+  lawSchoolUnitName: lawSchoolUnitNameEnum,
   lawSchoolUnitNameOtherText: z.string().optional(),
   lawProgram: lawProgramEnum,
   doctoralType: doctoralTypeEnum.optional(),
@@ -166,6 +207,10 @@ const applyLawSchoolConditionalRules = (
   data: z.infer<typeof lawSchoolBaseSchema>,
   ctx: z.RefinementCtx,
 ) => {
+  if (data.lawSchoolUnitName === '') {
+    addRequiredIssue(ctx, ['lawSchoolUnitName'])
+  }
+
   if (data.lawProgram === '') {
     addRequiredIssue(ctx, ['lawProgram'])
   }
@@ -178,25 +223,25 @@ const applyLawSchoolConditionalRules = (
     addRequiredIssue(ctx, ['accreditationStatus'])
   }
 
-  if (data.lawProgram === 'doctorate') {
+  if (data.lawProgram === 'Doctorate') {
     if (!data.doctoralType) {
       addRequiredIssue(ctx, ['doctoralType'])
     }
 
-    if (data.doctoralType === 'others' && !data.doctoralOtherText?.trim()) {
+    if (data.doctoralType === 'Others' && !data.doctoralOtherText?.trim()) {
       addRequiredIssue(ctx, ['doctoralOtherText'], 'Please specify')
     }
   }
 
   if (
-    data.recognitionStatus === 'others' &&
+    data.recognitionStatus === 'Others' &&
     !data.recognitionStatusOtherText?.trim()
   ) {
     addRequiredIssue(ctx, ['recognitionStatusOtherText'], 'Please specify')
   }
 
   if (
-    data.lawSchoolUnitName === 'others' &&
+    data.lawSchoolUnitName === 'Others' &&
     !data.lawSchoolUnitNameOtherText?.trim()
   ) {
     addRequiredIssue(ctx, ['lawSchoolUnitNameOtherText'], 'Please specify')
@@ -233,6 +278,9 @@ const deepPartial = (schema: z.ZodTypeAny): z.ZodTypeAny => {
   }
   if (schema instanceof z.ZodDefault) {
     return deepPartial((schema.removeDefault() as z.ZodTypeAny)).optional()
+  }
+  if (schema instanceof z.ZodString) {
+    return z.union([z.literal(''), schema]).optional()
   }
   return schema.optional()
 }

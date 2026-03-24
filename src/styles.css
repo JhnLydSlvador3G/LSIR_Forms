@@ -37,11 +37,11 @@ code {
   }
 
   .select-trigger {
-    @apply whitespace-nowrap inline-flex self-start shrink-0 w-fit h-10 items-center justify-center gap-1.25 rounded-md bg-white px-3.75 text-[16px] leading-none shadow-md outline-none border-leb border hover:bg-lebSecond focus:ring-2 focus:ring-leb data-placeholder:text-black text-black;
+    @apply inline-flex h-10 w-full min-w-0 items-center justify-between gap-1.25 rounded-md border border-leb bg-white px-3.75 text-[16px] leading-none text-black shadow-md outline-none hover:bg-lebSecond focus:ring-2 focus:ring-leb data-placeholder:text-black;
   }
 
   .select-content {
-    @apply overflow-hidden rounded-md bg-white shadow-lg;
+    @apply z-50 max-h-80 overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg;
   }
 
   .select-scroll-button {

@@ -4,6 +4,8 @@ import { SectionWrapper } from '../hei/HeiSectionWrapper'
 import AddressForm from '../address/AddressForm'
 import {
   LAW_SCHOOL_ADDRESS_FIELDS,
+  LAW_SCHOOL_DEAN_DEGREE_FIELDS,
+  LAW_SCHOOL_DEAN_FIELDS,
   LAW_SCHOOL_STEPS,
   LAW_SCHOOL_STEP_SCHEMAS,
   lawSchoolFormDefaultValues,
@@ -29,8 +31,8 @@ export default function LawSchoolForm() {
   const visitedStepsRef = useRef<Set<number>>(new Set([0]))
   const forcedErrorStepsRef = useRef<Set<number>>(new Set())
   const justAdvancedRef = useRef(false)
-  const [initialValues, setInitialValues] = useState(lawSchoolFormDefaultValues)
   const [resetVersion, setResetVersion] = useState(0)
+  const [initialValues, setInitialValues] = useState(lawSchoolFormDefaultValues)
 
   const form = useAppForm({
     defaultValues: initialValues,
@@ -41,6 +43,15 @@ export default function LawSchoolForm() {
       console.log('Submitted:', value)
     },
   })
+
+  useEffect(() => {
+    const values = loadFormFromLocal({
+      key: 'lawSchool',
+      fallback: lawSchoolFormDefaultValues,
+    })
+    setInitialValues(values)
+    form.reset(values)
+  }, [form])
 
   const lawSchoolSections = [
     {
@@ -56,24 +67,19 @@ export default function LawSchoolForm() {
     {
       key: 'law-dean',
       title: 'Law Dean',
-      render: () => <LawSchoolDean form={form as any} />,
+      render: () => <LawSchoolDean form={form as any} fields={LAW_SCHOOL_DEAN_FIELDS} />,
     },
     {
       key: 'dean-academic-background',
       title: "Dean's Academic Background",
-      render: () => <LawSchoolDeanDegree form={form as any} />,
+      render: () => (
+        <LawSchoolDeanDegree
+          form={form as any}
+          fields={LAW_SCHOOL_DEAN_DEGREE_FIELDS}
+        />
+      ),
     },
   ] as const
-
-  useEffect(() => {
-    const prev = loadFormFromLocal({
-      key: 'lawSchool',
-      fallback: lawSchoolFormDefaultValues,
-    })
-    const values = prev ?? lawSchoolFormDefaultValues
-    setInitialValues(values)
-    form.reset(values)
-  }, [form])
 
   useEffect(() => {
     if (visitedStepsRef.current.has(stepper.currentStep)) return
@@ -214,6 +220,8 @@ export default function LawSchoolForm() {
             storageKey="lawSchool"
             defaultValues={lawSchoolFormDefaultValues}
             getValue={() => form.state.values}
+            savePreferGetValueFirst
+            saveSchema={lawSchoolFormDraftSchema}
             onNext={handleStepNext}
             onReset={() => {
               setInitialValues(lawSchoolFormDefaultValues)

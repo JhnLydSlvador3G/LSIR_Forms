@@ -10,28 +10,39 @@ type SelectFieldProps = {
   label: string
   options: Array<{ value: string; label: string }>
   htmlForVal: string
+  className?: string
   disabled?: boolean
   required?: boolean
+  placeholder?: string
 }
 
 export function SelectField({
   label,
   options,
   htmlForVal,
+  className,
   disabled = false,
   required = false,
+  placeholder = 'Select Value',
 }: SelectFieldProps) {
   const field = useFieldContext<string>()
   const hasError = field.state.meta.isTouched && !field.state.meta.isValid
+  const value = field.state.value ?? ''
+  const selectedLabel = options.find((option) => option.value === value)?.label
+
   return (
-    <label className="flex flex-col gap-0">
+    <div className={cn('flex min-w-0 grow flex-col gap-0', className)}>
       <LabelForm label={label} htmlForVal={htmlForVal} required={required} />
       <Select.Root
-        value={field.state.value}
-        onValueChange={field.handleChange}
+        value={value || undefined}
+        onValueChange={(nextValue) => {
+          field.handleChange(nextValue)
+          field.handleBlur()
+        }}
         disabled={disabled}
       >
         <Select.Trigger
+          id={htmlForVal}
           aria-label={label}
           className={cn(
             'select-trigger',
@@ -41,13 +52,15 @@ export function SelectField({
               : 'border-gray-200 focus:ring-2 focus:ring-leb/40 focus:border-leb',
           )}
         >
-          <Select.Value placeholder="Select Value" />
+          <span className={cn(!selectedLabel && 'text-gray-400')}>
+            {selectedLabel ?? placeholder}
+          </span>
           <Select.Icon className="text-leb">
             <ChevronDownIcon />
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>
-          <Select.Content className="select-content">
+          <Select.Content className="select-content" position="popper" sideOffset={4}>
             <Select.ScrollUpButton className="select-scroll-button">
               <ChevronUpIcon />
             </Select.ScrollUpButton>
@@ -74,7 +87,7 @@ export function SelectField({
       </Select.Root>
 
       <FieldInfo field={field} />
-    </label>
+    </div>
   )
 }
 

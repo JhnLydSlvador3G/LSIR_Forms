@@ -1,5 +1,37 @@
-﻿import { AddressDefaultValues } from './AddressForm.type'
+import { AddressDefaultValues } from './AddressForm.type'
 import { withForm } from '@/hooks/form-context'
+
+const requiredText = (value: string | undefined) =>
+  !value?.trim() ? 'Required' : undefined
+
+const regionOptions = [
+  { value: 'Ilocos Region (Region I)', label: 'Ilocos Region (Region I)' },
+  { value: 'Cagayan Valley (Region II)', label: 'Cagayan Valley (Region II)' },
+  { value: 'Central Luzon (Region III)', label: 'Central Luzon (Region III)' },
+  { value: 'CALABARZON (Region IV-A)', label: 'CALABARZON (Region IV-A)' },
+  { value: 'MIMAROPA (Region IV-B)', label: 'MIMAROPA (Region IV-B)' },
+  { value: 'Bicol Region (Region V)', label: 'Bicol Region (Region V)' },
+  { value: 'Western Visayas (Region VI)', label: 'Western Visayas (Region VI)' },
+  { value: 'Central Visayas (Region VII)', label: 'Central Visayas (Region VII)' },
+  { value: 'Eastern Visayas (Region VIII)', label: 'Eastern Visayas (Region VIII)' },
+  { value: 'Zamboanga Peninsula (Region IX)', label: 'Zamboanga Peninsula (Region IX)' },
+  { value: 'Northern Mindanao (Region X)', label: 'Northern Mindanao (Region X)' },
+  { value: 'Davao Region (Region XI)', label: 'Davao Region (Region XI)' },
+  { value: 'SOCCSKSARGEN (Region XII)', label: 'SOCCSKSARGEN (Region XII)' },
+  { value: 'Caraga (Region XIII)', label: 'Caraga (Region XIII)' },
+  {
+    value: 'Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)',
+    label: 'Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)',
+  },
+  {
+    value: 'Cordillera Administrative Region (CAR)',
+    label: 'Cordillera Administrative Region (CAR)',
+  },
+  {
+    value: 'National Capital Region (NCR)',
+    label: 'National Capital Region (NCR)',
+  },
+] as const
 
 /**
  * Field path map -- callers pass the full dot-notation paths that exist in
@@ -50,7 +82,13 @@ const AddressGroup = withForm({
         </form.AppField>
 
         {/* Street -- required */}
-        <form.AppField name={fields.street as any}>
+        <form.AppField
+          name={fields.street as any}
+          validators={{
+            onBlur: ({ value }) => requiredText(value),
+            onChange: ({ value }) => requiredText(value),
+          }}
+        >
           {(field) => (
             <field.TextField
               label="Street"
@@ -62,7 +100,13 @@ const AddressGroup = withForm({
 
         <div className="flex flex-row gap-3">
           {/* Barangay -- required */}
-          <form.AppField name={fields.barangay as any}>
+          <form.AppField
+            name={fields.barangay as any}
+            validators={{
+              onBlur: ({ value }) => requiredText(value),
+              onChange: ({ value }) => requiredText(value),
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="Barangay"
@@ -80,7 +124,13 @@ const AddressGroup = withForm({
           </form.AppField>
 
           {/* City/Municipality -- required */}
-          <form.AppField name={fields.cityMult as any}>
+          <form.AppField
+            name={fields.cityMult as any}
+            validators={{
+              onBlur: ({ value }) => requiredText(value),
+              onChange: ({ value }) => requiredText(value),
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="City/Municipality"
@@ -93,7 +143,13 @@ const AddressGroup = withForm({
 
         <div className="flex flex-row gap-3">
           {/* Province -- required */}
-          <form.AppField name={fields.province as any}>
+          <form.AppField
+            name={fields.province as any}
+            validators={{
+              onBlur: ({ value }) => requiredText(value),
+              onChange: ({ value }) => requiredText(value),
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="Province"
@@ -104,12 +160,22 @@ const AddressGroup = withForm({
           </form.AppField>
 
           {/* Region -- required */}
-          <form.AppField name={fields.region as any}>
+          <form.AppField
+            name={fields.region as any}
+            validators={{
+              onBlur: ({ value }) => requiredText(value),
+              onChange: ({ value }) => requiredText(value),
+            }}
+          >
             {(field) => (
-              <field.TextField
+              <field.ComboboxField
                 label="Region"
                 htmlForVal={fields.region}
                 required
+                allowCustomInput={false}
+                placeholder="Select region"
+                searchPlaceholder="Search region..."
+                options={regionOptions.map((option) => ({ ...option }))}
               />
             )}
           </form.AppField>
@@ -120,4 +186,3 @@ const AddressGroup = withForm({
 })
 
 export default AddressGroup
-
