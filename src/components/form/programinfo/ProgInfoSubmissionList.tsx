@@ -259,6 +259,7 @@ export default function ProgInfoSubmissionList() {
   const [submissions, setSubmissions] = useState<ProgramInfoSubmission[]>([])
   const [openIds, setOpenIds] = useState<Set<string>>(new Set())
   const [isLeiOpen, setIsLeiOpen] = useState(true)
+  const leiProgram = 1
 
   useEffect(() => {
     setSubmissions(loadProgramInfoSubmissions())
@@ -318,7 +319,7 @@ export default function ProgInfoSubmissionList() {
             onClick={() => setIsLeiOpen((current) => !current)}
             className="flex w-full items-center justify-between gap-3 bg-slate-50 px-5 py-4 text-left transition-colors hover:bg-slate-100"
           >
-            <h2 className="text-lg font-bold text-slate-900">LEI 1</h2>
+            <h2 className="text-lg font-bold text-slate-900">LEI {leiProgram}</h2>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-leb/10 text-leb">
               {isLeiOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
             </span>
@@ -328,6 +329,9 @@ export default function ProgInfoSubmissionList() {
             <div className="space-y-8 px-4 py-5">
               <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
                 <div className="w-full md:flex-1">
+                  <h1 className="text-2xl font-black tracking-tight text-slate-900">
+                    LEI ({leiProgram})
+                  </h1>
                 </div>
                 <div className="flex w-full justify-center md:flex-1 md:justify-end">
                   <Link
