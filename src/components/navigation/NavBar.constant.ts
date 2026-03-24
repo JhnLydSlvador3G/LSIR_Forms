@@ -69,6 +69,12 @@ export const navigationConfig: Array<NavItemConfig> = [
     icon: GraduationCapIcon,
   },
   {
+    type: 'item',
+    label: 'Financial Info',
+    to: '/financialinfo',
+    icon: GraduationCapIcon,
+  },
+  {
     type: 'group',
     label: 'Start - SSR Demos',
     icon: StickyNote,

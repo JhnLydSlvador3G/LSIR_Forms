@@ -18,6 +18,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedFormStudentprofileRouteImport } from './routes/_protected/_form/studentprofile'
 import { Route as ProtectedFormScheduleRouteImport } from './routes/_protected/_form/schedule'
 import { Route as ProtectedFormHeiinfoRouteImport } from './routes/_protected/_form/heiinfo'
+import { Route as ProtectedFormFinancialinfoRouteImport } from './routes/_protected/_form/financialinfo'
 import { Route as ProtectedFormFacultyrosterRouteImport } from './routes/_protected/_form/facultyroster'
 import { Route as ProtectedFormFacultyprofileRouteImport } from './routes/_protected/_form/facultyprofile'
 import { Route as ProtectedFormFacultydevelopmentRouteImport } from './routes/_protected/_form/facultydevelopment'
@@ -67,6 +68,12 @@ const ProtectedFormHeiinfoRoute = ProtectedFormHeiinfoRouteImport.update({
   path: '/heiinfo',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const ProtectedFormFinancialinfoRoute =
+  ProtectedFormFinancialinfoRouteImport.update({
+    id: '/_form/financialinfo',
+    path: '/financialinfo',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 const ProtectedFormFacultyrosterRoute =
   ProtectedFormFacultyrosterRouteImport.update({
     id: '/_form/facultyroster',
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
+  '/financialinfo': typeof ProtectedFormFinancialinfoRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/schedule': typeof ProtectedFormScheduleRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
   '/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
+  '/financialinfo': typeof ProtectedFormFinancialinfoRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/schedule': typeof ProtectedFormScheduleRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
@@ -121,6 +130,7 @@ export interface FileRoutesById {
   '/_protected/_form/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/_protected/_form/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/_protected/_form/facultyroster': typeof ProtectedFormFacultyrosterRoute
+  '/_protected/_form/financialinfo': typeof ProtectedFormFinancialinfoRoute
   '/_protected/_form/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/_protected/_form/schedule': typeof ProtectedFormScheduleRoute
   '/_protected/_form/studentprofile': typeof ProtectedFormStudentprofileRoute
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/facultydevelopment'
     | '/facultyprofile'
     | '/facultyroster'
+    | '/financialinfo'
     | '/heiinfo'
     | '/schedule'
     | '/studentprofile'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/facultydevelopment'
     | '/facultyprofile'
     | '/facultyroster'
+    | '/financialinfo'
     | '/heiinfo'
     | '/schedule'
     | '/studentprofile'
@@ -163,6 +175,7 @@ export interface FileRouteTypes {
     | '/_protected/_form/facultydevelopment'
     | '/_protected/_form/facultyprofile'
     | '/_protected/_form/facultyroster'
+    | '/_protected/_form/financialinfo'
     | '/_protected/_form/heiinfo'
     | '/_protected/_form/schedule'
     | '/_protected/_form/studentprofile'
@@ -243,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedFormHeiinfoRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/_form/financialinfo': {
+      id: '/_protected/_form/financialinfo'
+      path: '/financialinfo'
+      fullPath: '/financialinfo'
+      preLoaderRoute: typeof ProtectedFormFinancialinfoRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
     '/_protected/_form/facultyroster': {
       id: '/_protected/_form/facultyroster'
       path: '/facultyroster'
@@ -272,6 +292,7 @@ interface ProtectedRouteChildren {
   ProtectedFormFacultydevelopmentRoute: typeof ProtectedFormFacultydevelopmentRoute
   ProtectedFormFacultyprofileRoute: typeof ProtectedFormFacultyprofileRoute
   ProtectedFormFacultyrosterRoute: typeof ProtectedFormFacultyrosterRoute
+  ProtectedFormFinancialinfoRoute: typeof ProtectedFormFinancialinfoRoute
   ProtectedFormHeiinfoRoute: typeof ProtectedFormHeiinfoRoute
   ProtectedFormScheduleRoute: typeof ProtectedFormScheduleRoute
   ProtectedFormStudentprofileRoute: typeof ProtectedFormStudentprofileRoute
@@ -282,6 +303,7 @@ const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedFormFacultydevelopmentRoute: ProtectedFormFacultydevelopmentRoute,
   ProtectedFormFacultyprofileRoute: ProtectedFormFacultyprofileRoute,
   ProtectedFormFacultyrosterRoute: ProtectedFormFacultyrosterRoute,
+  ProtectedFormFinancialinfoRoute: ProtectedFormFinancialinfoRoute,
   ProtectedFormHeiinfoRoute: ProtectedFormHeiinfoRoute,
   ProtectedFormScheduleRoute: ProtectedFormScheduleRoute,
   ProtectedFormStudentprofileRoute: ProtectedFormStudentprofileRoute,
