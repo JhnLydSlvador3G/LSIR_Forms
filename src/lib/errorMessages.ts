@@ -1,4 +1,3 @@
-// utils/loginMessages.ts
 export function getLoginErrorMessage(statusCode: number): string {
     switch (true) {
         // ✅ Success

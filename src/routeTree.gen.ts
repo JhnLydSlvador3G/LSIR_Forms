@@ -11,11 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiHelloRouteImport } from './routes/api/hello'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
 import { Route as AuthSignupIndexRouteImport } from './routes/_auth/signup.index'
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login.index'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedFormStudentprofileRouteImport } from './routes/_protected/_form/studentprofile'
 import { Route as ProtectedFormScheduleRouteImport } from './routes/_protected/_form/schedule'
 import { Route as ProtectedFormHeiinfoRouteImport } from './routes/_protected/_form/heiinfo'
@@ -33,11 +31,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiHelloRoute = ApiHelloRouteImport.update({
-  id: '/api/hello',
-  path: '/api/hello',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -51,11 +44,6 @@ const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
 const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
   id: '/_auth/login/',
   path: '/login/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProtectedFormStudentprofileRoute =
@@ -102,7 +90,6 @@ const ProtectedFormFacultydevelopmentRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
-  '/api/hello': typeof ApiHelloRoute
   '/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
@@ -110,14 +97,12 @@ export interface FileRoutesByFullPath {
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/schedule': typeof ProtectedFormScheduleRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/login/': typeof AuthLoginIndexRoute
   '/signup/': typeof AuthSignupIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
-  '/api/hello': typeof ApiHelloRoute
   '/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
@@ -125,7 +110,6 @@ export interface FileRoutesByTo {
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/schedule': typeof ProtectedFormScheduleRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/login': typeof AuthLoginIndexRoute
   '/signup': typeof AuthSignupIndexRoute
 }
@@ -134,7 +118,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteWithChildren
   '/_protected/dashboard': typeof ProtectedDashboardRoute
-  '/api/hello': typeof ApiHelloRoute
   '/_protected/_form/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/_protected/_form/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/_protected/_form/facultyroster': typeof ProtectedFormFacultyrosterRoute
@@ -142,7 +125,6 @@ export interface FileRoutesById {
   '/_protected/_form/heiinfo': typeof ProtectedFormHeiinfoRoute
   '/_protected/_form/schedule': typeof ProtectedFormScheduleRoute
   '/_protected/_form/studentprofile': typeof ProtectedFormStudentprofileRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
   '/_auth/signup/': typeof AuthSignupIndexRoute
 }
@@ -151,7 +133,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/api/hello'
     | '/facultydevelopment'
     | '/facultyprofile'
     | '/facultyroster'
@@ -159,14 +140,12 @@ export interface FileRouteTypes {
     | '/heiinfo'
     | '/schedule'
     | '/studentprofile'
-    | '/api/auth/$'
     | '/login/'
     | '/signup/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/dashboard'
-    | '/api/hello'
     | '/facultydevelopment'
     | '/facultyprofile'
     | '/facultyroster'
@@ -174,7 +153,6 @@ export interface FileRouteTypes {
     | '/heiinfo'
     | '/schedule'
     | '/studentprofile'
-    | '/api/auth/$'
     | '/login'
     | '/signup'
   id:
@@ -182,7 +160,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_protected'
     | '/_protected/dashboard'
-    | '/api/hello'
     | '/_protected/_form/facultydevelopment'
     | '/_protected/_form/facultyprofile'
     | '/_protected/_form/facultyroster'
@@ -190,7 +167,6 @@ export interface FileRouteTypes {
     | '/_protected/_form/heiinfo'
     | '/_protected/_form/schedule'
     | '/_protected/_form/studentprofile'
-    | '/api/auth/$'
     | '/_auth/login/'
     | '/_auth/signup/'
   fileRoutesById: FileRoutesById
@@ -198,8 +174,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRoute: typeof ProtectedRouteWithChildren
-  ApiHelloRoute: typeof ApiHelloRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
   AuthSignupIndexRoute: typeof AuthSignupIndexRoute
 }
@@ -218,13 +192,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/hello': {
-      id: '/api/hello'
-      path: '/api/hello'
-      fullPath: '/api/hello'
-      preLoaderRoute: typeof ApiHelloRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_protected/dashboard': {
@@ -246,13 +213,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login/'
       preLoaderRoute: typeof AuthLoginIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_protected/_form/studentprofile': {
@@ -336,8 +296,6 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRoute: ProtectedRouteWithChildren,
-  ApiHelloRoute: ApiHelloRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
   AuthSignupIndexRoute: AuthSignupIndexRoute,
 }

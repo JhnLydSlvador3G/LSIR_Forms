@@ -1,8 +1,12 @@
 import { createAuthClient } from 'better-auth/react'
-import { usernameClient } from 'better-auth/client/plugins'
+import { tanstackStartCookies } from 'better-auth/tanstack-start'
 
-// Initialize Better Auth client with the username plugin
-// usernameClient() enables signIn.username and signUp.email with username field
 export const authClient = createAuthClient({
-  plugins: [usernameClient()],
+  baseURL: "http://localhost:8000",
+  fetchOptions: {
+    credentials: 'include'
+  },
+  plugins: [tanstackStartCookies()],
 })
+
+

@@ -6,14 +6,14 @@ import { getLoginErrorMessage } from '@/lib/errorMessages'
 import { sleep } from '@/lib/utils'
 
 const LoginFormSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  email: z.email(),
   password: z.string().min(8, 'You must have a length of at least 8'),
 })
 
 type LoginFormValues = z.infer<typeof LoginFormSchema>
 
 const defaultValues: LoginFormValues = {
-  username: '',
+  email: '',
   password: '',
 }
 
@@ -26,23 +26,19 @@ export default function LoginForm() {
   const form = useAppForm({
     defaultValues,
     validators: {
-      onChangeAsyncDebounceMs: 1500,
-      onChange: LoginFormSchema,
-      onChangeAsync: async () => {
-
-      },
-      onSubmitAsync: async ({ value, formApi }) => {
-        const { username, password } = value
-        await sleep(10000)
-        const { error } = await authClient.signIn.username({
-          username: username,
+      onBlur: LoginFormSchema,
+      onSubmitAsync: async ({ value }) => {
+        const { email, password } = value
+        const { error } = await authClient.signIn.email({
+          email: email,
           password: password,
         })
 
         if (error) {
+          console.log(error)
           return getLoginErrorMessage(error.status);
         } else {
-          navigate({ to: redirectTo })
+          navigate({ to: redirectTo, replace: true })
         }
       },
     },
@@ -60,9 +56,9 @@ export default function LoginForm() {
     >
       <form.AppForm>
         <form.AppField
-          name="username"
+          name="email"
           children={(field) => (
-            <field.TextField label="Username" htmlForVal="username" />
+            <field.TextField label="Email" htmlForVal="username" />
           )}
         />
         <form.AppField
@@ -72,7 +68,7 @@ export default function LoginForm() {
         <form.FormErrorMessage />
         <form.SubscribeButton label="Sign in" />
       </form.AppForm>
-      
+
       <p className="text-center text-sm text-gray-500">
         Don't have an account?{' '}
         <Link to="/signup" className="text-leb font-medium hover:underline">

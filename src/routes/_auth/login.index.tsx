@@ -2,13 +2,13 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import LoginForm from '@/components/login/LoginForm'
 import LoginLayout from '@/components/login/LoginLayout'
 import LoginPageContent from '@/components/login/LoginPageContent'
-import { getSession } from '@/lib/auth.server'
+import { checkAuthSession } from '@/lib/auth-fn'
+
 
 export const Route = createFileRoute('/_auth/login/')({
   component: RouteComponent,
   beforeLoad: async ({ location }) => {
-    const session = await getSession()
-
+    const session = await checkAuthSession()
     if (session) {
       throw redirect({
         to: '/dashboard',
@@ -22,7 +22,7 @@ function RouteComponent() {
   return (
     <div className="flex flex-col md:flex-row">
       <LoginPageContent></LoginPageContent>
-      <LoginLayout title="Sign In">
+      <LoginLayout>
         <LoginForm></LoginForm>
       </LoginLayout>
     </div>
