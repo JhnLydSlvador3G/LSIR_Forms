@@ -1,4 +1,5 @@
-export default function LoginHeader() {
+// Shared header used by both login and signup pages
+export default function AuthHeader() {
   return (
     <>
       <div className="flex flex-row justify-center gap-4 items-center mb-2 sm:mb-4">

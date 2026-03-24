@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate, Link } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/useFormContext'
 import { authClient } from '@/lib/auth-client'
 import { getLoginErrorMessage } from '@/lib/errorMessages'
@@ -72,6 +72,13 @@ export default function LoginForm() {
         <form.FormErrorMessage />
         <form.SubscribeButton label="Sign in" />
       </form.AppForm>
+      
+      <p className="text-center text-sm text-gray-500">
+        Don't have an account?{' '}
+        <Link to="/signup" className="text-leb font-medium hover:underline">
+          Sign up
+        </Link>
+      </p>
     </form>
   )
 }

@@ -22,7 +22,7 @@ function RouteComponent() {
   return (
     <div className="flex flex-col md:flex-row">
       <LoginPageContent></LoginPageContent>
-      <LoginLayout>
+      <LoginLayout title="Sign In">
         <LoginForm></LoginForm>
       </LoginLayout>
     </div>
