@@ -1,19 +1,19 @@
-'use client'
-
 import { z } from 'zod'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/useFormContext'
 import { authClient } from '@/lib/auth-client'
+import { getLoginErrorMessage } from '@/lib/errorMessages'
+import { sleep } from '@/lib/utils'
 
 const LoginFormSchema = z.object({
-  userName: z.string().min(1, 'Username is required'),
+  username: z.string().min(1, 'Username is required'),
   password: z.string().min(8, 'You must have a length of at least 8'),
 })
 
 type LoginFormValues = z.infer<typeof LoginFormSchema>
 
 const defaultValues: LoginFormValues = {
-  userName: '',
+  username: '',
   password: '',
 }
 
@@ -26,21 +26,27 @@ export default function LoginForm() {
   const form = useAppForm({
     defaultValues,
     validators: {
+      onChangeAsyncDebounceMs: 1500,
       onChange: LoginFormSchema,
-    },
-    onSubmit: async ({ value, formApi }) => {
-      const { userName, password } = value
-      const { data, error } = await authClient.signIn.username({
-        username: userName,
-        password: password,
-      })
+      onChangeAsync: async () => {
 
-      if (error) {
-        formApi.setErrorMap({ onSubmit: error.message })
-      } else {
-        navigate({ to: redirectTo })
-      }
+      },
+      onSubmitAsync: async ({ value, formApi }) => {
+        const { username, password } = value
+        await sleep(10000)
+        const { error } = await authClient.signIn.username({
+          username: username,
+          password: password,
+        })
+
+        if (error) {
+          return getLoginErrorMessage(error.status);
+        } else {
+          navigate({ to: redirectTo })
+        }
+      },
     },
+
   })
 
   return (
@@ -54,9 +60,9 @@ export default function LoginForm() {
     >
       <form.AppForm>
         <form.AppField
-          name="userName"
+          name="username"
           children={(field) => (
-            <field.TextField label="Username" htmlForVal="userName" />
+            <field.TextField label="Username" htmlForVal="username" />
           )}
         />
         <form.AppField
