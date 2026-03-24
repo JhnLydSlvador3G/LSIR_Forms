@@ -89,6 +89,18 @@ code {
 }
 
 @layer utilities {
+  .font-gov-serif {
+    font-family: 'Times New Roman', Georgia, serif;
+  }
+
+  .font-gov-blackletter {
+    font-family: 'Old English Text MT', 'Goudy Text MT', 'Times New Roman', serif;
+  }
+
+  .font-gov-board {
+    font-family: 'Times New Roman', Georgia, serif;
+  }
+
   @keyframes overlayShow {
     from {
       opacity: 0;

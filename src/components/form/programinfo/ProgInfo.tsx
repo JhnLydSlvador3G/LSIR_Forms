@@ -18,6 +18,7 @@ import ProgInfoCurriculum from './ProgInfoCurriculum'
 import ProgInfoProgDuration from './ProgInfoProgDuration'
 import ResetButton from '@/components/ui/form/ResetButton'
 import SaveButton from '@/components/ui/form/SaveButton'
+import StepIndicator from '@/components/ui/form/StepIndicator'
 import { appendProgramInfoSubmission } from '@/lib/programInfoSubmissions'
 
 const STEPS = [
@@ -51,6 +52,7 @@ export default function ProgramInfo() {
        onChange: ProgInfoSchema,
      },
     onSubmit: async ({ value }) => {
+      console.log('Program information submitted:', value)
       appendProgramInfoSubmission(value)
       localStorage.removeItem('programinfo')
       setInitialValues(progInfoDefaultValues)
@@ -58,7 +60,7 @@ export default function ProgramInfo() {
       navigate({ to: '/programinfo-submissions' })
     },
   })
-
+  
   // Note: On component mount, we attempt to restore any saved draft from localStorage.
   useEffect(() => {
     const raw = localStorage.getItem('programinfo')
@@ -127,21 +129,7 @@ export default function ProgramInfo() {
 
   return (
     <FormWrapper title="Program Information">
-      {/* Step indicator */}
-      <div className="flex items-center justify-center gap-2 px-8 pt-6">
-        {STEP_TITLES.map((title, i) => (
-            <div key={title} className="flex items-center gap-2">
-            <div className={`flex shrink-0 items-center justify-center w-7 h-7 min-w-7 min-h-7 rounded-full text-xs font-bold leading-none
-              ${i === currentStep ? 'bg-leb text-white' : i < currentStep ? 'bg-leb/40 text-white' : 'bg-gray-200 text-gray-500'}`}>
-              {i + 1}
-            </div>
-            <span className={`text-xs hidden md:block ${i === currentStep ? 'text-leb font-semibold' : 'text-gray-400'}`}>
-              {title}
-            </span>
-            {i < LAST_STEP && <div className="w-6 h-px bg-gray-300" />}
-          </div>
-        ))}
-      </div>
+      <StepIndicator steps={STEP_TITLES} currentStep={currentStep} />
 
       <form
         className="w-full flex flex-col"

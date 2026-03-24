@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ChevronDown, ChevronRight, FileText, Plus } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { FormWrapper } from '../FormWrapper'
 import { loadProgramInfoSubmissions } from '@/lib/programInfoSubmissions'
 import type {
@@ -14,7 +15,7 @@ import type {
 const LAW_PROGRAM_HEADINGS: Record<LawProgramClassification, string> = {
   'juris-doctor': 'Juris Doctor',
   'master-of-laws': 'Master of Laws',
-  doctorate: 'Others',
+  doctorate: 'Doctorate',
 }
 
 const DOCTORATE_SECTIONS: DoctorateProgramOption[] = [
@@ -46,10 +47,10 @@ type DetailItemProps = {
 function DetailItem({ label, value }: DetailItemProps) {
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
         {label}
       </p>
-      <p className="mt-1 text-sm font-medium text-slate-900">{value}</p>
+      <p className="mt-1 text-[13px] font-medium leading-5 text-slate-900">{value}</p>
     </div>
   )
 }
@@ -131,10 +132,10 @@ function SubmissionCard({ submission, open, onToggle }: SubmissionCardProps) {
         className="flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left"
       >
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-slate-900">
+          <p className="truncate text-[13px] font-semibold text-slate-900">
             {data.permitNumber || 'Untitled program'}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-[11px] text-slate-500">
             {PROGRAM_TYPE_LABELS[data.programType]} program
           </p>
         </div>
@@ -155,14 +156,14 @@ function SubmissionCard({ submission, open, onToggle }: SubmissionCardProps) {
             <div className="mt-4 space-y-3">
               <div className="flex items-center gap-2">
                 <FileText size={16} className="text-leb" />
-                <h4 className="text-sm font-semibold text-slate-900">Curriculum Details</h4>
+                <h4 className="text-[13px] font-semibold text-slate-900">Curriculum Details</h4>
               </div>
               {data.curricula.map((curriculum, index) => (
                 <div
                   key={`${submission.id}-curriculum-${index}`}
                   className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"
                 >
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-[13px] font-semibold text-slate-900">
                     Curriculum {index + 1}
                   </p>
                   <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -211,85 +212,45 @@ function SubmissionCard({ submission, open, onToggle }: SubmissionCardProps) {
 
 type SubmissionColumnProps = {
   title: string
-  items: ProgramInfoSubmission[]
-  openIds: Set<string>
-  onToggle: (id: string) => void
+  items?: ProgramInfoSubmission[]
+  openIds?: Set<string>
+  onToggle?: (id: string) => void
+  children?: ReactNode
 }
 
-function SubmissionColumn({ title, items, openIds, onToggle }: SubmissionColumnProps) {
+function SubmissionColumn({
+  title,
+  items = [],
+  openIds,
+  onToggle,
+  children,
+}: SubmissionColumnProps) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="rounded-2xl bg-leb px-4 py-5 text-white">
-        <h2 className="mt-2 text-3xl font-black tracking-tight">{title}</h2>
+    <section className="rounded-2xl border border-slate-200 bg-white  pb-5 shadow-sm">
+      <div className="rounded-t-2xl bg-leb px-4 py-5 text-white text-center">
+        <h2 className="text-2xl font-black tracking-tight">{title}</h2>
       </div>
 
-      <div className="mt-5 space-y-3">
-        {items.length > 0 ? (
-          items.map((submission) => (
-            <SubmissionCard
-              key={submission.id}
-              submission={submission}
-              open={openIds.has(submission.id)}
-              onToggle={() => onToggle(submission.id)}
-            />
-          ))
-        ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
-            No submissions yet.
-          </div>
-        )}
-      </div>
-    </section>
-  )
-}
-
-type DoctorateColumnProps = {
-  itemsByProgram: Record<DoctorateProgramOption, ProgramInfoSubmission[]>
-  openIds: Set<string>
-  onToggle: (id: string) => void
-}
-
-function DoctorateColumn({ itemsByProgram, openIds, onToggle }: DoctorateColumnProps) {
-  return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="rounded-2xl bg-leb px-4 py-5 text-white">
-        <h2 className="mt-2 text-3xl font-black tracking-tight">Others</h2>
-      </div>
-
-      <div className="mt-5 space-y-5">
-        {DOCTORATE_SECTIONS.map((section, index) => {
-          const items = itemsByProgram[section]
-          return (
-            <div
-              key={section}
-              className={index > 0 ? 'border-t border-slate-200 pt-5' : undefined}
-            >
-              <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                <h3 className="mt-1 text-lg font-bold text-slate-900">{section}</h3>
-              </div>
-
-              <div className="mt-3 border-l border-slate-200 pl-4">
-                <div className="space-y-3">
-                  {items.length > 0 ? (
-                    items.map((submission) => (
-                      <SubmissionCard
-                        key={submission.id}
-                        submission={submission}
-                        open={openIds.has(submission.id)}
-                        onToggle={() => onToggle(submission.id)}
-                      />
-                    ))
-                  ) : (
-                    <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
-                      No submissions yet.
-                    </div>
-                  )}
-                </div>
-              </div>
+      {children ? (
+        children
+      ) : (
+        <div className="mt-5 mx-5 space-y-3">
+          {items.length > 0 && openIds && onToggle ? (
+            items.map((submission) => (
+              <SubmissionCard
+                key={submission.id}
+                submission={submission}
+                open={openIds.has(submission.id)}
+                onToggle={() => onToggle(submission.id)}
+              />
+            ))
+          ) : (
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+              No submissions yet.
             </div>
-          )
-        })}
-      </div>
+          )}
+        </div>
+      )}
     </section>
   )
 }
@@ -297,6 +258,7 @@ function DoctorateColumn({ itemsByProgram, openIds, onToggle }: DoctorateColumnP
 export default function ProgInfoSubmissionList() {
   const [submissions, setSubmissions] = useState<ProgramInfoSubmission[]>([])
   const [openIds, setOpenIds] = useState<Set<string>>(new Set())
+  const [isLeiOpen, setIsLeiOpen] = useState(true)
 
   useEffect(() => {
     setSubmissions(loadProgramInfoSubmissions())
@@ -347,41 +309,90 @@ export default function ProgInfoSubmissionList() {
     <FormWrapper
       title="Program Information Submissions"
       subtitle="Review saved law program submissions grouped by classification."
-      className="w-[80%] max-w-none"
+      className="w-[90%] max-w-none"
     >
       <div className="space-y-8 px-2 py-4">
-        <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
-          <div className="w-full md:flex-1" />
-          <div className="flex w-full justify-center md:flex-1 md:justify-end">
-            <Link
-              to="/programinfo"
-              className="inline-flex items-center gap-2 rounded-xl bg-leb px-4 py-2.5 text-sm font-semibold text-white shadow transition-transform hover:scale-[1.02]"
-            >
-              <Plus size={16} />
-              New submission
-            </Link>
-          </div>
-        </div>
+        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+          <button
+            type="button"
+            onClick={() => setIsLeiOpen((current) => !current)}
+            className="flex w-full items-center justify-between gap-3 bg-slate-50 px-5 py-4 text-left transition-colors hover:bg-slate-100"
+          >
+            <h2 className="text-lg font-bold text-slate-900">LEI 1</h2>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-leb/10 text-leb">
+              {isLeiOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+            </span>
+          </button>
 
-        <div className="grid gap-5 xl:grid-cols-3">
-          <SubmissionColumn
-            title={LAW_PROGRAM_HEADINGS['juris-doctor']}
-            items={grouped.jurisDoctor}
-            openIds={openIds}
-            onToggle={toggleSubmission}
-          />
-          <SubmissionColumn
-            title={LAW_PROGRAM_HEADINGS['master-of-laws']}
-            items={grouped.masterOfLaws}
-            openIds={openIds}
-            onToggle={toggleSubmission}
-          />
-          <DoctorateColumn
-            itemsByProgram={grouped.doctorateByProgram}
-            openIds={openIds}
-            onToggle={toggleSubmission}
-          />
-        </div>
+          {isLeiOpen && (
+            <div className="space-y-8 px-4 py-5">
+              <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
+                <div className="w-full md:flex-1">
+                </div>
+                <div className="flex w-full justify-center md:flex-1 md:justify-end">
+                  <Link
+                    to="/programinfo"
+                    className="inline-flex items-center gap-2 rounded-xl bg-leb px-4 py-2.5 text-sm font-semibold text-white shadow transition-transform hover:scale-[1.02]"
+                  >
+                    <Plus size={16} />
+                    New submission
+                  </Link>
+                </div>
+              </div>
+
+              <div className="grid gap-5 xl:grid-cols-3">
+                <SubmissionColumn
+                  title={LAW_PROGRAM_HEADINGS['juris-doctor']}
+                  items={grouped.jurisDoctor}
+                  openIds={openIds}
+                  onToggle={toggleSubmission}
+                />
+                <SubmissionColumn
+                  title={LAW_PROGRAM_HEADINGS['master-of-laws']}
+                  items={grouped.masterOfLaws}
+                  openIds={openIds}
+                  onToggle={toggleSubmission}
+                />
+                <SubmissionColumn title={LAW_PROGRAM_HEADINGS.doctorate}>
+                  <div className="space-y-5">
+                    {DOCTORATE_SECTIONS.map((section, index) => {
+                      const items = grouped.doctorateByProgram[section]
+                      return (
+                        <div
+                          key={section}
+                          className={index > 0 ? 'border-t border-slate-200 pt-5' : undefined}
+                        >
+                          <div className="rounded-2xl bg-slate-50 px-4 py-4">
+                            <h3 className="mt-1 text-1g font-bold text-slate-900">{section}</h3>
+                          </div>
+
+                          <div className="mt-3 mr-5 border-l border-slate-200 pl-4">
+                            <div className="space-y-3">
+                              {items.length > 0 ? (
+                                items.map((submission) => (
+                                  <SubmissionCard
+                                    key={submission.id}
+                                    submission={submission}
+                                    open={openIds.has(submission.id)}
+                                    onToggle={() => toggleSubmission(submission.id)}
+                                  />
+                                ))
+                              ) : (
+                                <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                                  No submissions yet.
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </SubmissionColumn>
+              </div>
+            </div>
+          )}
+        </section>
       </div>
     </FormWrapper>
   )

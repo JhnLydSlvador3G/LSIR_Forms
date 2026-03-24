@@ -18,7 +18,7 @@ const SaveButton = <T,>({
       type="button"
       className={cn(
         'flex-2 md:flex-none',
-        'px-2 py-1.5 md:px-8 md:py-3',
+        'px-2 py-1.5 md:px-5 md:py-2',
         'text-xs md:text-lg',
         'rounded-xl',
         'text-black shadow-lg bg-lebThird ring-2 ring-[#937bd0]/40',
