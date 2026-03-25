@@ -79,7 +79,7 @@ const ProgInfoLawProgramClassification = withForm({
                 <FieldInfo field={field} />
 
                 {classification === 'doctorate' ? (
-                  <div className="max-w-md">
+                  <div className="w-full">
                     <form.AppField name="doctorateProgram">
                       {(doctorateField) => (
                         <doctorateField.SelectField

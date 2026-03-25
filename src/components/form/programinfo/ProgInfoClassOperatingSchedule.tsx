@@ -9,28 +9,32 @@ const ProgInfoClassOperatingSchedule = withForm({
     return (
       <div className="flex flex-col gap-4">
         <div className="flex flex-row gap-6">
-          <form.AppField
-            name="classOperatingFrom"
-            children={(field) => (
-              <field.SelectField
-                label="From"
-                htmlForVal="classOperatingFrom"
-                required
-                options={dayOptions}
-              />
-            )}
-          />
-          <form.AppField
-            name="classOperatingTo"
-            children={(field) => (
-              <field.SelectField
-                label="To"
-                htmlForVal="classOperatingTo"
-                required
-                options={dayOptions}
-              />
-            )}
-          />
+          <div className="w-full min-w-0">
+            <form.AppField
+              name="classOperatingFrom"
+              children={(field) => (
+                <field.SelectField
+                  label="From"
+                  htmlForVal="classOperatingFrom"
+                  required
+                  options={dayOptions}
+                />
+              )}
+            />
+          </div>
+          <div className="w-full min-w-0">
+            <form.AppField
+              name="classOperatingTo"
+              children={(field) => (
+                <field.SelectField
+                  label="To"
+                  htmlForVal="classOperatingTo"
+                  required
+                  options={dayOptions}
+                />
+              )}
+            />
+          </div>
         </div>
       </div>
     )

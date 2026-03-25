@@ -27,7 +27,7 @@ export function SelectField({
   const hasError = field.state.meta.isTouched && !field.state.meta.isValid
   const value = field.state.value || undefined
   return (
-    <label className="flex flex-col gap-0">
+    <label className="flex min-w-0 flex-col gap-0">
       <LabelForm label={label} htmlForVal={htmlForVal} required={required} />
       <Select.Root
         key={value ?? '__empty__'}

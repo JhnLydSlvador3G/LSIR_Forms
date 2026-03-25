@@ -8,6 +8,8 @@ import {
   ProgInfoSchema,
   STEP_FIELDS,
   STEP_TITLES,
+  type CurriculumEntry,
+  type ProgInfoFormData,
 } from './ProgInfo.types'
 import ProgInfoProgOffered from './ProgInfoProgOffered'
 import ProgInfoLawProgramClassification from './ProgInfoLawProgramClassification'
@@ -32,6 +34,18 @@ const STEPS = [
 ]
 
 const LAST_STEP = STEPS.length - 1
+const ENUM_RESTORED_FIELDS = [
+  'lawProgramClassification',
+  'doctorateProgram',
+  'programType',
+  'recognitionStatus',
+  'startMonth',
+  'endMonth',
+  'classOperatingFrom',
+  'classOperatingTo',
+  'curricularSchedule',
+  'programDuration',
+] as const
 
 const issuePathToFieldName = (path: Array<string | number>) =>
   path.reduce((acc, segment) => {
@@ -40,7 +54,174 @@ const issuePathToFieldName = (path: Array<string | number>) =>
     }
     return acc ? `${acc}.${segment}` : segment
   }, '')
+//Note
 
+const getStepSpecificIssues = (
+  currentStep: number,
+  values: ProgInfoFormData,
+) => {
+  const issues: Array<{ path: Array<string | number>; message: string }> = []
+
+  if (currentStep === 0) {
+    if (
+      values.lawProgramClassification === 'doctorate' &&
+      !values.doctorateProgram
+    ) {
+      issues.push({
+        path: ['doctorateProgram'],
+        message: 'Doctorate program is required',
+      })
+    }
+  }
+
+  if (currentStep === 1) {
+    if (values.locationSite.trim().length === 0) {
+      issues.push({
+        path: ['locationSite'],
+        message: 'Location/Site is required',
+      })
+    }
+
+    if (values.programType === 'extension') {
+      if (values.governmentAuthority.trim().length === 0) {
+        issues.push({
+          path: ['governmentAuthority'],
+          message: 'Government Authority is required',
+        })
+      }
+
+      if (values.validity.trim().length === 0) {
+        issues.push({
+          path: ['validity'],
+          message: 'Validity is required',
+        })
+      }
+    }
+
+    if (values.programType === 'branch') {
+      if (!values.recognitionStatus) {
+        issues.push({
+          path: ['recognitionStatus'],
+          message: 'Recognition Status is required',
+        })
+      }
+
+      if (values.recognitionNumber.trim().length === 0) {
+        issues.push({
+          path: ['recognitionNumber'],
+          message: 'Recognition Number is required',
+        })
+      }
+    }
+  }
+
+  if (currentStep === 6) {
+    const requireCurriculumValue = (
+      value: string,
+      curriculumIndex: number,
+      field: keyof CurriculumEntry,
+      label: string,
+    ) => {
+      if (value.trim().length > 0) return
+      issues.push({
+        path: ['curricula', curriculumIndex, field],
+        message: `${label} is required`,
+      })
+    }
+
+    if (values.curricula.length === 0) {
+      issues.push({
+        path: ['curricula'],
+        message: 'At least one curriculum entry is required',
+      })
+    }
+
+    values.curricula.forEach((curriculum, index) => {
+      requireCurriculumValue(
+        curriculum.lebApprovalDate,
+        index,
+        'lebApprovalDate',
+        'LEB Approval Date',
+      )
+      requireCurriculumValue(
+        curriculum.firstYearFirstSem,
+        index,
+        'firstYearFirstSem',
+        'First Year Level - 1st Sem',
+      )
+      requireCurriculumValue(
+        curriculum.firstYearSecondSem,
+        index,
+        'firstYearSecondSem',
+        'First Year Level - 2nd Sem',
+      )
+      requireCurriculumValue(
+        curriculum.secondYearFirstSem,
+        index,
+        'secondYearFirstSem',
+        'Second Year Level - 1st Sem',
+      )
+      requireCurriculumValue(
+        curriculum.secondYearSecondSem,
+        index,
+        'secondYearSecondSem',
+        'Second Year Level - 2nd Sem',
+      )
+      requireCurriculumValue(
+        curriculum.thirdYearFirstSem,
+        index,
+        'thirdYearFirstSem',
+        'Third Year Level - 1st Sem',
+      )
+      requireCurriculumValue(
+        curriculum.thirdYearSecondSem,
+        index,
+        'thirdYearSecondSem',
+        'Third Year Level - 2nd Sem',
+      )
+      requireCurriculumValue(
+        curriculum.fourthYearFirstSem,
+        index,
+        'fourthYearFirstSem',
+        'Fourth Year Level - 1st Sem',
+      )
+      requireCurriculumValue(
+        curriculum.fourthYearSecondSem,
+        index,
+        'fourthYearSecondSem',
+        'Fourth Year Level - 2nd Sem',
+      )
+      requireCurriculumValue(
+        curriculum.fifthYearFirstSem,
+        index,
+        'fifthYearFirstSem',
+        'Fifth Year Level - 1st Sem',
+      )
+      requireCurriculumValue(
+        curriculum.fifthYearSecondSem,
+        index,
+        'fifthYearSecondSem',
+        'Fifth Year Level - 2nd Sem',
+      )
+      requireCurriculumValue(
+        curriculum.totalAcademicLoadFirstSem,
+        index,
+        'totalAcademicLoadFirstSem',
+        'Total academic load - 1st Sem',
+      )
+      requireCurriculumValue(
+        curriculum.totalAcademicLoadSecondSem,
+        index,
+        'totalAcademicLoadSecondSem',
+        'Total academic load - 2nd Sem',
+      )
+    })
+  }
+
+  return issues
+}
+
+//Note: The getStepSpecificIssues function performs additional validation that is specific to certain steps and cannot be easily captured by the overall schema validation.
 export default function ProgramInfo() {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
@@ -66,14 +247,14 @@ export default function ProgramInfo() {
     const raw = localStorage.getItem('programinfo')
     if (!raw) return
     const parsed = JSON.parse(raw)
-    // convert null back to empty string for fields that use ''
+    const restoredEnumFields = Object.fromEntries(
+      ENUM_RESTORED_FIELDS.map((field) => [field, parsed[field] ?? ''])
+    )
     const restored = {
+      //Note: Merge the default values with the parsed values to ensure any missing fields are populated with defaults, preventing potential issues with undefined values in the form.
       ...progInfoDefaultValues,
       ...parsed,
-      lawProgramClassification: parsed.lawProgramClassification ?? '',
-      doctorateProgram: parsed.doctorateProgram ?? '',
-      programType: parsed.programType ?? '',
-      programDuration: parsed.programDuration ?? '',
+      ...restoredEnumFields,
       curricula: parsed.curricula ?? progInfoDefaultValues.curricula,
     }
     setInitialValues(restored)
@@ -86,11 +267,15 @@ export default function ProgramInfo() {
     const fields = STEP_FIELDS[currentStep] as readonly string[]
     const currentValues = form.state.values
     const result = ProgInfoSchema.safeParse(currentValues)
-    const stepIssues = result.success
+    const schemaStepIssues = result.success
       ? []
       : result.error.issues.filter((issue) =>
           fields.includes(String(issue.path[0] || ''))
         )
+    const stepIssues = [
+      ...schemaStepIssues,
+      ...getStepSpecificIssues(currentStep, currentValues),
+    ]
 
     if (stepIssues.length === 0) {
       setCurrentStep((s) => s + 1)
