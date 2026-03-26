@@ -3,7 +3,6 @@ import { useLocation, useNavigate, Link } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/useFormContext'
 import { authClient } from '@/lib/auth-client'
 import { getLoginErrorMessage } from '@/lib/errorMessages'
-import { sleep } from '@/lib/utils'
 
 const LoginFormSchema = z.object({
   email: z.email(),

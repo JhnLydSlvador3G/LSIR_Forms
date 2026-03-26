@@ -23,6 +23,7 @@ const YearString = z
 
 // Single faculty schema
 export const facultySchema = z.object({
+    id: z.string(),
     lastName: z.string().min(1, { message: "Required" }),
     firstName: z.string().min(1, { message: "Required" }),
     middleName: z.string().max(2, { message: "Initials Only" }).optional(),
@@ -59,22 +60,28 @@ export const facultyRosterArraySchema = z.array(facultyRosterSchema);
 
 
 // Default values
-export const defaultFacultyValues: FacultyRosterData = {
-    lastName: "",
-    firstName: "",
-    middleName: "",
-    gender: "Male",
-    rollNumber: "",
-    heiEmploymentStatus: "Part-Time",
-    yearsTeaching: "0",
-    highestLawDegree: {
-        degree: "",
-        grantingHEI: "",
-        year: new Date().getFullYear().toString(),
-    },
-    professionalExperienceYears: "0",
-    relevantToTeachingLoad: [""],
-    subjects: [""],
+// We cast the input to 'any' or just provide the bare minimum 
+// so Zod can fill in the rest (including the ID).
+export const createDefaultFaculty = (): FacultyRosterData => {
+    return {
+        // Manually invoke the ID generator here
+        id: crypto.randomUUID(),
+        lastName: "",
+        firstName: "",
+        middleName: "",
+        gender: "Male",
+        rollNumber: "",
+        heiEmploymentStatus: "Part-Time",
+        yearsTeaching: "0",
+        highestLawDegree: {
+            degree: "",
+            grantingHEI: "",
+            year: new Date().getFullYear().toString(),
+        },
+        professionalExperienceYears: "0",
+        relevantToTeachingLoad: [""],
+        subjects: [""],
+    };
 };
 
 // Main form schema

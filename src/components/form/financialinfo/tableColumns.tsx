@@ -170,7 +170,7 @@ export function createColumnsFactory(config: ColumnFactoryConfig) {
                     return (
                         <div className="flex justify-center">
                             <button
-                                className="text-green-600 p-1 rounded hover:bg-green-100"
+                                className="bg-leb text-white p-1 rounded hover:scale-110 transition-all ease-in"
                                 onClick={() => {
                                     // Add the new row
                                     addRowToStore(dataKey);

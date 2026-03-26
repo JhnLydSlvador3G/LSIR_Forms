@@ -6,8 +6,6 @@ interface FacultyRosterModalProps {
     children: React.ReactNode;
 }
 
-
-
 const FacultyRosterModal = ({ children }: FacultyRosterModalProps) => {
     const modalContext = useFacultyRosterModal()
     return (
