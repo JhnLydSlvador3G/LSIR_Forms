@@ -6,7 +6,7 @@ import {
   FacultyActivitySchema,
 } from './FacultyDev.type'
 import FacultyDevelopmentInstance from './FacultyDevInstance'
-import { useAppForm } from '@/hooks/form-context'
+import { useAppForm } from '@/hooks/useFormContext'
 import SaveButton from '@/components/ui/form/SaveButton'
 import ResetButton from '@/components/ui/form/ResetButton'
 import SubscribeButton from '@/components/ui/form/SubscribeButton'

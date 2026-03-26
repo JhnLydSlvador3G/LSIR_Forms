@@ -5,17 +5,32 @@ import {
 } from "@tanstack/react-table"
 import { columns } from "./FacultyRosterColumns"
 import { FacultyRosterData } from "../FacultyRoster.type"
+import { useState } from "react"
 
 type Props = {
   data: FacultyRosterData[]
+  onEdit: (index: string) => void
+  onDelete: (index: string) => void
 }
 
-export default function FacultyTable({ data }: Props) {
+export default function FacultyTable({ data, onEdit, onDelete }: Props) {
+
+  const columnVisibility = {
+    "id": false
+  }
+
   const table = useReactTable({
     data,
     columns,
+    state: {
+      columnVisibility,
+    },
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
+    meta: {
+      onEdit,
+      onDelete
+    }
   })
 
   return (

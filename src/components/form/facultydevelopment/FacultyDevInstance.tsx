@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import { FacultyActivityDefaultValues } from './FacultyDev.type'
-import { withForm } from '@/hooks/form-context'
+import { withForm } from '@/hooks/useFormContext'
 import { cn } from '@/lib/utils'
 
 const defaultValues = {

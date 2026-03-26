@@ -1,6 +1,12 @@
 import { createAuthClient } from 'better-auth/react'
-import { usernameClient } from 'better-auth/client/plugins'
+import { tanstackStartCookies } from 'better-auth/tanstack-start'
 
 export const authClient = createAuthClient({
-  plugins: [usernameClient()],
+  baseURL: "http://localhost:8000",
+  fetchOptions: {
+    credentials: 'include'
+  },
+  plugins: [tanstackStartCookies()],
 })
+
+

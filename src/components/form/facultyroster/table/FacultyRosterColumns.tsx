@@ -1,10 +1,15 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { FacultyRosterData } from "../FacultyRoster.type";
+import { Pencil, Trash2 } from "lucide-react";
 
 const columnHelper = createColumnHelper<FacultyRosterData>();
 
 export const columns = [
     // Faculty Member Group
+    columnHelper.accessor("id", {
+        id: "id", // Explicitly set the ID for getValue calls
+        header: "ID",
+    }),
     columnHelper.group({
         header: "Faculty Member",
         columns: [
@@ -74,7 +79,7 @@ export const columns = [
     // Professional Experience
     columnHelper.accessor("relevantToTeachingLoad", {
         header: () => <div className="text-wrap">Professional experience/work relevant to teaching load</div>,
-        cell: info => info.getValue(),
+        cell: info => info.getValue()?.join(", "),
     }),
 
     columnHelper.accessor("professionalExperienceYears", {
@@ -85,7 +90,44 @@ export const columns = [
     columnHelper.display({
         id: 'actions',
         header: "Actions",
-        cell: props => <button>DELETE</button>,
+        cell: props => (
+            < div className="flex w-full items-center gap-1 justify-center" >
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        props.table.options.meta?.onEdit?.(props.row.getValue('id'));
+                    }}
+                    className="
+      p-1.5 rounded-md
+      bg-leb text-white
+      hover:bg-leb/90
+      active:bg-leb/80
+      transition-colors
+    "
+                >
+                    <Pencil size={14} />
+                </button>
+
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        props.table.options.meta?.onDelete?.(props.row.getValue('id'));
+                    }}
+                    className="
+      p-1.5 rounded-md
+      bg-red-500 text-white
+      hover:bg-red-600
+      active:bg-red-700
+      transition-colors
+    "
+                >
+                    <Trash2 size={14} />
+                </button>
+            </div >
+
+        )
     }),
 
 ];

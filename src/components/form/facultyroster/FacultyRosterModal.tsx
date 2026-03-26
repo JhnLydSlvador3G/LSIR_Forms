@@ -1,12 +1,10 @@
 import { Dialog } from "radix-ui";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { useFacultyRosterModal } from "@/hooks/FacultyRosterModalContext";
+import { useFacultyRosterModal } from "@/hooks/useFacultyModalContext";
 
 interface FacultyRosterModalProps {
     children: React.ReactNode;
 }
-
-
 
 const FacultyRosterModal = ({ children }: FacultyRosterModalProps) => {
     const modalContext = useFacultyRosterModal()

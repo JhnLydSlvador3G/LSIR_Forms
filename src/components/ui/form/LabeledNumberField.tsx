@@ -1,11 +1,11 @@
 import FieldInfo from './FieldInfo'
 import LabelForm from './LabelForm'
-import { useFieldContext } from '@/hooks/form-context'
+import { useFieldContext } from '@/hooks/useFormContext'
 import { cn } from '@/lib/utils'
 
 type NumberFieldProps = {
-  label: string
-  htmlForVal: string
+  label?: string
+  htmlForVal?: string
   className?: string
   required?: boolean
 }

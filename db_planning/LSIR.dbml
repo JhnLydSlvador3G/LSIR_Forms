@@ -1,145 +1,586 @@
-// Higher Education Institution
-Table HEI {
-  hei_id integer [pk, increment]
+Project LSIR {
+  database_type: 'PostgreSQL'
+  Note: 'Generated from Drizzle schema in src/db'
+}
+
+Enum form_status {
+  Draft
+  Submitted
+  Approved
+}
+
+Enum juris_doctor_duration_enum {
+  "4 years"
+  "5 years"
+  Both
+}
+
+Enum graduate_studies_duration_enum {
+  "with Thesis/Dissertation"
+  "Non-thesis"
+  "Online/Hybrid"
+}
+
+Enum region {
+  "Ilocos Region (Region I)"
+  "Cagayan Valley (Region II)"
+  "Central Luzon (Region III)"
+  "CALABARZON (Region IV-A)"
+  "MIMAROPA (Region IV-B)"
+  "Bicol Region (Region V)"
+  "Western Visayas (Region VI)"
+  "Central Visayas (Region VII)"
+  "Eastern Visayas (Region VIII)"
+  "Zamboanga Peninsula (Region IX)"
+  "Northern Mindanao (Region X)"
+  "Davao Region (Region XI)"
+  "SOCCSKSARGEN (Region XII)"
+  "Caraga (Region XIII)"
+  "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)"
+  "Cordillera Administrative Region (CAR)"
+  "National Capital Region (NCR)"
+}
+
+Enum fee_category {
+  "Other school fees"
+  "Miscellaneous fees"
+  "New Fee"
+}
+
+Enum curricular_schedule {
+  Semestral
+  Trimesteral
+  Summer
+}
+
+Enum program_type {
+  "Bachelor of Laws"
+  "Juris Doctor"
+  "Master of Laws"
+  "DCL/SJD"
+  "Refresher Course"
+}
+
+Enum graduate_law_course_enum {
+  "Master of Laws"
+  "DCL/SJD"
+}
+
+Enum semester {
+  "First Semester"
+  "Second Semester"
+  "Third Semester"
+}
+
+Enum employment_status {
+  Regular
+  "Part-time"
+}
+
+Enum gender {
+  Male
+  Female
+  Other
+}
+
+Enum highest_academic_degree {
+  "Basic Law Course"
+  "Units in Masteral level degree in law"
+  "Units in Doctoral level degree in law"
+  "Doctoral degree in law"
+}
+
+Enum month {
+  January
+  February
+  March
+  April
+  May
+  June
+  July
+  August
+  September
+  October
+  November
+  December
+}
+
+Enum days {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
+}
+
+Enum ownership {
+  Private
+  Public
+}
+
+Enum private_type {
+  Sectarian
+  "Non-Sectarian"
+}
+
+Enum hei_type {
+  University
+  College
+  Others
+}
+
+Enum law_program_classification {
+  "Juris Doctor"
+  "Master of Laws"
+  Doctorate
+}
+
+Enum doctorate_program_classification {
+  "Doctor of Civil Law"
+  "Doctor of Juridical Science"
+  Others
+}
+
+Enum law_school_program_classification {
+  "Government Permit I"
+  "Government Permit II"
+  "Government Permit III"
+  "Government Recognition"
+  Others
+}
+
+Enum accreditation_classification {
+  "Level I"
+  "Level II"
+  "Level III"
+  "Center of Development"
+  "Center of Excellence"
+  "Deregulated Status"
+  "Autonomous Status"
+}
+
+Table user {
+  id text [pk]
+  name text [not null]
+  email text [not null, unique]
+  email_verified boolean [not null, default: false]
+  image text
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  username text [unique]
+  display_username text
+}
+
+Table session {
+  id text [pk]
+  expires_at timestamp [not null]
+  token text [not null, unique]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  ip_address text
+  user_agent text
+  user_id text [not null]
+}
+
+Table account {
+  id text [pk]
+  account_id text [not null]
+  provider_id text [not null]
+  user_id text [not null]
+  access_token text
+  refresh_token text
+  id_token text
+  access_token_expires_at timestamp
+  refresh_token_expires_at timestamp
+  scope text
+  password text
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table verification {
+  id text [pk]
+  identifier text [not null]
+  value text [not null]
+  expires_at timestamp [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table hei_info {
+  hei_id serial [pk]
+  user_id text [not null]
   hei_name varchar
-  ownership_type varchar
-  hei_type varchar
+  ownership_type ownership
+  hei_type hei_type
+  private_type private_type
   email varchar
   telephone varchar
-  region varchar
+  building varchar
+  street varchar
+  barangay varchar
+  district varchar
+  city varchar
+  province varchar
+  region region
+  website varchar
+  created_at date
+  form_status form_status [default: 'Draft']
 }
 
-Table LAW_SCHOOL {
-  law_school_id integer [pk, increment]
-  hei_id integer
-  law_school_name varchar
+Table president {
+  president_id serial [pk]
+  title varchar
+  first_name varchar
+  middle_name varchar
+  last_name varchar
+  telephone_number varchar
+  form_status form_status [default: 'Draft']
+}
+
+Table president_assignment {
+  president_assignment_id serial [pk]
+  president_id integer [not null]
+  user_id text [not null]
+  start_date date
+  end_date date
+  form_status form_status [default: 'Draft']
+}
+
+Table registrar {
+  registrar_id serial [pk]
+  title varchar
+  first_name varchar
+  middle_name varchar
+  last_name varchar
+  telephone_number varchar
+  form_status form_status [default: 'Draft']
+}
+
+Table registrar_assignment {
+  assignment_id serial [pk]
+  registrar_id integer [not null]
+  user_id text [not null]
+  start_date date
+  end_date date
+  form_status form_status [default: 'Draft']
+}
+
+Table law_school {
+  law_school_id serial [pk]
+  user_id text [not null]
+}
+
+Table law_school_info {
+  law_school_info_id serial [pk]
+  law_school_id integer
+  building varchar
+  street varchar
+  barangay varchar
+  district varchar
+  city varchar
+  province varchar
+  region region
   email varchar
   telephone varchar
-  recognition_status varchar
   accreditation_status varchar
+  recognition_status law_school_program_classification
+  accredication_status accreditation_classification
+  created_at date
+  form_status form_status [default: 'Draft']
 }
 
-Table REPORTING_PERIOD {
-  reporting_period_id integer [pk, increment]
+Table dean {
+  dean_id serial [pk]
+  title varchar
+  first_name varchar
+  middle_name varchar
+  last_name varchar
+  mobile_number varchar
+  date_appointed varchar
+  email_address varchar
+  highest_legal_educational_attainment highest_academic_degree
+  roll_number varchar
+  year_teaching_experience integer
+  year_admin_experience integer
+  form_status form_status [default: 'Draft']
+}
+
+Table dean_assignment {
+  assignment_id serial [pk]
+  dean_id integer
   law_school_id integer
+  start_date date
+  end_date date
+  form_status form_status [default: 'Draft']
+}
+
+Table submission {
+  submission_id serial [pk]
+  law_school_id integer [not null]
+  deanAssignment_id integer [not null]
+  president_assignment_id integer [not null]
+  registrar_assignment_id integer [not null]
   school_year varchar
-  semester_term varchar
-  submission_date date
+  semester semester
+  submitted_at date
   status varchar
+  is_draft boolean [default: true]
 }
 
-Table PROGRAM {
-  program_id integer [pk, increment]
-  law_school_id integer
-  program_type varchar
-  permit_number varchar
-  year_issued integer
-}
-
-Table FINANCIAL_REPORT {
-  financial_report_id integer [pk, increment]
-  reporting_period_id integer
-  tuition_per_unit decimal
-  total_average_tuition decimal
-  total_recurring_fees decimal
-  total_non_recurring_fees decimal
-}
-
-Table ENROLLMENT_STATISTICS {
-  enrollment_id integer [pk, increment]
-  reporting_period_id integer
-  program_type varchar
-  year_level integer
-  male_count integer
-  female_count integer
-  total_count integer
-}
-
-Table CURRICULUM {
-  curriculum_id integer [pk, increment]
-  reporting_period_id integer
-  leb_approval_date date
-}
-
-Table ACADEMIC_LOAD {
-  academic_load_id integer [pk, increment]
-  curriculum_id integer
-  year_level integer
-  total_units integer
-}
-
-Table FACULTY {
-  faculty_id integer [pk, increment]
-  law_school_id integer
-  full_name varchar
-  gender varchar
-  employment_status varchar
+Table faculty {
+  faculty_id serial [pk]
+  law_school_id integer [not null]
+  title varchar
+  first_name varchar
+  middle_name varchar
+  last_name varchar
+  gender gender
+  employment_status employment_status
   years_teaching integer
+  years_professional_experience integer
+  roll_number integer
+  form_status form_status [default: 'Draft']
 }
 
-Table FACULTY_DEGREE {
-  faculty_degree_id integer [pk, increment]
-  faculty_id integer
-  degree_type varchar
-  granting_hei varchar
-  graduation_year integer
+Table faculty_submission {
+  faculty_submission_id serial [pk]
+  faculty_id integer [not null]
+  submission_id integer [not null]
 }
 
-Table FACULTY_ASSIGNMENT {
-  assignment_id integer [pk, increment]
-  faculty_id integer
-  reporting_period_id integer
-  subject_title varchar
-  year_level integer
-  number_of_units integer
+Table faculty_experience {
+  faculty_experience_id serial [pk]
+  faculty_id integer [not null]
+  experience varchar
+  form_status form_status [default: 'Draft']
 }
 
-Table FACULTY_TRAINING {
-  training_id integer [pk, increment]
-  reporting_period_id integer
+Table faculty_teaching_load {
+  faculty_teaching_load_id serial [pk]
+  faculty_id integer [not null]
+  assigned_subject varchar
+  number_units integer
+  form_status form_status [default: 'Draft']
+}
+
+Table program_information {
+  program_information_id serial [pk]
+  law_school_id integer [not null]
+  submission_id integer [not null]
+  program_classification law_program_classification
+  doctorate_classification doctorate_program_classification
+  curricular_schedule curricular_schedule
+  operating_schedule days[]
+  form_status form_status [default: 'Draft']
+}
+
+Table academic_calendar {
+  academic_calendare_id serial [pk]
+  program_information_id integer [not null, unique]
+  starting_month month
+  ending_month month
+  form_status form_status [default: 'Draft']
+}
+
+Table juris_doctor_duration {
+  juris_doctor_duration_id serial [pk]
+  program_information_id integer [not null]
+  duration juris_doctor_duration_enum
+  form_status form_status [default: 'Draft']
+}
+
+Table graduate_studies_duration {
+  graduate_studies_duration_id serial [pk]
+  program_information_id integer [not null]
+  duration graduate_studies_duration_enum
+  form_status form_status [default: 'Draft']
+}
+
+Table curriculum {
+  curriculum_id serial [pk]
+  program_information_id integer [not null, unique]
+  leb_approval_date date
+  form_status form_status [default: 'Draft']
+}
+
+Table academic_load {
+  academic_load_id serial [pk]
+  curriculum_id integer [not null]
+  year_level varchar
+  total_units integer
+  semester semester
+  form_status form_status [default: 'Draft']
+}
+
+Table certification {
+  certification_id serial [pk]
+  submission_id integer [not null]
+  certification_year integer
+  certification_month month
+  form_status form_status [default: 'Draft']
+}
+
+Table president_attestation {
+  attestation_id serial [pk]
+  certification_id integer [not null, unique]
+  printed_name varchar
+  id_type varchar
+  id_number varchar
+  form_status form_status [default: 'Draft']
+}
+
+Table dean_attestation {
+  attestation_id serial [pk]
+  certification_id integer [not null, unique]
+  printed_name varchar
+  id_type varchar
+  id_number varchar
+  form_status form_status [default: 'Draft']
+}
+
+Table faculty_development {
+  faculty_development_id serial [pk]
+  program_information_id integer [not null]
   training_title varchar
   training_hours integer
-  participants integer
-  training_date date
+  number_of_participants integer
+  competencies_covered varchar
+  date_conducted date
+  form_status form_status [default: 'Draft']
 }
 
-Table CERTIFICATION {
-  certification_id integer [pk, increment]
-  reporting_period_id integer
-  certification_year integer
-  certification_month varchar
+Table faculty_statistics {
+  faculty_statistics_id serial [pk]
+  program_information_id integer [not null]
+  gender gender
+  basic integer
+  master integer
+  doctor integer
+  regular integer
+  part_time integer
+  retired integer
+  private integer
+  judges integer
+  prosecutor integer
+  other_government integer
+  form_status form_status [default: 'Draft']
 }
 
-Table PRESIDENT_ATTESTATION {
-  attestation_id integer [pk, increment]
-  certification_id integer
-  printed_name varchar
-  id_type varchar
-  id_number varchar
+Table financial_report {
+  financial_report_id serial [pk]
+  program_information_id integer [not null, unique]
+  last_fee_increase_sy decimal
+  course program_type
+  form_status form_status [default: 'Draft']
 }
 
-Table DEAN_ATTESTATION {
-  attestation_id integer [pk, increment]
-  certification_id integer
-  printed_name varchar
-  id_type varchar
-  id_number varchar
+Table year_level_report {
+  year_level_report_id serial [pk]
+  financial_report_id integer [not null]
+  year_level varchar
+  tuition_per_unit decimal
+  is_draft boolean [default: true]
 }
 
-// --- Relationships ---
+Table fees {
+  fees_id serial [pk]
+  year_level_report_id integer [not null]
+  fee_description varchar
+  fee_amount decimal
+  category fee_category
+  is_draft boolean [default: true]
+}
 
-Ref: LAW_SCHOOL.hei_id > HEI.hei_id
-Ref: REPORTING_PERIOD.law_school_id > LAW_SCHOOL.law_school_id
-Ref: PROGRAM.law_school_id > LAW_SCHOOL.law_school_id
-Ref: FINANCIAL_REPORT.reporting_period_id > REPORTING_PERIOD.reporting_period_id
-Ref: ENROLLMENT_STATISTICS.reporting_period_id > REPORTING_PERIOD.reporting_period_id
-Ref: CURRICULUM.reporting_period_id > REPORTING_PERIOD.reporting_period_id
-Ref: ACADEMIC_LOAD.curriculum_id > CURRICULUM.curriculum_id
-Ref: FACULTY.law_school_id > LAW_SCHOOL.law_school_id
-Ref: FACULTY_DEGREE.faculty_id > FACULTY.faculty_id
-Ref: FACULTY_ASSIGNMENT.faculty_id > FACULTY.faculty_id
-Ref: FACULTY_ASSIGNMENT.reporting_period_id > REPORTING_PERIOD.reporting_period_id
-Ref: FACULTY_TRAINING.reporting_period_id > REPORTING_PERIOD.reporting_period_id
-Ref: CERTIFICATION.reporting_period_id > REPORTING_PERIOD.reporting_period_id
-Ref: PRESIDENT_ATTESTATION.certification_id > CERTIFICATION.certification_id
-Ref: DEAN_ATTESTATION.certification_id > CERTIFICATION.certification_id
+Table block_section {
+  block_section_id serial [pk]
+  program_information_id integer [not null]
+  year_level integer
+  section varchar
+}
+
+Table class_schedule {
+  class_schedule_id serial [pk]
+  block_section_id integer
+  faculty_name varchar
+  faculty_id integer
+  subject_title varchar
+  day days
+  time_start time
+  time_end time
+  form_status form_status [default: 'Draft']
+}
+
+Table enrollment_statistics {
+  enrollment_statistics_id serial [pk]
+  program_information_id integer [not null]
+  program_type program_type
+  year_level varchar
+  male_count integer
+  female_count integer
+  full_time_count integer
+  working_count integer
+  scholars_count integer
+  transfer_count integer
+  form_status form_status [default: 'Draft']
+}
+
+Table faculty_training {
+  training_id serial [pk]
+  program_information_id integer [not null]
+  training_year integer
+  training_month month
+  is_draft boolean [not null, default: true]
+}
+
+Ref: session.user_id > user.id [delete: cascade]
+Ref: account.user_id > user.id [delete: cascade]
+
+Ref: hei_info.user_id > user.id
+
+Ref: president_assignment.president_id > president.president_id
+Ref: president_assignment.user_id > user.id
+Ref: registrar_assignment.registrar_id > registrar.registrar_id
+Ref: registrar_assignment.user_id > user.id
+
+Ref: law_school.user_id > user.id
+Ref: law_school_info.law_school_id > law_school.law_school_id
+Ref: dean_assignment.dean_id > dean.dean_id
+Ref: dean_assignment.law_school_id > law_school.law_school_id
+
+Ref: submission.law_school_id > law_school.law_school_id
+Ref: submission.deanAssignment_id > dean_assignment.assignment_id
+Ref: submission.president_assignment_id > president_assignment.president_assignment_id
+Ref: submission.registrar_assignment_id > registrar_assignment.assignment_id
+
+Ref: faculty.law_school_id > law_school.law_school_id
+Ref: faculty_submission.faculty_id > faculty.faculty_id [delete: cascade]
+Ref: faculty_submission.submission_id > submission.submission_id [delete: cascade]
+Ref: faculty_experience.faculty_id > faculty.faculty_id [delete: cascade]
+Ref: faculty_teaching_load.faculty_id > faculty.faculty_id [delete: cascade]
+
+Ref: program_information.law_school_id > law_school.law_school_id
+Ref: program_information.submission_id > submission.submission_id [delete: cascade]
+Ref: academic_calendar.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: juris_doctor_duration.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: graduate_studies_duration.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: curriculum.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: academic_load.curriculum_id > curriculum.curriculum_id [delete: cascade]
+
+Ref: certification.submission_id > submission.submission_id [delete: cascade]
+Ref: president_attestation.certification_id > certification.certification_id [delete: cascade]
+Ref: dean_attestation.certification_id > certification.certification_id [delete: cascade]
+
+Ref: faculty_development.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: faculty_statistics.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: financial_report.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: year_level_report.financial_report_id > financial_report.financial_report_id [delete: cascade]
+Ref: fees.year_level_report_id > year_level_report.year_level_report_id [delete: cascade]
+
+Ref: block_section.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: class_schedule.block_section_id > block_section.block_section_id [delete: cascade]
+Ref: class_schedule.faculty_id > faculty.faculty_id
+Ref: enrollment_statistics.program_information_id > program_information.program_information_id [delete: cascade]
+Ref: faculty_training.program_information_id > program_information.program_information_id [delete: cascade]

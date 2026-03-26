@@ -1,4 +1,4 @@
-import { useSideBar } from '@/hooks/SideBarContext'
+import { useSideBar } from '@/hooks/useSideBar'
 
 export default function Backdrop() {
   const { isOpen, close } = useSideBar()

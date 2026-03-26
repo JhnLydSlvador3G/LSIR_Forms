@@ -4,7 +4,7 @@ import { NavGroup, NavItem } from './NavBarItem'
 import { navigationConfig } from './NavBar.constant'
 import Backdrop from './BackDrop'
 import { cn } from '@/lib/utils'
-import { useSideBar } from '@/hooks/SideBarContext'
+import { useSideBar } from '@/hooks/useSideBar'
 
 export default function NavigationBar() {
   const { toggle, isOpen, close } = useSideBar()

@@ -1,6 +1,6 @@
 import { heiFormDefaultValues } from './HeiForm.types'
 import type { HeiPersonelFieldPaths } from './HeiPersonel.type'
-import { withForm } from '@/hooks/form-context'
+import { withForm } from '@/hooks/useFormContext'
 
 const HeiPersonel = withForm({
   defaultValues: heiFormDefaultValues,

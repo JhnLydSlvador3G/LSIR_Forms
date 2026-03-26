@@ -3,11 +3,11 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 import React from 'react'
 import FieldInfo from './FieldInfo'
 import LabelForm from './LabelForm'
-import { useFieldContext } from '@/hooks/form-context'
+import { useFieldContext } from '@/hooks/useFormContext'
 import { cn } from '@/lib/utils'
 
 type SelectFieldProps = {
-  label: string
+  label?: string
   options: Array<{ value: string; label: string }>
   htmlForVal: string
   className?: string
@@ -46,6 +46,7 @@ export function SelectField({
           aria-label={label}
           className={cn(
             'select-trigger',
+            'grow',
             disabled && 'no-hover bg-gray-200 text-gray-400',
             hasError
               ? 'border-red-500 ring-2 ring-red-200 focus:ring-red-400'

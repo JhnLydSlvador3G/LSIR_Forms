@@ -17,7 +17,7 @@ import {
 import HeiGeneral from './HeiGeneralInfo'
 import HeiPersonel from './HeiPersonel'
 import { SectionWrapper } from './HeiSectionWrapper'
-import { useAppForm } from '@/hooks/form-context'
+import { useAppForm } from '@/hooks/useFormContext'
 import { StepperNav } from '@/components/ui/stepper/StepperNav'
 import { useStepper } from '@/hooks/useStepper'
 import { saveFormToLocal } from '@/lib/formLocalStorage'

@@ -1,5 +1,5 @@
 import Spinner from '../feedback/Spinner'
-import { useFormContext } from '@/hooks/form-context'
+import { useFormContext } from '@/hooks/useFormContext'
 import { cn } from '@/lib/utils'
 
 export default function SubscribeButton({ label }: { label: string }) {
@@ -7,13 +7,13 @@ export default function SubscribeButton({ label }: { label: string }) {
   return (
     <form.Subscribe
       selector={(state) => [
-        state.isSubmitting,
+        state.isSubmitting, state.canSubmit, state.isPristine
       ]}
     >
-      {([isSubmitting]) => (
+      {([isSubmitting, canSubmit, isPristine]) => (
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !canSubmit || isPristine}
           className={cn(
             'flex-2 md:flex-none justify-center flex items-center',
             'px-3 py-1.5 md:px-12 md:py-4',

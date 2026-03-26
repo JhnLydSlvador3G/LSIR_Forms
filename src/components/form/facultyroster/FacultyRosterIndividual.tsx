@@ -1,13 +1,15 @@
-import { useAppForm, withForm } from "@/hooks/form-context"
-import { defaultFacultyValues, FacultyRosterData, facultyRosterSchema } from "./FacultyRoster.type"
+import { useAppForm } from "@/hooks/useFormContext"
+import { createDefaultFaculty, FacultyRosterData, facultyRosterSchema } from "./FacultyRoster.type"
 import { Plus, Trash2 } from "lucide-react";
-import { useFacultyRosterModal } from "@/hooks/FacultyRosterModalContext";
+import { useFacultyRosterModal } from "@/hooks/useFacultyModalContext";
 
 type FacultyRosterModalFormProps = {
     handleSubmit: (draft: FacultyRosterData) => void
+    existingData: FacultyRosterData | null
 }
 
-export function FacultyModalForm({ handleSubmit }: FacultyRosterModalFormProps) {
+export function FacultyModalForm({ handleSubmit, existingData }: FacultyRosterModalFormProps) {
+    const defaultFacultyValues = existingData ?? createDefaultFaculty()
 
     const modalContext = useFacultyRosterModal();
 
@@ -15,9 +17,9 @@ export function FacultyModalForm({ handleSubmit }: FacultyRosterModalFormProps) 
         defaultValues: defaultFacultyValues,
         validators: {
             onChange: facultyRosterSchema,
+            onBlur: facultyRosterSchema,
         },
         onSubmit: async ({ value }) => {
-            console.log(value)
             handleSubmit(value)
             modalContext.setOpen(false)
         },
