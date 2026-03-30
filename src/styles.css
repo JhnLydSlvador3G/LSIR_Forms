@@ -171,11 +171,21 @@ code {
   }
 
 
-  [data-state='closed'].animate-overlayShow {
-    animation: overlayHide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  @keyframes slide-in {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
 
-  [data-state='closed'].animate-contentShow {
-    animation: contentHide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* The utility class to use in your component */
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out forwards;
   }
+
 }

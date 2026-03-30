@@ -7,10 +7,10 @@ export default function FormErrorMessage() {
   return (
     <form.Subscribe selector={(state) => state.errorMap.onSubmit}>
       {(errors) => {
-        if (!errors || errors.length === 0) return null
+        if (!errors || (Array.isArray(errors) && errors.length === 0)) return null
 
         return (
-          <div className="pb-4">
+          <div className="fixed top-6 right-6 z-[100] w-full max-w-sm transition-all animate-slide-in">
             <ToastNotification
               variant="error"
               title="Please review this section"
