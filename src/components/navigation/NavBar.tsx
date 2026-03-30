@@ -119,6 +119,7 @@ export default function NavigationBar() {
                     to={entry.to}
                     icon={<Icon size={20} />}
                     label={entry.label}
+                    activePaths={entry.activePaths}
                     onNavigate={close}
                   />
                 )

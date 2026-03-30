@@ -150,6 +150,10 @@ function SubmissionCard({ submission, open, onToggle }: SubmissionCardProps) {
             {detailItems.map((item) => (
               <DetailItem key={item.label} label={item.label} value={item.value} />
             ))}
+            <DetailItem
+              label="LEB Approval Date"
+              value={data.lebApprovalDate || 'Not provided'}
+            />
           </div>
 
           {data.curricula.length > 0 && (
@@ -164,41 +168,16 @@ function SubmissionCard({ submission, open, onToggle }: SubmissionCardProps) {
                   className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"
                 >
                   <p className="text-[13px] font-semibold text-slate-900">
-                    Curriculum {index + 1}
+                    Semestral Academic Load {index + 1}
                   </p>
                   <div className="mt-3 grid gap-3 md:grid-cols-2">
-                    <DetailItem
-                      label="LEB Approval Date"
-                      value={curriculum.lebApprovalDate || 'Not provided'}
-                    />
-                    <DetailItem
-                      label="Total Load - 1st Sem"
-                      value={curriculum.totalAcademicLoadFirstSem || 'Not provided'}
-                    />
-                    <DetailItem
-                      label="Total Load - 2nd Sem"
-                      value={curriculum.totalAcademicLoadSecondSem || 'Not provided'}
-                    />
-                    <DetailItem
-                      label="1st Year"
-                      value={`${curriculum.firstYearFirstSem || '-'} / ${curriculum.firstYearSecondSem || '-'}`}
-                    />
-                    <DetailItem
-                      label="2nd Year"
-                      value={`${curriculum.secondYearFirstSem || '-'} / ${curriculum.secondYearSecondSem || '-'}`}
-                    />
-                    <DetailItem
-                      label="3rd Year"
-                      value={`${curriculum.thirdYearFirstSem || '-'} / ${curriculum.thirdYearSecondSem || '-'}`}
-                    />
-                    <DetailItem
-                      label="4th Year"
-                      value={`${curriculum.fourthYearFirstSem || '-'} / ${curriculum.fourthYearSecondSem || '-'}`}
-                    />
-                    <DetailItem
-                      label="5th Year"
-                      value={`${curriculum.fifthYearFirstSem || '-'} / ${curriculum.fifthYearSecondSem || '-'}`}
-                    />
+                    {curriculum.loads.map((load) => (
+                      <DetailItem
+                        key={`${submission.id}-${index}-${load.year}`}
+                        label={`Year ${load.year}`}
+                        value={`${String(load.first_sem || '-')} / ${String(load.second_sem || '-')}`}
+                      />
+                    ))}
                   </div>
                 </div>
               ))}
@@ -226,15 +205,15 @@ function SubmissionColumn({
   children,
 }: SubmissionColumnProps) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white  pb-5 shadow-sm">
-      <div className="rounded-t-2xl bg-leb px-4 py-5 text-white text-center">
+    <section className="rounded-2xl border border-slate-200 bg-white pb-5 shadow-sm">
+      <div className="rounded-t-2xl bg-leb px-4 py-5 text-center text-white">
         <h2 className="text-2xl font-black tracking-tight">{title}</h2>
       </div>
 
       {children ? (
         children
       ) : (
-        <div className="mt-5 mx-5 space-y-3">
+        <div className="mx-5 mt-5 space-y-3">
           {items.length > 0 && openIds && onToggle ? (
             items.map((submission) => (
               <SubmissionCard
@@ -258,8 +237,9 @@ function SubmissionColumn({
 export default function ProgInfoSubmissionList() {
   const [submissions, setSubmissions] = useState<ProgramInfoSubmission[]>([])
   const [openIds, setOpenIds] = useState<Set<string>>(new Set())
-  const [isLeiOpen, setIsLeiOpen] = useState(true)
-  const leiProgram = 1
+  const [selectedLei, setSelectedLei] = useState<number | null>(1)
+  const [openLei, setOpenLei] = useState<number | null>(1)
+  const leiCards = [1, 2, 3, 4]
 
   useEffect(() => {
     setSubmissions(loadProgramInfoSubmissions())
@@ -306,6 +286,30 @@ export default function ProgInfoSubmissionList() {
     })
   }
 
+  const handleLeiClick = (lei: number) => {
+    if (openLei === lei) {
+      setOpenLei(null)
+      setSelectedLei(null)
+      return
+    }
+
+    setSelectedLei(lei)
+    setOpenLei(lei)
+  }
+
+  const activeGrouped =
+    selectedLei === 1
+      ? grouped
+      : {
+          jurisDoctor: [] as ProgramInfoSubmission[],
+          masterOfLaws: [] as ProgramInfoSubmission[],
+          doctorateByProgram: {
+            'Doctor in Civil Law': [],
+            'Doctor in Juridical Science': [],
+            Others: [],
+          } as Record<DoctorateProgramOption, ProgramInfoSubmission[]>,
+        }
+
   return (
     <FormWrapper
       title="Program Information Submissions"
@@ -313,24 +317,53 @@ export default function ProgInfoSubmissionList() {
       className="w-[90%] max-w-none"
     >
       <div className="space-y-8 px-2 py-4">
-        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-          <button
-            type="button"
-            onClick={() => setIsLeiOpen((current) => !current)}
-            className="flex w-full items-center justify-between gap-3 bg-slate-50 px-5 py-4 text-left transition-colors hover:bg-slate-100"
-          >
-            <h2 className="text-lg font-bold text-slate-900">LEI {leiProgram}</h2>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-leb/10 text-leb">
-              {isLeiOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </span>
-          </button>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {leiCards.map((lei) => {
+            const isActive = openLei === lei
 
-          {isLeiOpen && (
-            <div className="space-y-8 px-4 py-5">
+            return (
+              <button
+                key={lei}
+                type="button"
+                onClick={() => handleLeiClick(lei)}
+                className={`relative min-h-40 overflow-hidden rounded-[28px] border p-6 text-left transition-all duration-300 ${
+                  isActive
+                    ? 'border-slate-300 bg-purple-100 text-slate-900 shadow-sm'
+                    : 'border-slate-200 bg-white text-slate-900 shadow-sm hover:-translate-y-1 hover:shadow-lg'
+                }`}
+              >
+                <div className="flex h-full flex-col justify-between">
+                  <span
+                    className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl text-sm font-black ${
+                      isActive ? 'bg-leb text-white' : 'bg-leb text-white'
+                    }`}
+                  >
+                    {lei}
+                  </span>
+                  <div>
+                    <p
+                      className={`text-xs font-semibold uppercase tracking-[0.22em] ${
+                        isActive ? 'text-slate-500' : 'text-slate-400'
+                      }`}
+                    >
+                      Legal Education Institute
+                    </p>
+                    <h2 className="mt-2 text-2xl font-black tracking-tight">{`LEI ${lei}`}</h2>
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        {openLei !== null && (
+          <section className="rounded-[34px] border border-purple-100 bg-purple-100 shadow-sm">
+          {openLei === selectedLei && (
+            <div className="relative z-10 space-y-8 px-5 py-5 pb-28">
               <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
                 <div className="w-full md:flex-1">
                   <h1 className="text-2xl font-black tracking-tight text-slate-900">
-                    LEI ({leiProgram})
+                    LEI {selectedLei}
                   </h1>
                 </div>
                 <div className="flex w-full justify-center md:flex-1 md:justify-end">
@@ -347,27 +380,31 @@ export default function ProgInfoSubmissionList() {
               <div className="grid gap-5 xl:grid-cols-3">
                 <SubmissionColumn
                   title={LAW_PROGRAM_HEADINGS['juris-doctor']}
-                  items={grouped.jurisDoctor}
+                  items={activeGrouped.jurisDoctor}
                   openIds={openIds}
                   onToggle={toggleSubmission}
                 />
                 <SubmissionColumn
                   title={LAW_PROGRAM_HEADINGS['master-of-laws']}
-                  items={grouped.masterOfLaws}
+                  items={activeGrouped.masterOfLaws}
                   openIds={openIds}
                   onToggle={toggleSubmission}
                 />
                 <SubmissionColumn title={LAW_PROGRAM_HEADINGS.doctorate}>
                   <div className="space-y-5">
                     {DOCTORATE_SECTIONS.map((section, index) => {
-                      const items = grouped.doctorateByProgram[section]
+                      const items = activeGrouped.doctorateByProgram[section]
                       return (
                         <div
                           key={section}
-                          className={index > 0 ? 'border-t border-slate-200 pt-5' : undefined}
+                          className={
+                            index > 0
+                              ? 'border-t border-slate-200 pt-5'
+                              : undefined
+                          }
                         >
                           <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                            <h3 className="mt-1 text-1g font-bold text-slate-900">{section}</h3>
+                            <h3 className="mt-1 text-lg font-bold text-slate-900">{section}</h3>
                           </div>
 
                           <div className="mt-3 mr-5 border-l border-slate-200 pl-4">
@@ -397,6 +434,7 @@ export default function ProgInfoSubmissionList() {
             </div>
           )}
         </section>
+        )}
       </div>
     </FormWrapper>
   )

@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -7,6 +7,7 @@ interface NavItemProps {
   icon: ReactNode
   label: string
   onNavigate?: () => void
+  activePaths?: string[]
 }
 
 interface NavGroupProps {
@@ -17,15 +18,30 @@ interface NavGroupProps {
   children: ReactNode
 }
 
-export function NavItem({ to, icon, label, onNavigate }: NavItemProps) {
+export function NavItem({
+  to,
+  icon,
+  label,
+  onNavigate,
+  activePaths,
+}: NavItemProps) {
+  const { pathname } = useLocation()
+  const isCustomActive =
+    activePaths?.some((path) => pathname === path || pathname.startsWith(`${path}/`)) ??
+    false
+
   return (
     <Link
       to={to}
       onClick={onNavigate}
-      className="flex items-center gap-3 p-3 rounded-lg hover:bg-lebSecond hover:text-black transition-colors mb-2"
+      className={`mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors ${
+        isCustomActive
+          ? 'bg-lebSecond text-black hover:bg-lebThird'
+          : 'hover:bg-lebSecond hover:text-black'
+      }`}
       activeProps={{
         className:
-          'flex items-center gap-3 p-3 rounded-lg bg-lebSecond text-black hover:bg-lebThird transition-colors mb-2',
+          'mb-2 flex items-center gap-3 rounded-lg bg-lebSecond p-3 text-black transition-colors hover:bg-lebThird',
       }}
     >
       {icon}

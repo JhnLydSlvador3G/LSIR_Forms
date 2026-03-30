@@ -17,6 +17,7 @@ export type NavItemConfig =
     label: string
     to: string
     icon: any
+    activePaths?: string[]
   }
   | {
     type: 'group'
@@ -53,6 +54,7 @@ export const navigationConfig: Array<NavItemConfig> = [
     type: 'item',
     label: 'Program Information',
     to: '/programinfo-submissions',
+    activePaths: ['/programinfo-submissions', '/programinfo'],
     icon: BookCheck, 
   },
   {

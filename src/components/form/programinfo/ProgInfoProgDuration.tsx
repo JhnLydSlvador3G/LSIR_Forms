@@ -7,8 +7,7 @@ const ProgInfoProgDuration = withForm({
   render: function Render({ form }) {
     return (
       <div className="flex flex-col gap-4">
-        <p className="text-sm font-semibold text-gray-700">D. Program Duration</p>
-
+  
         <form.AppField name="programDuration">
           {(field) => (
             <form.Subscribe selector={(state) => state.errorMap.onSubmit}>
