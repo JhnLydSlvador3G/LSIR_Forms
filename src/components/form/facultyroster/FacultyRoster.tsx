@@ -27,6 +27,11 @@ export default function FacultyRoster() {
         setOpen(true);
     }
 
+    const onClose = () => {
+        setEditingIndex(null)
+        setFacultyState(null)
+    }
+
     const onDelete = (index: string) => {
         const currentRoster = form.getFieldValue('facultyRoster');
         const existingIndex = currentRoster.findIndex((item) => item.id === index);
@@ -87,7 +92,7 @@ export default function FacultyRoster() {
             <div className="mt-5 w-full flex flex-row justify-center-safe gap-10 items-center">
                 <form.AppForm>
                     <FacultyRosterModalContext value={{ open, setOpen }}>
-                        <FacultyRosterModal>
+                        <FacultyRosterModal onClose={onClose}>
                             <FacultyModalForm handleSubmit={handleSave} existingData={facultyState} />
                         </FacultyRosterModal>
                     </FacultyRosterModalContext>

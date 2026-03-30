@@ -2,6 +2,7 @@ import { useAppForm } from "@/hooks/useFormContext"
 import { createDefaultFaculty, FacultyRosterData, facultyRosterSchema } from "./FacultyRoster.type"
 import { Plus, Trash2 } from "lucide-react";
 import { useFacultyRosterModal } from "@/hooks/useFacultyModalContext";
+import { useEffect } from "react";
 
 type FacultyRosterModalFormProps = {
     handleSubmit: (draft: FacultyRosterData) => void

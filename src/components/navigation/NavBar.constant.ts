@@ -75,6 +75,12 @@ export const navigationConfig: Array<NavItemConfig> = [
     icon: GraduationCapIcon,
   },
   {
+    type: 'item',
+    label: 'LEI Info',
+    to: '/leiinfo',
+    icon: GraduationCapIcon,
+  },
+  {
     type: 'group',
     label: 'Start - SSR Demos',
     icon: StickyNote,

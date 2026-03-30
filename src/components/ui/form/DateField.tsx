@@ -5,14 +5,12 @@ import { cn } from '@/lib/utils'
 
 type TextFieldProps = {
   label: string
-  htmlForVal: string
   className?: string
   required?: boolean
 }
 
 export function DateField({
   label,
-  htmlForVal,
   className,
   required = false,
 }: TextFieldProps) {
@@ -22,11 +20,10 @@ export function DateField({
 
   return (
     <label className={cn('flex flex-col grow', className)}>
-      <LabelForm label={label} htmlForVal={htmlForVal} required={required} />
+      <LabelForm label={label} required={required} />
 
       <input
         type="date"
-        id={htmlForVal}
         placeholder="Select a Start Date"
         className={cn(
           'input-text w-full',
