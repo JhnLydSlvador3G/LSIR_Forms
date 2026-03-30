@@ -1,5 +1,5 @@
 import { lawSchoolFormDefaultValues } from './LawSchoolForm.types'
-import { withForm } from '@/hooks/form-context'
+import { withForm } from '@/hooks/useFormContext'
 
 // Section component used by `src/components/form/lawschool/LawSchoolForm.tsx`.
 // It renders the top part of the paper form: law programs and contact numbers.

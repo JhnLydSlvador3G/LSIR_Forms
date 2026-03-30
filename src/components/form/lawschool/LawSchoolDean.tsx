@@ -2,7 +2,7 @@ import {
   lawSchoolFormDefaultValues,
   type LawSchoolDeanFieldPaths,
 } from './LawSchoolForm.types'
-import { withForm } from '@/hooks/form-context'
+import { withForm } from '@/hooks/useFormContext'
 
 const LawSchoolDean = withForm({
   defaultValues: lawSchoolFormDefaultValues,

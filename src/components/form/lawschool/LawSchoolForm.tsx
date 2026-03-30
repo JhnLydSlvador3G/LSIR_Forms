@@ -15,7 +15,7 @@ import {
 import LawSchoolGeneralInfo from './LawSchoolGeneralInfo'
 import LawSchoolDean from './LawSchoolDean'
 import LawSchoolDeanDegree from './LawSchoolDeanDegree'
-import { useAppForm } from '@/hooks/form-context'
+import { useAppForm } from '@/hooks/useFormContext'
 import { StepperNav } from '@/components/ui/stepper/StepperNav'
 import { useStepper } from '@/hooks/useStepper'
 import { loadFormFromLocal, saveFormToLocal } from '@/lib/formLocalStorage'
