@@ -1,4 +1,4 @@
-import { check, date, integer, pgTable, serial,text, varchar, } from 'drizzle-orm/pg-core'
+import { check, date, integer, pgTable, serial, text, varchar, } from 'drizzle-orm/pg-core'
 import { relations, sql } from 'drizzle-orm'
 import {
     accreditationClassification,
@@ -60,7 +60,7 @@ export const lawSchool_info_relations = relations(lawSchool_info, ({ one }) => (
     }),
 }));
 
-export const lawSchool_relations = relations(lawSchool, ({ one,many }) => ({
+export const lawSchool_relations = relations(lawSchool, ({ one, many }) => ({
     user: one(user, {
         fields: [lawSchool.user_id],
         references: [user.id]

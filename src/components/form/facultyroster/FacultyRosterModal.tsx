@@ -4,11 +4,10 @@ import { useFacultyRosterModal } from "@/hooks/useFacultyModalContext";
 
 interface FacultyRosterModalProps {
     children: React.ReactNode;
+    onClose: () => void;
 }
 
-
-
-const FacultyRosterModal = ({ children }: FacultyRosterModalProps) => {
+const FacultyRosterModal = ({ children, onClose }: FacultyRosterModalProps) => {
     const modalContext = useFacultyRosterModal()
     return (
         <Dialog.Root open={modalContext.open} onOpenChange={modalContext.setOpen} >
@@ -35,7 +34,10 @@ const FacultyRosterModal = ({ children }: FacultyRosterModalProps) => {
 
                         {children}
 
-                        <Dialog.Close asChild>
+                        <Dialog.Close asChild
+                            onClick={() => {
+                                onClose()
+                            }}>
                             <button
                                 className="absolute right-2.5 top-2.5 inline-flex size-[25px] appearance-none items-center justify-center rounded-full text-black bg-lebSecond hover:bg-lebThird focus:shadow-[0_0_0_2px] focus:shadow-violet7 focus:outline-none"
                                 aria-label="Close">

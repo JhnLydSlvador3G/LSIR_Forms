@@ -1,4 +1,5 @@
-export default function LoginHeader() {
+// Shared header used by both login and signup pages
+export default function AuthHeader() {
   return (
     <>
       <div className="flex flex-row justify-center gap-4 items-center mb-2 sm:mb-4">
@@ -17,7 +18,7 @@ export default function LoginHeader() {
           />
         </a>
       </div>
-      <h2 className="text-8xl sm:text-[10rem] font-bold text-leb tracking-widest leading-none text-center text-shadow-lg/5 ">
+      <h2 className="text-8xl sm:text-[10rem] font-bold text-leb tracking-widest leading-none text-center">
         LSIR
       </h2>
     </>

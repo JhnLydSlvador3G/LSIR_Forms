@@ -1,19 +1,18 @@
-'use client'
-
 import { z } from 'zod'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate, Link } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/useFormContext'
 import { authClient } from '@/lib/auth-client'
+import { getLoginErrorMessage } from '@/lib/errorMessages'
 
 const LoginFormSchema = z.object({
-  userName: z.string().min(1, 'Username is required'),
+  email: z.email(),
   password: z.string().min(8, 'You must have a length of at least 8'),
 })
 
 type LoginFormValues = z.infer<typeof LoginFormSchema>
 
 const defaultValues: LoginFormValues = {
-  userName: '',
+  email: '',
   password: '',
 }
 
@@ -26,50 +25,21 @@ export default function LoginForm() {
   const form = useAppForm({
     defaultValues,
     validators: {
-      onChange: LoginFormSchema,
-    },
-    /* Note: The login form calls authClient.signIn.username(...) which hits the Better Auth API endpoint, which hits the DB. This will error out.
-    onSubmit: async ({ value, formApi }) => {
-      const { userName, password } = value
-      const { data, error } = await authClient.signIn.username({
-        username: userName,
-        password: password,
-      })
+      onBlur: LoginFormSchema,
+      onSubmitAsync: async ({ value }) => {
+        const { email, password } = value
+        const { error } = await authClient.signIn.email({
+          email: email,
+          password: password,
+        })
 
-      if (error) {
-        formApi.setErrorMap({ onSubmit: error.message })
-      } else {
-        navigate({ to: redirectTo })
-      }
-    },
-    */
-   // Note: Before calling authClient, check if the entered credentials match the env vars and short-circuit with a direct navigate().
-    onSubmit: async ({ value, formApi }) => {
-      const { userName, password } = value
-
-      // DEV BYPASS
-      if (import.meta.env.VITE_AUTH_BYPASS === 'true') {
-        if (
-          userName === import.meta.env.VITE_DEV_LOGIN_USER &&
-          password === import.meta.env.VITE_DEV_LOGIN_PASS
-        ) {
-          navigate({ to: redirectTo })
-          return
+        if (error) {
+          console.log(error)
+          return getLoginErrorMessage(error.status);
         } else {
-          formApi.setErrorMap({ onSubmit: { message: 'Invalid dev credentials' } as never })
-          return
+          navigate({ to: redirectTo, replace: true })
         }
-      }
-
-      // normal auth flow below...
-      // @ts-expect-error username plugin not reflected in client type
-      const { error } = await authClient.signIn.username({ username: userName, password })
-
-      if (error) {
-        formApi.setErrorMap({ onSubmit: error.message })
-      } else {
-        navigate({ to: redirectTo })
-      }
+      },
     },
   })
 
@@ -84,9 +54,9 @@ export default function LoginForm() {
     >
       <form.AppForm>
         <form.AppField
-          name="userName"
+          name="email"
           children={(field) => (
-            <field.TextField label="Username" htmlForVal="userName" />
+            <field.TextField label="Email" htmlForVal="username" />
           )}
         />
         <form.AppField
@@ -96,6 +66,13 @@ export default function LoginForm() {
         <form.FormErrorMessage />
         <form.SubscribeButton label="Sign in" />
       </form.AppForm>
+
+      <p className="text-center text-sm text-gray-500">
+        Don't have an account?{' '}
+        <Link to="/signup" className="text-leb font-medium hover:underline">
+          Sign up
+        </Link>
+      </p>
     </form>
   )
 }

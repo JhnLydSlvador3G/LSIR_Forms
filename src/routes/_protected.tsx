@@ -1,12 +1,12 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
-import { getSession } from '@/lib/auth.server'
 import NavigationBar from '@/components/navigation/NavBar'
 import Footer from '@/components/Footer'
 import { SidebarProvider } from '@/hooks/useSideBar'
+import { checkAuthSession } from '@/lib/auth-fn'
 
 export const Route = createFileRoute('/_protected')({
   beforeLoad: async ({ location }) => {
-    const session = await getSession()
+    const session = await checkAuthSession()
 
     if (!session) {
       throw redirect({
@@ -14,8 +14,9 @@ export const Route = createFileRoute('/_protected')({
         search: { redirect: location.href },
       })
     }
+    const userData = session.user
 
-    return { user: session.user }
+    return ({ userData })
   },
   component: () => (
     <SidebarProvider>

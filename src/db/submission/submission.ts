@@ -1,9 +1,9 @@
 import { boolean, check, date, integer, pgTable, serial, varchar } from 'drizzle-orm/pg-core'
 import { relations, sql } from 'drizzle-orm'
 import { faculty_submission } from '../FACULTY/faculty_roster'
-import {deanAssignment} from '../LAW_SCHOOL_GENERAL_INFO/dean'
+import { deanAssignment } from '../LAW_SCHOOL_GENERAL_INFO/dean'
 import { president_assignment } from '../HEI_GENERAL_INFO/president'
-import {registrar_assignment} from '../HEI_GENERAL_INFO/registrar'
+import { registrar_assignment } from '../HEI_GENERAL_INFO/registrar'
 import { lawSchool } from '../LAW_SCHOOL_GENERAL_INFO/lawSchool'
 import { program_information } from '../PROGRAM_INFORMATION/program'
 import { semester } from '../enum'
@@ -36,7 +36,7 @@ export const submission_relations = relations(submission, ({ one, many }) => ({
         fields: [submission.law_school_id],
         references: [lawSchool.law_school_id],
     }),
-    
+
     facultySubmissions: many(faculty_submission),
     programInformations: many(program_information),
     certifications: many(certification)
