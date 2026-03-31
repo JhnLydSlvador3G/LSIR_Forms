@@ -21,12 +21,18 @@ import { useMultistepValidation } from '@/hooks/useMultistepValidation'
 import { StepperNav } from '@/components/ui/stepper/StepperNav'
 import { useStepper } from '@/hooks/useStepper'
 import { loadFormFromLocal, saveFormToLocal } from '@/lib/formLocalStorage'
+import {
+  clearActiveLawSchoolSubmissionId,
+  loadActiveLawSchoolSubmissionId,
+  saveLawSchoolSubmission,
+} from '@/lib/lawSchoolSubmissions'
 
 export default function LawSchoolForm() {
   // LEI keeps useStepper for navigation while shared validation handles Next/Submit.
   const stepper = useStepper(LAW_SCHOOL_STEPS)
   const [resetVersion, setResetVersion] = useState(0)
   const [initialValues, setInitialValues] = useState(lawSchoolFormDefaultValues)
+  const [activeSubmissionId, setActiveSubmissionId] = useState('')
 
   const form = useAppForm({
     defaultValues: initialValues,
@@ -43,6 +49,7 @@ export default function LawSchoolForm() {
       key: 'lawSchool',
       fallback: lawSchoolFormDefaultValues,
     })
+    setActiveSubmissionId(loadActiveLawSchoolSubmissionId())
     setInitialValues(values)
     form.reset(values)
   }, [form])
@@ -96,15 +103,26 @@ export default function LawSchoolForm() {
       return
     }
 
+    const submittedValues = form.state.values
+
     saveFormToLocal({
       key: 'lawSchool',
-      value: form.state.values,
+      value: submittedValues,
       schema: lawSchoolFormDraftSchema,
     })
 
+    const savedSubmission = saveLawSchoolSubmission(submittedValues, activeSubmissionId)
+    setActiveSubmissionId(savedSubmission.id)
     await form.handleSubmit()
-    form.reset(form.state.values, { keepDefaultValues: true })
-    stepper.goTo(stepper.totalSteps - 1)
+
+    localStorage.removeItem('lawSchool')
+    clearActiveLawSchoolSubmissionId()
+    setActiveSubmissionId('')
+    setInitialValues(lawSchoolFormDefaultValues)
+    clearSubmitError()
+    setResetVersion((value) => value + 1)
+    form.reset(lawSchoolFormDefaultValues)
+    stepper.goTo(0)
   }
 
   return (
@@ -131,6 +149,8 @@ export default function LawSchoolForm() {
             saveSchema={lawSchoolFormDraftSchema}
             onNext={handleStepNext}
             onReset={() => {
+              clearActiveLawSchoolSubmissionId()
+              setActiveSubmissionId('')
               setInitialValues(lawSchoolFormDefaultValues)
               clearSubmitError()
               setResetVersion((value) => value + 1)

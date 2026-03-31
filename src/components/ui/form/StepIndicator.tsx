@@ -9,40 +9,46 @@ export default function StepIndicator({
   currentStep,
   className = '',
 }: StepIndicatorProps) {
-  const lastStep = steps.length - 1
-
   return (
-    <div className={`overflow-x-auto px-8 pt-6 ${className}`.trim()}>
-      <div className="mx-auto flex min-w-max items-start justify-center">
+    <div className={`rounded-l-2xl ${className}`.trim()}>
+      <div className="flex flex-col py-4">
         {steps.map((title, index) => (
-          <div key={title} className="relative flex items-start">
-            <div className="flex w-[104px] flex-col items-center text-center">
+          <div
+            key={title}
+            className={`flex items-center gap-4 border-l-4 px-7 py-5 transition-colors ${
+              index === currentStep
+                ? 'border-l-leb bg-slate-200/60'
+                : index < currentStep
+                  ? 'border-l-leb/50 bg-white'
+                  : 'border-l-transparent bg-transparent'
+            }`}
+          >
+            <div className="flex shrink-0 items-center justify-center">
               <div
-                className={`relative z-10 flex h-7 w-7 min-h-7 min-w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold leading-none ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full text-base font-bold ${
                   index === currentStep
-                    ? 'bg-leb text-white'
+                    ? 'bg-leb text-white shadow-sm'
                     : index < currentStep
-                      ? 'bg-leb/40 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      ? 'bg-leb/20 text-leb'
+                      : 'border border-slate-300 bg-white text-slate-500'
                 }`}
               >
                 {index + 1}
               </div>
-              <span
-                className={`mt-2 text-xs leading-4 ${
-                  index === currentStep ? 'font-semibold text-leb' : 'text-gray-400'
+            </div>
+            <div className="min-w-0">
+              <div
+                className={`text-[1.05rem] leading-6 ${
+                  index === currentStep
+                    ? 'font-semibold text-leb'
+                    : index < currentStep
+                      ? 'font-medium text-slate-700'
+                      : 'text-slate-400'
                 }`}
               >
                 {title}
-              </span>
+              </div>
             </div>
-            {index < lastStep && (
-              <div
-                className={`mt-3.5 -ml-0.5 w-6 border-t ${
-                  index < currentStep ? 'border-slate-400' : 'border-dashed border-slate-300'
-                }`}
-              />
-            )}
           </div>
         ))}
       </div>

@@ -7,20 +7,17 @@ import {
 export const PROGRAM_INFO_SUBMISSIONS_KEY = 'programinfo-submissions'
 
 const ProgramInfoSubmissionListSchema = ProgramInfoSubmissionSchema.array()
-const emptyCurriculum = {
-  lebApprovalDate: '',
-  firstYearFirstSem: '',
-  firstYearSecondSem: '',
-  secondYearFirstSem: '',
-  secondYearSecondSem: '',
-  thirdYearFirstSem: '',
-  thirdYearSecondSem: '',
-  fourthYearFirstSem: '',
-  fourthYearSecondSem: '',
-  fifthYearFirstSem: '',
-  fifthYearSecondSem: '',
-  totalAcademicLoadFirstSem: '',
-  totalAcademicLoadSecondSem: '',
+
+const normalizeSemestralValue = (value: unknown): number | '' => {
+  if (value === '' || value === null || value === undefined) return ''
+  if (typeof value === 'number') return Number.isInteger(value) ? value : ''
+  if (typeof value === 'string') {
+    const trimmed = value.trim()
+    if (!trimmed) return ''
+    const parsed = Number(trimmed)
+    return Number.isInteger(parsed) ? parsed : ''
+  }
+  return ''
 }
 
 const normalizeSubmissionShape = (submission: unknown): unknown => {
@@ -35,101 +32,82 @@ const normalizeSubmissionShape = (submission: unknown): unknown => {
   if (!data) return submission
 
   const curricula = Array.isArray(data.curricula) ? data.curricula : []
+  const nestedLebApprovalDate = curricula.find(
+    (entry) =>
+      entry &&
+      typeof entry === 'object' &&
+      typeof (entry as Record<string, unknown>).lebApprovalDate === 'string',
+  )
 
-  const normalizedCurricula = curricula.map((entry) => {
-    if (!entry || typeof entry !== 'object') {
-      return emptyCurriculum
-    }
+  const firstSemKeys = [
+    'firstYearFirstSem',
+    'secondYearFirstSem',
+    'thirdYearFirstSem',
+    'fourthYearFirstSem',
+    'fifthYearFirstSem',
+  ] as const
 
-    const curriculum = entry as Record<string, unknown>
+  const secondSemKeys = [
+    'firstYearSecondSem',
+    'secondYearSecondSem',
+    'thirdYearSecondSem',
+    'fourthYearSecondSem',
+    'fifthYearSecondSem',
+  ] as const
 
-    if (Array.isArray(curriculum.loads)) {
-      const loads = curriculum.loads as Array<Record<string, unknown>>
-      const getLoadValue = (index: number, key: 'first_sem' | 'second_sem') => {
-        const rawValue = loads[index]?.[key]
-        return rawValue == null ? '' : String(rawValue)
-      }
+  const normalizedCurricula = curricula.every(
+    (entry) =>
+      entry &&
+      typeof entry === 'object' &&
+      Array.isArray((entry as Record<string, unknown>).loads),
+  )
+    ? curricula.map((entry) => {
+        const curriculum = entry as Record<string, unknown>
+        const loads = Array.isArray(curriculum.loads)
+          ? (curriculum.loads as Array<Record<string, unknown>>)
+          : []
 
-      return {
-        lebApprovalDate:
-          typeof curriculum.lebApprovalDate === 'string'
-            ? curriculum.lebApprovalDate
-            : '',
-        firstYearFirstSem: getLoadValue(0, 'first_sem'),
-        firstYearSecondSem: getLoadValue(0, 'second_sem'),
-        secondYearFirstSem: getLoadValue(1, 'first_sem'),
-        secondYearSecondSem: getLoadValue(1, 'second_sem'),
-        thirdYearFirstSem: getLoadValue(2, 'first_sem'),
-        thirdYearSecondSem: getLoadValue(2, 'second_sem'),
-        fourthYearFirstSem: getLoadValue(3, 'first_sem'),
-        fourthYearSecondSem: getLoadValue(3, 'second_sem'),
-        fifthYearFirstSem: getLoadValue(4, 'first_sem'),
-        fifthYearSecondSem: getLoadValue(4, 'second_sem'),
-        totalAcademicLoadFirstSem: '',
-        totalAcademicLoadSecondSem: '',
-      }
-    }
+        return {
+          loads: [1, 2, 3, 4, 5].map((year, index) => ({
+            year,
+            first_sem: normalizeSemestralValue(loads[index]?.first_sem),
+            second_sem: normalizeSemestralValue(loads[index]?.second_sem),
+          })),
+        }
+      })
+    : [{
+        loads: firstSemKeys.map((firstKey, index) => {
+          const legacyEntry =
+            curricula[index] && typeof curricula[index] === 'object'
+              ? (curricula[index] as Record<string, unknown>)
+              : {}
 
-    return {
-      lebApprovalDate:
-        typeof curriculum.lebApprovalDate === 'string'
-          ? curriculum.lebApprovalDate
-          : '',
-      firstYearFirstSem:
-        typeof curriculum.firstYearFirstSem === 'string'
-          ? curriculum.firstYearFirstSem
-          : '',
-      firstYearSecondSem:
-        typeof curriculum.firstYearSecondSem === 'string'
-          ? curriculum.firstYearSecondSem
-          : '',
-      secondYearFirstSem:
-        typeof curriculum.secondYearFirstSem === 'string'
-          ? curriculum.secondYearFirstSem
-          : '',
-      secondYearSecondSem:
-        typeof curriculum.secondYearSecondSem === 'string'
-          ? curriculum.secondYearSecondSem
-          : '',
-      thirdYearFirstSem:
-        typeof curriculum.thirdYearFirstSem === 'string'
-          ? curriculum.thirdYearFirstSem
-          : '',
-      thirdYearSecondSem:
-        typeof curriculum.thirdYearSecondSem === 'string'
-          ? curriculum.thirdYearSecondSem
-          : '',
-      fourthYearFirstSem:
-        typeof curriculum.fourthYearFirstSem === 'string'
-          ? curriculum.fourthYearFirstSem
-          : '',
-      fourthYearSecondSem:
-        typeof curriculum.fourthYearSecondSem === 'string'
-          ? curriculum.fourthYearSecondSem
-          : '',
-      fifthYearFirstSem:
-        typeof curriculum.fifthYearFirstSem === 'string'
-          ? curriculum.fifthYearFirstSem
-          : '',
-      fifthYearSecondSem:
-        typeof curriculum.fifthYearSecondSem === 'string'
-          ? curriculum.fifthYearSecondSem
-          : '',
-      totalAcademicLoadFirstSem:
-        typeof curriculum.totalAcademicLoadFirstSem === 'string'
-          ? curriculum.totalAcademicLoadFirstSem
-          : '',
-      totalAcademicLoadSecondSem:
-        typeof curriculum.totalAcademicLoadSecondSem === 'string'
-          ? curriculum.totalAcademicLoadSecondSem
-          : '',
-    }
-  })
+          return {
+            year: index + 1,
+            first_sem: normalizeSemestralValue(
+              legacyEntry[firstKey] ?? legacyEntry.first_sem ?? '',
+            ),
+            second_sem: normalizeSemestralValue(
+              legacyEntry[secondSemKeys[index]] ?? legacyEntry.second_sem ?? '',
+            ),
+          }
+        }),
+      }]
 
   return {
     ...candidate,
     data: {
       ...data,
+      lawSchoolId:
+        typeof data.lawSchoolId === 'string' ? data.lawSchoolId : '',
+      lebApprovalDate:
+        typeof data.lebApprovalDate === 'string'
+          ? data.lebApprovalDate
+          : typeof nestedLebApprovalDate === 'object' &&
+              nestedLebApprovalDate !== null &&
+              typeof (nestedLebApprovalDate as Record<string, unknown>).lebApprovalDate === 'string'
+            ? (nestedLebApprovalDate as Record<string, unknown>).lebApprovalDate
+            : '',
       curricula: normalizedCurricula,
     },
   }
@@ -155,7 +133,7 @@ export function loadProgramInfoSubmissions(): ProgramInfoSubmission[] {
 }
 
 export function appendProgramInfoSubmission(
-  data: ProgInfoFormData
+  data: ProgInfoFormData,
 ): ProgramInfoSubmission {
   const parsedData = ProgramInfoSubmissionSchema.shape.data.parse(data)
 
@@ -168,7 +146,7 @@ export function appendProgramInfoSubmission(
   const existing = loadProgramInfoSubmissions()
   localStorage.setItem(
     PROGRAM_INFO_SUBMISSIONS_KEY,
-    JSON.stringify([submission, ...existing])
+    JSON.stringify([submission, ...existing]),
   )
 
   return submission

@@ -1,7 +1,5 @@
 import { z } from 'zod'
 
-// Note: These are lookup constants. They define the valid/allowed values used by
-// both the UI and the schemas.
 export const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -54,38 +52,37 @@ export const DOCTORATE_PROGRAM_OPTIONS = [
 
 export type DoctorateProgramOption = typeof DOCTORATE_PROGRAM_OPTIONS[number]
 
-//Note: Base schema for each curriculum entry
-const CurriculumEntryBaseSchema = z.object({
-  lebApprovalDate: z.string(),
-  firstYearFirstSem: z.string(),
-  firstYearSecondSem: z.string(),
-  secondYearFirstSem: z.string(),
-  secondYearSecondSem: z.string(),
-  thirdYearFirstSem: z.string(),
-  thirdYearSecondSem: z.string(),
-  fourthYearFirstSem: z.string(),
-  fourthYearSecondSem: z.string(),
-  fifthYearFirstSem: z.string(),
-  fifthYearSecondSem: z.string(),
-  totalAcademicLoadFirstSem: z.string(),
-  totalAcademicLoadSecondSem: z.string(),
+const IntegerFieldSchema = z.preprocess(
+  (value) => {
+    if (value === '' || value === null || value === undefined) return undefined
+    if (typeof value === 'string') return Number(value)
+    return value
+  },
+  z.number({ error: 'Required' }).int('Must be a whole number'),
+)
+
+const CurriculumLoadEntryBaseSchema = z.object({
+  year: z.number().int().min(1).max(5),
+  first_sem: IntegerFieldSchema,
+  second_sem: IntegerFieldSchema,
 })
 
-export type CurriculumEntry = z.infer<typeof CurriculumEntryBaseSchema>
+const CurriculumEntryBaseSchema = z.object({
+  loads: z.array(CurriculumLoadEntryBaseSchema).length(5),
+})
 
-// Note: A single strict schema by itself would validate the entire form at once,
-// which is not ideal for a wizard flow because it can block navigation too early.
-//
-// Validation is therefore split into two layers:
-// 1) ProgInfoDraftSchema supports lenient in-progress editing so users are not
-//    blocked while filling out later steps.
-// 2) ProgInfoSchema is the strict final validation gate used on submit for the
-//    complete payload.
-//
-// STEP_FIELDS complements both schemas by defining which fields belong to each
-// wizard step, so light step validation can check only the current section
-// instead of the whole form at once.
+export type CurriculumLoadEntry = {
+  year: number
+  first_sem: number | ''
+  second_sem: number | ''
+}
+
+export type CurriculumEntry = {
+  loads: CurriculumLoadEntry[]
+}
+
 const ProgInfoBaseSchema = z.object({
+  lawSchoolId: z.string(),
   lawProgramClassification: z.enum(LAW_PROGRAM_CLASSIFICATIONS),
   doctorateProgram: z.enum(DOCTORATE_PROGRAM_OPTIONS).or(z.literal('')),
   programType: z.enum(['extension', 'branch']),
@@ -101,21 +98,16 @@ const ProgInfoBaseSchema = z.object({
   classOperatingTo: z.enum(DAYS, { error: 'Required' }),
   curricularSchedule: z.enum(CURRICULAR_SCHEDULES, { error: 'Required' }),
   programDuration: z.enum(['online', 'hybrid']),
+  lebApprovalDate: z.string(),
   curricula: z.array(CurriculumEntryBaseSchema),
 })
 
 export const ProgInfoSchema = ProgInfoBaseSchema.superRefine((values, ctx) => {
-  const requireCurriculumValue = (
-    value: string,
-    curriculumIndex: number,
-    field: keyof CurriculumEntry,
-    label: string,
-  ) => {
-    if (value.trim().length > 0) return
+  if (values.lawSchoolId.trim().length === 0) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ['curricula', curriculumIndex, field],
-      message: `${label} is required`,
+      path: ['lawSchoolId'],
+      message: 'Required',
     })
   }
 
@@ -171,112 +163,62 @@ export const ProgInfoSchema = ProgInfoBaseSchema.superRefine((values, ctx) => {
     }
   }
 
+  if (values.lebApprovalDate.trim().length === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['lebApprovalDate'],
+      message: 'LEB Approval Date is required',
+    })
+  }
+
   if (values.curricula.length === 0) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['curricula'],
-      message: 'At least one curriculum entry is required',
+      message: 'At least one semestral academic load is required',
     })
   }
-
-  values.curricula.forEach((curriculum, index) => {
-    requireCurriculumValue(
-      curriculum.lebApprovalDate,
-      index,
-      'lebApprovalDate',
-      'LEB Approval Date',
-    )
-    requireCurriculumValue(
-      curriculum.firstYearFirstSem,
-      index,
-      'firstYearFirstSem',
-      'First Year Level - 1st Sem',
-    )
-    requireCurriculumValue(
-      curriculum.firstYearSecondSem,
-      index,
-      'firstYearSecondSem',
-      'First Year Level - 2nd Sem',
-    )
-    requireCurriculumValue(
-      curriculum.secondYearFirstSem,
-      index,
-      'secondYearFirstSem',
-      'Second Year Level - 1st Sem',
-    )
-    requireCurriculumValue(
-      curriculum.secondYearSecondSem,
-      index,
-      'secondYearSecondSem',
-      'Second Year Level - 2nd Sem',
-    )
-    requireCurriculumValue(
-      curriculum.thirdYearFirstSem,
-      index,
-      'thirdYearFirstSem',
-      'Third Year Level - 1st Sem',
-    )
-    requireCurriculumValue(
-      curriculum.thirdYearSecondSem,
-      index,
-      'thirdYearSecondSem',
-      'Third Year Level - 2nd Sem',
-    )
-    requireCurriculumValue(
-      curriculum.fourthYearFirstSem,
-      index,
-      'fourthYearFirstSem',
-      'Fourth Year Level - 1st Sem',
-    )
-    requireCurriculumValue(
-      curriculum.fourthYearSecondSem,
-      index,
-      'fourthYearSecondSem',
-      'Fourth Year Level - 2nd Sem',
-    )
-    requireCurriculumValue(
-      curriculum.fifthYearFirstSem,
-      index,
-      'fifthYearFirstSem',
-      'Fifth Year Level - 1st Sem',
-    )
-    requireCurriculumValue(
-      curriculum.fifthYearSecondSem,
-      index,
-      'fifthYearSecondSem',
-      'Fifth Year Level - 2nd Sem',
-    )
-    requireCurriculumValue(
-      curriculum.totalAcademicLoadFirstSem,
-      index,
-      'totalAcademicLoadFirstSem',
-      'Total academic load - 1st Sem',
-    )
-    requireCurriculumValue(
-      curriculum.totalAcademicLoadSecondSem,
-      index,
-      'totalAcademicLoadSecondSem',
-      'Total academic load - 2nd Sem',
-    )
-  })
 })
 
-// LENIENT SCHEMA: used during editing so incomplete later-step fields do not
-// block progress while the form is still being filled out.
-// performs light validation on the current step only, allowing other fields to be empty.
-export const ProgInfoDraftSchema = ProgInfoBaseSchema.partial()
+const DraftCurriculumLoadEntrySchema = z.object({
+  year: z.number().int().min(1).max(5),
+  first_sem: z.union([z.number().int('Must be a whole number'), z.literal('')]),
+  second_sem: z.union([z.number().int('Must be a whole number'), z.literal('')]),
+})
 
-// Note: These arrays drive the wizard logic by defining which fields belong to
-// each step and which title should be shown for that step.
-// Fields belonging to each step: used to scope light step validation on Next.
+const DraftCurriculumEntrySchema = z.object({
+  loads: z.array(DraftCurriculumLoadEntrySchema).length(5),
+})
+
+export const ProgInfoDraftSchema = z.object({
+  lawSchoolId: z.string(),
+  lawProgramClassification: z.enum(LAW_PROGRAM_CLASSIFICATIONS).or(z.literal('')),
+  doctorateProgram: z.enum(DOCTORATE_PROGRAM_OPTIONS).or(z.literal('')),
+  programType: z.enum(['extension', 'branch']).or(z.literal('')),
+  permitNumber: z.string(),
+  governmentAuthority: z.string(),
+  validity: z.string(),
+  locationSite: z.string(),
+  recognitionStatus: z.enum(RECOGNITION_STATUSES).or(z.literal('')),
+  recognitionNumber: z.string(),
+  startMonth: z.enum(MONTHS).or(z.literal('')),
+  endMonth: z.enum(MONTHS).or(z.literal('')),
+  classOperatingFrom: z.enum(DAYS).or(z.literal('')),
+  classOperatingTo: z.enum(DAYS).or(z.literal('')),
+  curricularSchedule: z.enum(CURRICULAR_SCHEDULES).or(z.literal('')),
+  programDuration: z.enum(['online', 'hybrid']).or(z.literal('')),
+  lebApprovalDate: z.string(),
+  curricula: z.array(DraftCurriculumEntrySchema),
+})
+
 export const STEP_FIELDS = [
-  ['lawProgramClassification', 'doctorateProgram'], // Step 0 - Law Program Classification
-  ['programType', 'governmentAuthority', 'validity', 'locationSite', 'recognitionStatus', 'recognitionNumber', 'permitNumber'], // Step 1 - Program Offered
-  ['startMonth', 'endMonth'],                // Step 2 - Academic Calendar
-  ['curricularSchedule'],                    // Step 3 - Curricular Schedule
-  ['programDuration'],                       // Step 4 - Program Duration
-  ['classOperatingFrom', 'classOperatingTo'], // Step 5 - Class Operating Schedule
-  ['curricula'],                             // Step 6 - Curriculum
+  ['lawProgramClassification', 'doctorateProgram'],
+  ['programType', 'governmentAuthority', 'validity', 'locationSite', 'recognitionStatus', 'recognitionNumber', 'permitNumber'],
+  ['startMonth', 'endMonth'],
+  ['curricularSchedule'],
+  ['programDuration'],
+  ['classOperatingFrom', 'classOperatingTo'],
+  ['lebApprovalDate', 'curricula'],
 ] as const
 
 export const STEP_TITLES = [
@@ -289,8 +231,8 @@ export const STEP_TITLES = [
   'Curriculum',
 ] as const
 
-// Note: This is the in-memory TypeScript shape of the form data.
 export type ProgInfoFormData = {
+  lawSchoolId: string
   lawProgramClassification: LawProgramClassification | ''
   doctorateProgram: DoctorateProgramOption | ''
   programType: 'extension' | 'branch' | ''
@@ -306,6 +248,7 @@ export type ProgInfoFormData = {
   classOperatingTo: Day | ''
   curricularSchedule: CurricularSchedule | ''
   programDuration: 'online' | 'hybrid' | ''
+  lebApprovalDate: string
   curricula: CurriculumEntry[]
 }
 
@@ -317,8 +260,8 @@ export const ProgramInfoSubmissionSchema = z.object({
 
 export type ProgramInfoSubmission = z.infer<typeof ProgramInfoSubmissionSchema>
 
-// Note: Default values used when the form is first initialized or reset.
 export const progInfoDefaultValues: ProgInfoFormData = {
+  lawSchoolId: '',
   lawProgramClassification: '',
   doctorateProgram: '',
   programType: '',
@@ -334,21 +277,16 @@ export const progInfoDefaultValues: ProgInfoFormData = {
   classOperatingTo: '',
   curricularSchedule: '',
   programDuration: '',
+  lebApprovalDate: '',
   curricula: [
     {
-      lebApprovalDate: '',
-      firstYearFirstSem: '',
-      firstYearSecondSem: '',
-      secondYearFirstSem: '',
-      secondYearSecondSem: '',
-      thirdYearFirstSem: '',
-      thirdYearSecondSem: '',
-      fourthYearFirstSem: '',
-      fourthYearSecondSem: '',
-      fifthYearFirstSem: '',
-      fifthYearSecondSem: '',
-      totalAcademicLoadFirstSem: '',
-      totalAcademicLoadSecondSem: '',
+      loads: [
+        { year: 1, first_sem: '', second_sem: '' },
+        { year: 2, first_sem: '', second_sem: '' },
+        { year: 3, first_sem: '', second_sem: '' },
+        { year: 4, first_sem: '', second_sem: '' },
+        { year: 5, first_sem: '', second_sem: '' },
+      ],
     },
   ],
 }

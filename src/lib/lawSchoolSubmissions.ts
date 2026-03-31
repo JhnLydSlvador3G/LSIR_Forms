@@ -5,6 +5,7 @@ import {
 import { z } from 'zod'
 
 export const LAW_SCHOOL_SUBMISSIONS_KEY = 'lawSchool-submissions'
+export const ACTIVE_LAW_SCHOOL_SUBMISSION_ID_KEY = 'lawSchool-active-submission-id'
 
 export const LawSchoolSubmissionSchema = z.object({
   id: z.string(),
@@ -26,7 +27,26 @@ export function loadLawSchoolSubmissions(): LawSchoolSubmission[] {
     const parsed = JSON.parse(raw)
     const result = LawSchoolSubmissionListSchema.safeParse(parsed)
 
-    return result.success ? result.data : []
+    if (!result.success) return []
+
+    const seen = new Set<string>()
+    const deduped = result.data.filter((submission) => {
+      const signature = JSON.stringify(submission.data)
+      if (seen.has(signature)) {
+        return false
+      }
+      seen.add(signature)
+      return true
+    })
+
+    if (deduped.length !== result.data.length) {
+      localStorage.setItem(
+        LAW_SCHOOL_SUBMISSIONS_KEY,
+        JSON.stringify(deduped),
+      )
+    }
+
+    return deduped
   } catch {
     return []
   }
@@ -50,6 +70,51 @@ export function appendLawSchoolSubmission(
   )
 
   return submission
+}
+
+export function saveLawSchoolSubmission(
+  data: LawSchoolFormData,
+  existingId?: string,
+): LawSchoolSubmission {
+  const parsedData = lawSchoolFormSchema.parse(data)
+  const existing = loadLawSchoolSubmissions()
+
+  if (existingId) {
+    const match = existing.find((submission) => submission.id === existingId)
+
+    if (match) {
+      const updatedSubmission: LawSchoolSubmission = {
+        ...match,
+        data: parsedData,
+      }
+
+      localStorage.setItem(
+        LAW_SCHOOL_SUBMISSIONS_KEY,
+        JSON.stringify(
+          existing.map((submission) =>
+            submission.id === existingId ? updatedSubmission : submission,
+          ),
+        ),
+      )
+
+      localStorage.setItem(ACTIVE_LAW_SCHOOL_SUBMISSION_ID_KEY, updatedSubmission.id)
+      return updatedSubmission
+    }
+  }
+
+  const created = appendLawSchoolSubmission(parsedData)
+  localStorage.setItem(ACTIVE_LAW_SCHOOL_SUBMISSION_ID_KEY, created.id)
+  return created
+}
+
+export function loadActiveLawSchoolSubmissionId() {
+  if (typeof window === 'undefined') return ''
+  return localStorage.getItem(ACTIVE_LAW_SCHOOL_SUBMISSION_ID_KEY) || ''
+}
+
+export function clearActiveLawSchoolSubmissionId() {
+  if (typeof window === 'undefined') return
+  localStorage.removeItem(ACTIVE_LAW_SCHOOL_SUBMISSION_ID_KEY)
 }
 
 export function getLawSchoolSubmissionDisplayName(

@@ -3,7 +3,13 @@ import { Link } from '@tanstack/react-router'
 import { ChevronDown, ChevronRight, FileText, Plus } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { FormWrapper } from '../FormWrapper'
+import LawSchoolProgramCard from '@/components/ui/form/LawSchoolProgramCard'
 import { loadProgramInfoSubmissions } from '@/lib/programInfoSubmissions'
+import {
+  getLawSchoolSubmissionDisplayName,
+  loadLawSchoolSubmissions,
+  type LawSchoolSubmission,
+} from '@/lib/lawSchoolSubmissions'
 import type {
   CurricularSchedule,
   DoctorateProgramOption,
@@ -158,47 +164,28 @@ function SubmissionCard({ submission, open, onToggle }: SubmissionCardProps) {
                 <FileText size={16} className="text-leb" />
                 <h4 className="text-[13px] font-semibold text-slate-900">Curriculum Details</h4>
               </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                <DetailItem
+                  label="LEB Approval Date"
+                  value={data.lebApprovalDate || 'Not provided'}
+                />
+              </div>
               {data.curricula.map((curriculum, index) => (
                 <div
                   key={`${submission.id}-curriculum-${index}`}
                   className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"
                 >
                   <p className="text-[13px] font-semibold text-slate-900">
-                    Curriculum {index + 1}
+                    Semestral Academic Load {index + 1}
                   </p>
                   <div className="mt-3 grid gap-3 md:grid-cols-2">
-                    <DetailItem
-                      label="LEB Approval Date"
-                      value={curriculum.lebApprovalDate || 'Not provided'}
-                    />
-                    <DetailItem
-                      label="Total Load - 1st Sem"
-                      value={curriculum.totalAcademicLoadFirstSem || 'Not provided'}
-                    />
-                    <DetailItem
-                      label="Total Load - 2nd Sem"
-                      value={curriculum.totalAcademicLoadSecondSem || 'Not provided'}
-                    />
-                    <DetailItem
-                      label="1st Year"
-                      value={`${curriculum.firstYearFirstSem || '-'} / ${curriculum.firstYearSecondSem || '-'}`}
-                    />
-                    <DetailItem
-                      label="2nd Year"
-                      value={`${curriculum.secondYearFirstSem || '-'} / ${curriculum.secondYearSecondSem || '-'}`}
-                    />
-                    <DetailItem
-                      label="3rd Year"
-                      value={`${curriculum.thirdYearFirstSem || '-'} / ${curriculum.thirdYearSecondSem || '-'}`}
-                    />
-                    <DetailItem
-                      label="4th Year"
-                      value={`${curriculum.fourthYearFirstSem || '-'} / ${curriculum.fourthYearSecondSem || '-'}`}
-                    />
-                    <DetailItem
-                      label="5th Year"
-                      value={`${curriculum.fifthYearFirstSem || '-'} / ${curriculum.fifthYearSecondSem || '-'}`}
-                    />
+                    {curriculum.loads.map((load) => (
+                      <DetailItem
+                        key={`${submission.id}-${index}-${load.year}`}
+                        label={`Year ${load.year}`}
+                        value={`${String(load.first_sem)} / ${String(load.second_sem)}`}
+                      />
+                    ))}
                   </div>
                 </div>
               ))}
@@ -255,24 +242,125 @@ function SubmissionColumn({
   )
 }
 
+type GroupedPrograms = {
+  jurisDoctor: ProgramInfoSubmission[]
+  masterOfLaws: ProgramInfoSubmission[]
+  doctorateByProgram: Record<DoctorateProgramOption, ProgramInfoSubmission[]>
+}
+
+type LawSchoolGroup = {
+  id: string
+  name: string
+  grouped: GroupedPrograms
+}
+
+type LawSchoolDetailsSectionProps = {
+  lawSchoolGroup: LawSchoolGroup
+  openIds: Set<string>
+  onToggleSubmission: (id: string) => void
+}
+
+function LawSchoolDetailsSection({
+  lawSchoolGroup,
+  openIds,
+  onToggleSubmission,
+}: LawSchoolDetailsSectionProps) {
+  return (
+    <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+      <div className="space-y-8 px-4 py-5">
+        <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
+          <div className="w-full md:flex-1">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900">
+              {lawSchoolGroup.name}
+            </h1>
+          </div>
+          <div className="flex w-full justify-center md:flex-1 md:justify-end">
+            <Link
+              to="/programinfo"
+              search={{ lawSchoolId: lawSchoolGroup.id }}
+              className="inline-flex items-center gap-2 rounded-xl bg-leb px-4 py-2.5 text-sm font-semibold text-white shadow transition-transform hover:scale-[1.02]"
+            >
+              <Plus size={16} />
+              New submission
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid gap-5">
+          <SubmissionColumn
+            title={LAW_PROGRAM_HEADINGS['juris-doctor']}
+            items={lawSchoolGroup.grouped.jurisDoctor}
+            openIds={openIds}
+            onToggle={onToggleSubmission}
+          />
+          <SubmissionColumn
+            title={LAW_PROGRAM_HEADINGS['master-of-laws']}
+            items={lawSchoolGroup.grouped.masterOfLaws}
+            openIds={openIds}
+            onToggle={onToggleSubmission}
+          />
+          <SubmissionColumn title={LAW_PROGRAM_HEADINGS.doctorate}>
+            <div className="space-y-5">
+              {DOCTORATE_SECTIONS.map((section, index) => {
+                const items = lawSchoolGroup.grouped.doctorateByProgram[section]
+                return (
+                  <div
+                    key={section}
+                    className={index > 0 ? 'border-t border-slate-200 pt-5' : undefined}
+                  >
+                    <div className="rounded-2xl bg-slate-50 px-4 py-4">
+                      <h3 className="mt-1 text-lg font-bold text-slate-900">{section}</h3>
+                    </div>
+
+                    <div className="mt-3 mr-5 border-l border-slate-200 pl-4">
+                      <div className="space-y-3">
+                        {items.length > 0 ? (
+                          items.map((submission) => (
+                            <SubmissionCard
+                              key={submission.id}
+                              submission={submission}
+                              open={openIds.has(submission.id)}
+                              onToggle={() => onToggleSubmission(submission.id)}
+                            />
+                          ))
+                        ) : (
+                          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            No submissions yet.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </SubmissionColumn>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function ProgInfoSubmissionList() {
   const [submissions, setSubmissions] = useState<ProgramInfoSubmission[]>([])
+  const [lawSchoolSubmissions, setLawSchoolSubmissions] = useState<LawSchoolSubmission[]>([])
   const [openIds, setOpenIds] = useState<Set<string>>(new Set())
-  const [isLeiOpen, setIsLeiOpen] = useState(true)
-  const leiProgram = 1
+  const [openLawSchoolIds, setOpenLawSchoolIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     setSubmissions(loadProgramInfoSubmissions())
+    const lawSchools = loadLawSchoolSubmissions()
+    setLawSchoolSubmissions(lawSchools)
   }, [])
 
-  const grouped = useMemo(() => {
-    const jurisDoctor = submissions.filter(
+  const groupProgramSubmissions = (items: ProgramInfoSubmission[]): GroupedPrograms => {
+    const jurisDoctor = items.filter(
       (submission) => submission.data.lawProgramClassification === 'juris-doctor',
     )
-    const masterOfLaws = submissions.filter(
+    const masterOfLaws = items.filter(
       (submission) => submission.data.lawProgramClassification === 'master-of-laws',
     )
-    const doctorateItems = submissions.filter(
+    const doctorateItems = items.filter(
       (submission) => submission.data.lawProgramClassification === 'doctorate',
     )
 
@@ -292,7 +380,28 @@ export default function ProgInfoSubmissionList() {
       masterOfLaws,
       doctorateByProgram,
     }
-  }, [submissions])
+  }
+
+  const groupedByLawSchool = useMemo(() => {
+    const parents = lawSchoolSubmissions.map((lawSchool) => ({
+      id: lawSchool.id,
+      name: getLawSchoolSubmissionDisplayName(lawSchool),
+      grouped: groupProgramSubmissions(
+        submissions.filter((submission) => submission.data.lawSchoolId === lawSchool.id),
+      ),
+    }))
+
+    const unassigned = submissions.filter((submission) => !submission.data.lawSchoolId)
+    if (unassigned.length > 0) {
+      parents.push({
+        id: '__unassigned__',
+        name: 'Unassigned LEI',
+        grouped: groupProgramSubmissions(unassigned),
+      })
+    }
+
+    return parents
+  }, [lawSchoolSubmissions, submissions])
 
   const toggleSubmission = (id: string) => {
     setOpenIds((current) => {
@@ -306,6 +415,70 @@ export default function ProgInfoSubmissionList() {
     })
   }
 
+  const toggleLawSchoolSection = (id: string) => {
+    setOpenLawSchoolIds((current) => {
+      const next = new Set(current)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  const renderLawSchoolCard = (lawSchoolGroup: LawSchoolGroup) => (
+    <LawSchoolProgramCard
+      key={lawSchoolGroup.id}
+      title={lawSchoolGroup.name}
+      summaryItems={[
+        {
+          label: 'Juris Doctor',
+          value: lawSchoolGroup.grouped.jurisDoctor.length,
+        },
+        {
+          label: 'Master of Laws',
+          value: lawSchoolGroup.grouped.masterOfLaws.length,
+        },
+        {
+          label: 'Doctorate',
+          value: DOCTORATE_SECTIONS.reduce(
+            (total, section) => total + lawSchoolGroup.grouped.doctorateByProgram[section].length,
+            0,
+          ),
+        },
+      ]}
+      expanded={openLawSchoolIds.has(lawSchoolGroup.id)}
+      onAction={() => toggleLawSchoolSection(lawSchoolGroup.id)}
+    />
+  )
+
+  const renderResponsiveSections = (columns: 1 | 2 | 3) => {
+    const rows: LawSchoolGroup[][] = []
+    for (let index = 0; index < groupedByLawSchool.length; index += columns) {
+      rows.push(groupedByLawSchool.slice(index, index + columns))
+    }
+
+    return rows.map((row, rowIndex) => {
+      const openGroup = row.find((group) => openLawSchoolIds.has(group.id))
+      return (
+        <div key={`row-${columns}-${rowIndex}`} className="space-y-4">
+          <div className={`grid gap-5 ${columns === 1 ? '' : columns === 2 ? 'md:grid-cols-2' : 'xl:grid-cols-3'}`}>
+            {row.map((lawSchoolGroup) => renderLawSchoolCard(lawSchoolGroup))}
+          </div>
+
+          {openGroup ? (
+            <LawSchoolDetailsSection
+              lawSchoolGroup={openGroup}
+              openIds={openIds}
+              onToggleSubmission={toggleSubmission}
+            />
+          ) : null}
+        </div>
+      )
+    })
+  }
+
   return (
     <FormWrapper
       title="Program Information Submissions"
@@ -313,90 +486,17 @@ export default function ProgInfoSubmissionList() {
       className="w-[90%] max-w-none"
     >
       <div className="space-y-8 px-2 py-4">
-        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-          <button
-            type="button"
-            onClick={() => setIsLeiOpen((current) => !current)}
-            className="flex w-full items-center justify-between gap-3 bg-slate-50 px-5 py-4 text-left transition-colors hover:bg-slate-100"
-          >
-            <h2 className="text-lg font-bold text-slate-900">LEI {leiProgram}</h2>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-leb/10 text-leb">
-              {isLeiOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </span>
-          </button>
-
-          {isLeiOpen && (
-            <div className="space-y-8 px-4 py-5">
-              <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
-                <div className="w-full md:flex-1">
-                  <h1 className="text-2xl font-black tracking-tight text-slate-900">
-                    LEI ({leiProgram})
-                  </h1>
-                </div>
-                <div className="flex w-full justify-center md:flex-1 md:justify-end">
-                  <Link
-                    to="/programinfo"
-                    className="inline-flex items-center gap-2 rounded-xl bg-leb px-4 py-2.5 text-sm font-semibold text-white shadow transition-transform hover:scale-[1.02]"
-                  >
-                    <Plus size={16} />
-                    New submission
-                  </Link>
-                </div>
-              </div>
-
-              <div className="grid gap-5 xl:grid-cols-3">
-                <SubmissionColumn
-                  title={LAW_PROGRAM_HEADINGS['juris-doctor']}
-                  items={grouped.jurisDoctor}
-                  openIds={openIds}
-                  onToggle={toggleSubmission}
-                />
-                <SubmissionColumn
-                  title={LAW_PROGRAM_HEADINGS['master-of-laws']}
-                  items={grouped.masterOfLaws}
-                  openIds={openIds}
-                  onToggle={toggleSubmission}
-                />
-                <SubmissionColumn title={LAW_PROGRAM_HEADINGS.doctorate}>
-                  <div className="space-y-5">
-                    {DOCTORATE_SECTIONS.map((section, index) => {
-                      const items = grouped.doctorateByProgram[section]
-                      return (
-                        <div
-                          key={section}
-                          className={index > 0 ? 'border-t border-slate-200 pt-5' : undefined}
-                        >
-                          <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                            <h3 className="mt-1 text-lg font-bold text-slate-900">{section}</h3>
-                          </div>
-
-                          <div className="mt-3 mr-5 border-l border-slate-200 pl-4">
-                            <div className="space-y-3">
-                              {items.length > 0 ? (
-                                items.map((submission) => (
-                                  <SubmissionCard
-                                    key={submission.id}
-                                    submission={submission}
-                                    open={openIds.has(submission.id)}
-                                    onToggle={() => toggleSubmission(submission.id)}
-                                  />
-                                ))
-                              ) : (
-                                <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
-                                  No submissions yet.
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </SubmissionColumn>
-              </div>
-            </div>
-          )}
-        </section>
+        {groupedByLawSchool.length > 0 ? (
+          <>
+            <div className="space-y-4 md:hidden">{renderResponsiveSections(1)}</div>
+            <div className="hidden space-y-4 md:block xl:hidden">{renderResponsiveSections(2)}</div>
+            <div className="hidden space-y-4 xl:block">{renderResponsiveSections(3)}</div>
+          </>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center text-slate-500">
+            No Law School submissions yet.
+          </div>
+        )}
       </div>
     </FormWrapper>
   )
