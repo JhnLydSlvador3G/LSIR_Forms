@@ -1,8 +1,13 @@
 import { createAuthClient } from 'better-auth/react'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 
+const authBaseUrl =
+  typeof window !== 'undefined'
+    ? window.location.origin
+    : process.env.BETTER_AUTH_URL || 'http://localhost:3000'
+
 export const authClient = createAuthClient({
-  baseURL: "http://localhost:8000",
+  baseURL: authBaseUrl,
   fetchOptions: {
     credentials: 'include'
   },

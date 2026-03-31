@@ -4,8 +4,21 @@ import { useAppForm } from '@/hooks/useFormContext'
 import { authClient } from '@/lib/auth-client'
 import { getLoginErrorMessage } from '@/lib/errorMessages'
 
+const isAuthBypassEnabled = import.meta.env.VITE_AUTH_BYPASS === 'true'
+const devLoginUser = import.meta.env.VITE_DEV_LOGIN_USER ?? ''
+const devLoginPass = import.meta.env.VITE_DEV_LOGIN_PASS ?? ''
+
 const LoginFormSchema = z.object({
-  email: z.email(),
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Email is required')
+    .refine(
+      (value) =>
+        (isAuthBypassEnabled && value === devLoginUser) ||
+        z.email().safeParse(value).success,
+      'Please enter a valid email',
+    ),
   password: z.string().min(8, 'You must have a length of at least 8'),
 })
 
@@ -28,6 +41,17 @@ export default function LoginForm() {
       onBlur: LoginFormSchema,
       onSubmitAsync: async ({ value }) => {
         const { email, password } = value
+
+        if (
+          isAuthBypassEnabled &&
+          email === devLoginUser &&
+          password === devLoginPass
+        ) {
+          document.cookie = 'dev_auth_bypass=1; path=/; SameSite=Lax'
+          navigate({ to: redirectTo, replace: true })
+          return
+        }
+
         const { error } = await authClient.signIn.email({
           email: email,
           password: password,
