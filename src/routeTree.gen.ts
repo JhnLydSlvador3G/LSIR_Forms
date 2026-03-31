@@ -11,15 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiHelloRouteImport } from './routes/api/hello'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
+import { Route as AuthSignupIndexRouteImport } from './routes/_auth/signup.index'
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login.index'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedFormStudentprofileRouteImport } from './routes/_protected/_form/studentprofile'
 import { Route as ProtectedFormScheduleRouteImport } from './routes/_protected/_form/schedule'
 import { Route as ProtectedFormPrograminfoSubmissionsRouteImport } from './routes/_protected/_form/programinfo-submissions'
 import { Route as ProtectedFormPrograminfoRouteImport } from './routes/_protected/_form/programinfo'
+import { Route as ProtectedFormLawschoolinfoRouteImport } from './routes/_protected/_form/lawschoolinfo'
 import { Route as ProtectedFormHeiinfoRouteImport } from './routes/_protected/_form/heiinfo'
+import { Route as ProtectedFormFinancialinfoRouteImport } from './routes/_protected/_form/financialinfo'
 import { Route as ProtectedFormFacultyrosterRouteImport } from './routes/_protected/_form/facultyroster'
 import { Route as ProtectedFormFacultyprofileRouteImport } from './routes/_protected/_form/facultyprofile'
 import { Route as ProtectedFormFacultydevelopmentRouteImport } from './routes/_protected/_form/facultydevelopment'
@@ -33,24 +34,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiHelloRoute = ApiHelloRouteImport.update({
-  id: '/api/hello',
-  path: '/api/hello',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
+  id: '/_auth/signup/',
+  path: '/signup/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
   id: '/_auth/login/',
   path: '/login/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProtectedFormStudentprofileRoute =
@@ -76,11 +72,23 @@ const ProtectedFormPrograminfoRoute =
     path: '/programinfo',
     getParentRoute: () => ProtectedRoute,
   } as any)
+const ProtectedFormLawschoolinfoRoute =
+  ProtectedFormLawschoolinfoRouteImport.update({
+    id: '/_form/lawschoolinfo',
+    path: '/lawschoolinfo',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 const ProtectedFormHeiinfoRoute = ProtectedFormHeiinfoRouteImport.update({
   id: '/_form/heiinfo',
   path: '/heiinfo',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const ProtectedFormFinancialinfoRoute =
+  ProtectedFormFinancialinfoRouteImport.update({
+    id: '/_form/financialinfo',
+    path: '/financialinfo',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 const ProtectedFormFacultyrosterRoute =
   ProtectedFormFacultyrosterRouteImport.update({
     id: '/_form/facultyroster',
@@ -103,105 +111,110 @@ const ProtectedFormFacultydevelopmentRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
-  '/api/hello': typeof ApiHelloRoute
   '/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
+  '/financialinfo': typeof ProtectedFormFinancialinfoRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
+  '/lawschoolinfo': typeof ProtectedFormLawschoolinfoRoute
   '/programinfo': typeof ProtectedFormPrograminfoRoute
   '/programinfo-submissions': typeof ProtectedFormPrograminfoSubmissionsRoute
   '/schedule': typeof ProtectedFormScheduleRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/login/': typeof AuthLoginIndexRoute
+  '/signup/': typeof AuthSignupIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
-  '/api/hello': typeof ApiHelloRoute
   '/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/facultyroster': typeof ProtectedFormFacultyrosterRoute
+  '/financialinfo': typeof ProtectedFormFinancialinfoRoute
   '/heiinfo': typeof ProtectedFormHeiinfoRoute
+  '/lawschoolinfo': typeof ProtectedFormLawschoolinfoRoute
   '/programinfo': typeof ProtectedFormPrograminfoRoute
   '/programinfo-submissions': typeof ProtectedFormPrograminfoSubmissionsRoute
   '/schedule': typeof ProtectedFormScheduleRoute
   '/studentprofile': typeof ProtectedFormStudentprofileRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/login': typeof AuthLoginIndexRoute
+  '/signup': typeof AuthSignupIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteWithChildren
   '/_protected/dashboard': typeof ProtectedDashboardRoute
-  '/api/hello': typeof ApiHelloRoute
   '/_protected/_form/facultydevelopment': typeof ProtectedFormFacultydevelopmentRoute
   '/_protected/_form/facultyprofile': typeof ProtectedFormFacultyprofileRoute
   '/_protected/_form/facultyroster': typeof ProtectedFormFacultyrosterRoute
+  '/_protected/_form/financialinfo': typeof ProtectedFormFinancialinfoRoute
   '/_protected/_form/heiinfo': typeof ProtectedFormHeiinfoRoute
+  '/_protected/_form/lawschoolinfo': typeof ProtectedFormLawschoolinfoRoute
   '/_protected/_form/programinfo': typeof ProtectedFormPrograminfoRoute
   '/_protected/_form/programinfo-submissions': typeof ProtectedFormPrograminfoSubmissionsRoute
   '/_protected/_form/schedule': typeof ProtectedFormScheduleRoute
   '/_protected/_form/studentprofile': typeof ProtectedFormStudentprofileRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
+  '/_auth/signup/': typeof AuthSignupIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/api/hello'
     | '/facultydevelopment'
     | '/facultyprofile'
     | '/facultyroster'
+    | '/financialinfo'
     | '/heiinfo'
+    | '/lawschoolinfo'
     | '/programinfo'
     | '/programinfo-submissions'
     | '/schedule'
     | '/studentprofile'
-    | '/api/auth/$'
     | '/login/'
+    | '/signup/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/dashboard'
-    | '/api/hello'
     | '/facultydevelopment'
     | '/facultyprofile'
     | '/facultyroster'
+    | '/financialinfo'
     | '/heiinfo'
+    | '/lawschoolinfo'
     | '/programinfo'
     | '/programinfo-submissions'
     | '/schedule'
     | '/studentprofile'
-    | '/api/auth/$'
     | '/login'
+    | '/signup'
   id:
     | '__root__'
     | '/'
     | '/_protected'
     | '/_protected/dashboard'
-    | '/api/hello'
     | '/_protected/_form/facultydevelopment'
     | '/_protected/_form/facultyprofile'
     | '/_protected/_form/facultyroster'
+    | '/_protected/_form/financialinfo'
     | '/_protected/_form/heiinfo'
+    | '/_protected/_form/lawschoolinfo'
     | '/_protected/_form/programinfo'
     | '/_protected/_form/programinfo-submissions'
     | '/_protected/_form/schedule'
     | '/_protected/_form/studentprofile'
-    | '/api/auth/$'
     | '/_auth/login/'
+    | '/_auth/signup/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRoute: typeof ProtectedRouteWithChildren
-  ApiHelloRoute: typeof ApiHelloRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
+  AuthSignupIndexRoute: typeof AuthSignupIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -220,13 +233,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/hello': {
-      id: '/api/hello'
-      path: '/api/hello'
-      fullPath: '/api/hello'
-      preLoaderRoute: typeof ApiHelloRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_protected/dashboard': {
       id: '/_protected/dashboard'
       path: '/dashboard'
@@ -234,18 +240,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDashboardRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_auth/signup/': {
+      id: '/_auth/signup/'
+      path: '/signup'
+      fullPath: '/signup/'
+      preLoaderRoute: typeof AuthSignupIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/login/': {
       id: '/_auth/login/'
       path: '/login'
       fullPath: '/login/'
       preLoaderRoute: typeof AuthLoginIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_protected/_form/studentprofile': {
@@ -276,11 +282,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedFormPrograminfoRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/_form/lawschoolinfo': {
+      id: '/_protected/_form/lawschoolinfo'
+      path: '/lawschoolinfo'
+      fullPath: '/lawschoolinfo'
+      preLoaderRoute: typeof ProtectedFormLawschoolinfoRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
     '/_protected/_form/heiinfo': {
       id: '/_protected/_form/heiinfo'
       path: '/heiinfo'
       fullPath: '/heiinfo'
       preLoaderRoute: typeof ProtectedFormHeiinfoRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/_form/financialinfo': {
+      id: '/_protected/_form/financialinfo'
+      path: '/financialinfo'
+      fullPath: '/financialinfo'
+      preLoaderRoute: typeof ProtectedFormFinancialinfoRouteImport
       parentRoute: typeof ProtectedRoute
     }
     '/_protected/_form/facultyroster': {
@@ -312,7 +332,9 @@ interface ProtectedRouteChildren {
   ProtectedFormFacultydevelopmentRoute: typeof ProtectedFormFacultydevelopmentRoute
   ProtectedFormFacultyprofileRoute: typeof ProtectedFormFacultyprofileRoute
   ProtectedFormFacultyrosterRoute: typeof ProtectedFormFacultyrosterRoute
+  ProtectedFormFinancialinfoRoute: typeof ProtectedFormFinancialinfoRoute
   ProtectedFormHeiinfoRoute: typeof ProtectedFormHeiinfoRoute
+  ProtectedFormLawschoolinfoRoute: typeof ProtectedFormLawschoolinfoRoute
   ProtectedFormPrograminfoRoute: typeof ProtectedFormPrograminfoRoute
   ProtectedFormPrograminfoSubmissionsRoute: typeof ProtectedFormPrograminfoSubmissionsRoute
   ProtectedFormScheduleRoute: typeof ProtectedFormScheduleRoute
@@ -324,7 +346,9 @@ const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedFormFacultydevelopmentRoute: ProtectedFormFacultydevelopmentRoute,
   ProtectedFormFacultyprofileRoute: ProtectedFormFacultyprofileRoute,
   ProtectedFormFacultyrosterRoute: ProtectedFormFacultyrosterRoute,
+  ProtectedFormFinancialinfoRoute: ProtectedFormFinancialinfoRoute,
   ProtectedFormHeiinfoRoute: ProtectedFormHeiinfoRoute,
+  ProtectedFormLawschoolinfoRoute: ProtectedFormLawschoolinfoRoute,
   ProtectedFormPrograminfoRoute: ProtectedFormPrograminfoRoute,
   ProtectedFormPrograminfoSubmissionsRoute:
     ProtectedFormPrograminfoSubmissionsRoute,
@@ -339,9 +363,8 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRoute: ProtectedRouteWithChildren,
-  ApiHelloRoute: ApiHelloRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
+  AuthSignupIndexRoute: AuthSignupIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

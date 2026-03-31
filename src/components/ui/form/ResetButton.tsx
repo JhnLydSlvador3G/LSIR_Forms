@@ -9,16 +9,16 @@ type ResetButtonProps = {
   defaultValues: Record<string, any>
   storageKey?: string
   label?: string
-  onReset?: () => void // Optional callback for additional reset logic (e.g., resetting wizard step)
+  onReset?: () => void
 }
 
 //Uses as any bad type but can't cast DefaultValues as <Record, never>
 
 const ResetButton = ({
-  defaultValues,   
-  storageKey, 
+  defaultValues,
+  storageKey,
   label = 'Reset',
-  onReset, // Optional callback for additional reset logic (e.g., resetting wizard step)
+  onReset,
 }: ResetButtonProps) => {
   const form = useFormContext()
   const [open, setOpen] = useState(false)

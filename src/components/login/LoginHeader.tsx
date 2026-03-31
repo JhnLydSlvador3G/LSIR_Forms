@@ -17,7 +17,7 @@ export default function LoginHeader() {
           />
         </a>
       </div>
-      <h2 className="text-8xl sm:text-[10rem] font-bold text-leb tracking-widest leading-none text-center">
+      <h2 className="text-8xl sm:text-[10rem] font-bold text-leb tracking-widest leading-none text-center text-shadow-lg/5 ">
         LSIR
       </h2>
     </>

@@ -57,6 +57,13 @@ export const navigationConfig: Array<NavItemConfig> = [
     activePaths: ['/programinfo-submissions', '/programinfo'],
     icon: BookCheck, 
   },
+  // Law School form page (see `src/routes/_protected/_form/lawschoolinfo.tsx`)
+  {
+    type: 'item',
+    label: 'Law School General Information',
+    to: '/lawschoolinfo',
+    icon: Info,
+  },
   {
     type: 'item',
     label: 'Student Profile',
@@ -86,6 +93,18 @@ export const navigationConfig: Array<NavItemConfig> = [
     label: 'Class Schedule',
     to: '/schedule',
     icon: CalendarDays,
+  },
+  {
+    type: 'item',
+    label: 'Financial Info',
+    to: '/financialinfo',
+    icon: GraduationCapIcon,
+  },
+  {
+    type: 'item',
+    label: 'LEI Info',
+    to: '/leiinfo',
+    icon: GraduationCapIcon,
   },
   {
     type: 'group',

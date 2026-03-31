@@ -11,10 +11,10 @@ export default function FormErrorMessage({ replayKey = 0 }: FormErrorMessageProp
   return (
     <form.Subscribe selector={(state) => state.errorMap.onSubmit}>
       {(errors) => {
-        if (!errors || errors.length === 0) return null
+        if (!errors || (Array.isArray(errors) && errors.length === 0)) return null
 
         return (
-          <div className="pointer-events-none fixed inset-x-0 top-6 z-[100] flex justify-center px-4">
+          <div className="fixed top-6 right-6 z-[100] w-full max-w-sm transition-all animate-slide-in">
             <ToastNotification
               key={`${replayKey}-${errors}`}
               variant="error"

@@ -38,10 +38,10 @@ export default function SubscribeButton({
   return (
     <form.Subscribe
       selector={(state) => [
-        state.isSubmitting,
+        state.isSubmitting, state.canSubmit, state.isPristine
       ]}
     >
-      {([isSubmitting]) =>
+      {([isSubmitting, canSubmit, isPristine]) =>
         shouldConfirm ? (
           <AlertDialog.Root open={open} onOpenChange={setOpen}>
             <AlertDialog.Trigger asChild>
@@ -94,7 +94,7 @@ export default function SubscribeButton({
         ) : (
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !canSubmit || isPristine}
             className={buttonClasses}
           >
             {isSubmitting ? <Spinner /> : label}
