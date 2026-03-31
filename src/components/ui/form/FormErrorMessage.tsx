@@ -1,4 +1,5 @@
 import { useFormContext } from '@/hooks/useFormContext'
+import ToastNotification from '@/components/ui/feedback/ToastNotification'
 
 export default function FormErrorMessage() {
   const form = useFormContext()
@@ -6,9 +7,15 @@ export default function FormErrorMessage() {
   return (
     <form.Subscribe selector={(state) => state.errorMap.onSubmit}>
       {(errors) => {
+        if (!errors || (Array.isArray(errors) && errors.length === 0)) return null
+
         return (
-          <div className="text-red-500">
-            {errors && errors.length > 0 ? <em>{errors}</em> : ''}
+          <div className="fixed top-6 right-6 z-[100] w-full max-w-sm transition-all animate-slide-in">
+            <ToastNotification
+              variant="error"
+              title="Please review this section"
+              message={errors}
+            />
           </div>
         )
       }}

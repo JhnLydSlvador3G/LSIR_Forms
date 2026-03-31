@@ -1,116 +1,277 @@
-import { useEffect } from 'react'
+import { useState } from 'react'
+import { StepperFormWrapper } from '../StepperFormWrapper'
 import AddressForm from '../address/AddressForm'
-import { FormWrapper } from '../FormWrapper'
-import { heiFormDefaultValues, heiFormSchema } from './HeiForm.types'
+import Spinner from '@/components/ui/feedback/Spinner'
+import {
+  HEI_ADDRESS_FIELDS,
+  HEI_PRESIDENT_FIELDS,
+  HEI_REGISTRAR_FIELDS,
+  HEI_STEPS,
+  heiFormDefaultValues,
+  heiFormDraftSchema,
+  heiFormSchema,
+} from './HeiForm.types'
+import type { HeiFormData, HeiOwnership, HeiType } from './HeiForm.types'
 import HeiGeneral from './HeiGeneralInfo'
 import HeiPersonel from './HeiPersonel'
 import { SectionWrapper } from './HeiSectionWrapper'
 import { useAppForm } from '@/hooks/useFormContext'
-import SubscribeButton from '@/components/ui/form/SubscribeButton'
-import ResetButton from '@/components/ui/form/ResetButton'
-import SaveButton from '@/components/ui/form/SaveButton'
-import { loadFormFromLocal } from '@/lib/formLocalStorage'
-import { useStore } from '@tanstack/react-form'
-import FormLeaveGuard from '@/components/navigation/FormLeaveGuard'
+import { useMultistepValidation } from '@/hooks/useMultistepValidation'
+import { StepperNav } from '@/components/ui/stepper/StepperNav'
+import { useStepper } from '@/hooks/useStepper'
+import { saveFormToLocal } from '@/lib/formLocalStorage'
+
+const isHeiOwnership = (value: unknown): value is HeiOwnership =>
+  value === 'private' || value === 'public'
+
+const isHeiType = (value: unknown): value is HeiType =>
+  value === 'university' || value === 'college' || value === 'others'
+
+const getActiveHeiStepFields = (
+  values: HeiFormData,
+  fieldNames: ReadonlyArray<string>,
+) =>
+  fieldNames.filter((fieldName) => {
+    // Only validate conditional fields when their controlling selection is active.
+    if (fieldName === 'privateOwnerShip') {
+      return values.heiOwnership === 'private'
+    }
+
+    if (fieldName === 'heiOther') {
+      return values.heiType === 'others'
+    }
+
+    return true
+  })
+
+const normalizeHeiDraft = (value: unknown): HeiFormData => {
+  const draft = (value as Partial<HeiFormData>) ?? {}
+  const ownership = isHeiOwnership(draft.heiOwnership)
+    ? draft.heiOwnership
+    : ''
+  const heiType = isHeiType(draft.heiType)
+    ? draft.heiType
+    : ''
+
+  return {
+    ...heiFormDefaultValues,
+    ...draft,
+    heiAdd: {
+      ...heiFormDefaultValues.heiAdd,
+      ...draft.heiAdd,
+    },
+    heiPres: {
+      ...heiFormDefaultValues.heiPres,
+      ...draft.heiPres,
+      credential: draft.heiPres?.credential || heiFormDefaultValues.heiPres.credential,
+    },
+    heiReg: {
+      ...heiFormDefaultValues.heiReg,
+      ...draft.heiReg,
+      credential: draft.heiReg?.credential || heiFormDefaultValues.heiReg.credential,
+    },
+    heiOwnership: ownership,
+    privateOwnerShip: ownership === 'private' ? (draft.privateOwnerShip ?? '') : '',
+    heiType,
+    heiOther: heiType === 'others' ? (draft.heiOther ?? '') : '',
+  }
+}
 
 export default function HeiForm() {
-  const form = useAppForm({
-    defaultValues: heiFormDefaultValues,
-    validators: {
-      onChange: heiFormSchema,
-      onBlur: heiFormSchema,
-    },
-    onSubmit: async ({ value }) => {
-      console.log(value)
-    },
+  const [initialValues, setInitialValues] = useState<HeiFormData>(() => {
+    if (typeof window === 'undefined') return heiFormDefaultValues
+
+    try {
+      const raw = localStorage.getItem('hei')
+      if (!raw) return heiFormDefaultValues
+      return normalizeHeiDraft(JSON.parse(raw))
+    } catch {
+      return heiFormDefaultValues
+    }
   })
-  // load persisted values only on the client after mount; the server will
-  // always render using the fallback, avoiding a hydration mismatch.
-  useEffect(() => {
-    const prev = loadFormFromLocal({
-      key: 'hei',
-      fallback: heiFormDefaultValues,
-    })
-    form.reset(prev ?? heiFormDefaultValues)
-  }, [form])
+  const [formVersion, setFormVersion] = useState(0)
 
   return (
+    <HeiFormContent
+      key={formVersion}
+      initialValues={initialValues}
+      onHardReset={() => {
+        setInitialValues(heiFormDefaultValues)
+        setFormVersion((value) => value + 1)
+      }}
+    />
+  )
+}
 
-    <FormWrapper title="HEI General Information">
-      <form
-        className="w-full flex flex-col"
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
+function HeiFormContent({
+  initialValues,
+  onHardReset,
+}: {
+  initialValues: HeiFormData
+  onHardReset: () => void
+}) {
+  // HEI keeps useStepper for navigation while shared validation handles Next/Submit.
+  const stepper = useStepper(HEI_STEPS)
+  const [resetVersion, setResetVersion] = useState(0)
 
-          const isValid = form.validateAllFields('submit')
+  const form = useAppForm({
+    defaultValues: initialValues,
+    validators: {
+      onChange: heiFormDraftSchema,
+    },
+    onSubmit: ({ value }) => {
+      console.log('Submitted:', value)
+    },
+  })
 
-          if (!isValid) return
+  const heiSections = [
+    {
+      key: 'general-information',
+      title: 'HEI General Information',
+      render: () => <HeiGeneral form={form as any} />,
+    },
+    {
+      key: 'hei-address',
+      title: 'HEI Address',
+      render: () => <AddressForm form={form as any} fields={HEI_ADDRESS_FIELDS} />,
+    },
+    {
+      key: 'hei-president',
+      title: 'HEI President',
+      render: () => (
+        <HeiPersonel
+          form={form as any}
+          fields={HEI_PRESIDENT_FIELDS}
+          isActive={stepper.currentStep === 2}
+        />
+      ),
+    },
+    {
+      key: 'hei-registrar',
+      title: 'HEI Registrar',
+      render: () => (
+        <HeiPersonel
+          form={form as any}
+          fields={HEI_REGISTRAR_FIELDS}
+          isActive={stepper.currentStep === 3}
+        />
+      ),
+    },
+  ] as const
 
-          form.handleSubmit()
-        }}
-      >
-        <SectionWrapper title="HEI General Information">
-          <HeiGeneral form={form} />
-        </SectionWrapper>
-        <SectionWrapper title="HEI Address">
-          <AddressForm
-            form={form}
-            fields={{
-              building: 'heiAdd.building',
-              street: 'heiAdd.street',
-              barangay: 'heiAdd.barangay',
-              district: 'heiAdd.district',
-              cityMult: 'heiAdd.cityMult',
-              province: 'heiAdd.province',
-              region: 'heiAdd.region',
-            }}
-          />
-        </SectionWrapper>
+  const getHeiDraftValues = () => {
+    const values = form.state.values
+    const ownership = isHeiOwnership(values.heiOwnership)
+      ? values.heiOwnership
+      : ''
+    const heiType = isHeiType(values.heiType) ? values.heiType : null
+    const normalizedHeiType = heiType ?? ''
 
-        <SectionWrapper title="HEI President">
-          <HeiPersonel
-            form={form}
-            title="HEI President"
-            type="heiPres"
-            fields={{
-              firstName: 'heiPres.firstName',
-              middleName: 'heiPres.middleName',
-              lastName: 'heiPres.lastName',
-              suffix: 'heiPres.suffix',
-              credential: 'heiPres.credential',
-              email: 'heiPres.email',
-              telNum: 'heiPres.telNum',
-            }}
-          />
-        </SectionWrapper>
-        <SectionWrapper title="HEI Registrar">
-          <HeiPersonel
-            form={form}
-            title="HEI Registrar"
-            type="heiReg"
-            fields={{
-              firstName: 'heiReg.firstName',
-              middleName: 'heiReg.middleName',
-              lastName: 'heiReg.lastName',
-              suffix: 'heiReg.suffix',
-              credential: 'heiReg.credential',
-              email: 'heiReg.email',
-              telNum: 'heiReg.telNum',
-            }}
-          />
-        </SectionWrapper>
-        <form.AppForm>
-          <div className="flex justify-between mt-5">
-            <div className="flex flex-row gap-4">
-              <ResetButton defaultValues={heiFormDefaultValues} storageKey='hei' />
-              <SaveButton getValue={() => form.state.values} storageKey="hei" />
-            </div>
+    return {
+      ...heiFormDefaultValues,
+      ...values,
+      heiAdd: {
+        ...heiFormDefaultValues.heiAdd,
+        ...values.heiAdd,
+      },
+      heiPres: {
+        ...heiFormDefaultValues.heiPres,
+        ...values.heiPres,
+      },
+      heiReg: {
+        ...heiFormDefaultValues.heiReg,
+        ...values.heiReg,
+      },
+      heiOwnership: ownership,
+      privateOwnerShip: ownership === 'private' ? (values.privateOwnerShip || null) : null,
+      heiType: normalizedHeiType,
+      heiOther: normalizedHeiType === 'others' ? (values.heiOther || '') : '',
+    }
+  }
 
-            <SubscribeButton label="Submit" />
+  const { clearSubmitError, validateCurrentStep, validateBeforeSubmit } =
+    useMultistepValidation<HeiFormData>({
+      form,
+      stepper,
+      schema: heiFormSchema,
+      // HEI has conditional fields on step 1 that should not error while inactive.
+      getActiveFields: ({ values, fields }) =>
+        getActiveHeiStepFields(values, fields),
+    })
+  const handleStepNext = validateCurrentStep
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!stepper.isLast) return
+
+    // Submit runs full-form validation and jumps to the first invalid step when needed.
+    const result = await validateBeforeSubmit()
+
+    if (!result.ok) {
+      return
+    }
+
+    saveFormToLocal({
+      key: 'hei',
+      value: getHeiDraftValues(),
+    })
+
+    await form.handleSubmit()
+    form.reset(form.state.values, { keepDefaultValues: true })
+    stepper.goTo(stepper.totalSteps - 1)
+  }
+
+  return (
+    <StepperFormWrapper title="HEI General Information" stepper={stepper}>
+      <form className="w-full flex flex-col" onSubmit={handleSubmit}>
+        {heiSections.map((section, index) => (
+          <div
+            key={`${section.key}-${resetVersion}`}
+            className={index === stepper.currentStep ? 'block' : 'hidden'}
+          >
+            <SectionWrapper title={section.title}>
+              {section.render()}
+            </SectionWrapper>
           </div>
+        ))}
+
+        <form.AppForm>
+          <StepperNav
+            stepper={stepper}
+            storageKey="hei"
+            defaultValues={heiFormDefaultValues}
+            getValue={getHeiDraftValues}
+            savePreferGetValueFirst
+            onNext={handleStepNext}
+            onReset={() => {
+              onHardReset()
+              clearSubmitError()
+              setResetVersion((value) => value + 1)
+              stepper.goTo(0)
+            }}
+          />
+
+          <form.FormErrorMessage />
+
+          {stepper.isLast && (
+            <form.Subscribe selector={(state) => state.isSubmitting}>
+              {(isSubmitting) => (
+                <div className="px-6 pb-4 flex justify-end gap-3">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex items-center gap-2 px-8 py-2 rounded-xl text-sm font-semibold bg-leb text-white shadow-md ring-2 ring-leb/30 hover:scale-105 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? <Spinner size="h-4 w-4" /> : 'Submit'}
+                  </button>
+                </div>
+              )}
+            </form.Subscribe>
+          )}
         </form.AppForm>
       </form>
-    </FormWrapper>
+    </StepperFormWrapper>
   )
 }
