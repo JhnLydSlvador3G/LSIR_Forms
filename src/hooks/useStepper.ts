@@ -24,6 +24,7 @@ export type UseStepperReturn = {
 }
 
 export function useStepper(steps: StepConfig[]): UseStepperReturn {
+  // Navigation state stays here; validation is handled by the shared multistep hook.
   const [currentStep, setCurrentStep] = useState(0)
 
   const isFirst = currentStep === 0

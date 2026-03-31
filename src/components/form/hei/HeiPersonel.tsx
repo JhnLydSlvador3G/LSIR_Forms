@@ -14,13 +14,24 @@ const HeiPersonel = withForm({
       email: 'heiPres.email',
       telNum: 'heiPres.telNum',
     } as HeiPersonelFieldPaths,
+    isActive: true,
   },
 
-  render: function Render({ form, fields }) {
+  render: function Render({ form, fields, isActive }) {
     return (
       <fieldset className="flex flex-col gap-4">
         <div className="flex flex-row gap-3">
-          <form.AppField name={fields.firstName as any}>
+          <form.AppField
+            name={fields.firstName as any}
+            validators={
+              isActive
+                ? {
+                    onBlur: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+                    onChange: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+                  }
+                : undefined
+            }
+          >
             {(field) => (
               <field.TextField
                 label="First Name"
@@ -39,7 +50,17 @@ const HeiPersonel = withForm({
               />
             )}
           </form.AppField>
-          <form.AppField name={fields.lastName as any}>
+          <form.AppField
+            name={fields.lastName as any}
+            validators={
+              isActive
+                ? {
+                    onBlur: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+                    onChange: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+                  }
+                : undefined
+            }
+          >
             {(field) => (
               <field.TextField
                 label="Last Name"
@@ -61,7 +82,27 @@ const HeiPersonel = withForm({
         </div>
 
         <div className="flex flex-row gap-3">
-          <form.AppField name={fields.email as any}>
+          <form.AppField
+            name={fields.email as any}
+            validators={
+              isActive
+                ? {
+                    onBlur: ({ value }) => {
+                      if (!value?.trim()) return 'Required'
+                      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                        ? undefined
+                        : 'Invalid Email'
+                    },
+                    onChange: ({ value }) => {
+                      if (!value?.trim()) return 'Required'
+                      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                        ? undefined
+                        : 'Invalid Email'
+                    },
+                  }
+                : undefined
+            }
+          >
             {(field) => (
               <field.TextField
                 label="Email"
@@ -71,7 +112,29 @@ const HeiPersonel = withForm({
               />
             )}
           </form.AppField>
-          <form.AppField name={fields.telNum as any}>
+          <form.AppField
+            name={fields.telNum as any}
+            validators={
+              isActive
+                ? {
+                    onBlur: ({ value }) => {
+                      const trimmed = value?.trim() ?? ''
+                      if (!trimmed) return 'Required'
+                      return /^(09|\+639)\d{9}$/.test(trimmed)
+                        ? undefined
+                        : 'Invalid Number'
+                    },
+                    onChange: ({ value }) => {
+                      const trimmed = value?.trim() ?? ''
+                      if (!trimmed) return 'Required'
+                      return /^(09|\+639)\d{9}$/.test(trimmed)
+                        ? undefined
+                        : 'Invalid Number'
+                    },
+                  }
+                : undefined
+            }
+          >
             {(field) => (
               <field.TextField
                 label="Mobile Number"

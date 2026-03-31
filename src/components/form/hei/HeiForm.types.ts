@@ -3,11 +3,13 @@ import { AddressSchema } from '../address/AddressForm.type'
 import { heiPersonelSchema, type HeiPersonelFieldPaths } from './HeiPersonel.type'
 import type { StepConfig } from '@/hooks/useStepper'
 
-export const HeiOwnershipEnum = z.enum(['private', 'public'])
-export type HeiOwnership = z.infer<typeof HeiOwnershipEnum>
+export const HeiOwnershipValueEnum = z.enum(['private', 'public'])
+export type HeiOwnership = z.infer<typeof HeiOwnershipValueEnum>
+export const HeiOwnershipEnum = z.enum(['', 'private', 'public'])
 
-export const HeiTypeEnum = z.enum(['university', 'college', 'others'])
-export type HeiType = z.infer<typeof HeiTypeEnum>
+export const HeiTypeValueEnum = z.enum(['university', 'college', 'others'])
+export type HeiType = z.infer<typeof HeiTypeValueEnum>
+export const HeiTypeEnum = z.enum(['', 'university', 'college', 'others'])
 
 export const HEI_STEPS: StepConfig[] = [
   {
@@ -124,6 +126,14 @@ const applyHeiConditionalRules = (
     addRequiredIssue(ctx, ['privateOwnerShip'])
   }
 
+  if (data.heiOwnership === '') {
+    addRequiredIssue(ctx, ['heiOwnership'])
+  }
+
+  if (data.heiType === '') {
+    addRequiredIssue(ctx, ['heiType'])
+  }
+
   if (data.heiType === 'others' && !data.heiOther?.trim()) {
     addRequiredIssue(ctx, ['heiOther'], 'Please specify')
   }
@@ -227,9 +237,9 @@ export const heiFormDefaultValues: HeiFormData = {
     email: '',
     telNum: '',
   },
-  heiOwnership: 'public',
+  heiOwnership: '',
   privateOwnerShip: '',
-  heiType: 'university',
+  heiType: '',
   heiOther: '',
   startSem: '',
   heiWebsite: '',

@@ -19,7 +19,13 @@ const LawSchoolDeanDegree = withForm({
   render: function Render({ form, fields }) {
     return (
       <div className="flex flex-col gap-4">
-        <form.AppField name={fields.highestDegreeType as any}>
+        <form.AppField
+          name={fields.highestDegreeType as any}
+          validators={{
+            onBlur: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+            onChange: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+          }}
+        >
           {(field) => (
             <field.ComboboxField
               label="Highest Academic Degree Attained in Legal Education"
@@ -51,6 +57,10 @@ const LawSchoolDeanDegree = withForm({
 
         <form.AppField
           name={fields.rollNumber as any}
+          validators={{
+            onBlur: ({ value }) => (!value?.toString().trim() ? 'Required' : undefined),
+            onChange: ({ value }) => (!value?.toString().trim() ? 'Required' : undefined),
+          }}
           children={(field) => (
             <field.LabeledNumberField
               label="Roll Number"
@@ -63,6 +73,10 @@ const LawSchoolDeanDegree = withForm({
 
         <form.AppField
           name={fields.yearsTeachingExp as any}
+          validators={{
+            onBlur: ({ value }) => (!value?.toString().trim() ? 'Required' : undefined),
+            onChange: ({ value }) => (!value?.toString().trim() ? 'Required' : undefined),
+          }}
           children={(field) => (
             <field.LabeledNumberField
               label="Years of Teaching Experience in Law School"
@@ -75,6 +89,10 @@ const LawSchoolDeanDegree = withForm({
 
         <form.AppField
           name={fields.yearsAdminExp as any}
+          validators={{
+            onBlur: ({ value }) => (!value?.toString().trim() ? 'Required' : undefined),
+            onChange: ({ value }) => (!value?.toString().trim() ? 'Required' : undefined),
+          }}
           children={(field) => (
             <field.LabeledNumberField
               label="Years of Administrative Experience in Law School"

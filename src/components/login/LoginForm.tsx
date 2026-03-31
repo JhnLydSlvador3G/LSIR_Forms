@@ -3,6 +3,8 @@ import { useLocation, useNavigate, Link } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/useFormContext'
 import { authClient } from '@/lib/auth-client'
 import { getLoginErrorMessage } from '@/lib/errorMessages'
+import { userQueryOptions } from '@/lib/queries/user'
+import { useQueryClient } from '@tanstack/react-query'
 
 const isAuthBypassEnabled = import.meta.env.VITE_AUTH_BYPASS === 'true'
 const devLoginUser = import.meta.env.VITE_DEV_LOGIN_USER ?? ''
@@ -30,6 +32,7 @@ const defaultValues: LoginFormValues = {
 }
 
 export default function LoginForm() {
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
@@ -40,6 +43,7 @@ export default function LoginForm() {
     validators: {
       onBlur: LoginFormSchema,
       onSubmitAsync: async ({ value }) => {
+
         const { email, password } = value
 
         if (
@@ -57,10 +61,16 @@ export default function LoginForm() {
           password: password,
         })
 
-        if (error) {
-          console.log(error)
+
+        if (error !== null) {
           return getLoginErrorMessage(error.status);
-        } else {
+        }
+
+        await queryClient.invalidateQueries({ queryKey: ['user'] })
+        const user = await queryClient.fetchQuery(userQueryOptions())
+
+        if (user) {
+          console.log("NAVIGATING", user)
           navigate({ to: redirectTo, replace: true })
         }
       },

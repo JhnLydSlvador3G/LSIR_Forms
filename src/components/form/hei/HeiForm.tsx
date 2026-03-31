@@ -1,32 +1,25 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { StepperFormWrapper } from '../StepperFormWrapper'
 import AddressForm from '../address/AddressForm'
+import Spinner from '@/components/ui/feedback/Spinner'
 import {
   HEI_ADDRESS_FIELDS,
   HEI_PRESIDENT_FIELDS,
   HEI_REGISTRAR_FIELDS,
   HEI_STEPS,
-  HEI_STEP_SCHEMAS,
-  type HeiFormData,
-  type HeiOwnership,
-  type HeiType,
   heiFormDefaultValues,
   heiFormDraftSchema,
   heiFormSchema,
 } from './HeiForm.types'
+import type { HeiFormData, HeiOwnership, HeiType } from './HeiForm.types'
 import HeiGeneral from './HeiGeneralInfo'
 import HeiPersonel from './HeiPersonel'
 import { SectionWrapper } from './HeiSectionWrapper'
 import { useAppForm } from '@/hooks/useFormContext'
+import { useMultistepValidation } from '@/hooks/useMultistepValidation'
 import { StepperNav } from '@/components/ui/stepper/StepperNav'
 import { useStepper } from '@/hooks/useStepper'
 import { saveFormToLocal } from '@/lib/formLocalStorage'
-
-const isEmptyValue = (value: unknown) =>
-  value === undefined ||
-  value === null ||
-  (typeof value === 'string' && value.trim() === '') ||
-  (Array.isArray(value) && value.length === 0)
 
 const isHeiOwnership = (value: unknown): value is HeiOwnership =>
   value === 'private' || value === 'public'
@@ -34,14 +27,31 @@ const isHeiOwnership = (value: unknown): value is HeiOwnership =>
 const isHeiType = (value: unknown): value is HeiType =>
   value === 'university' || value === 'college' || value === 'others'
 
+const getActiveHeiStepFields = (
+  values: HeiFormData,
+  fieldNames: ReadonlyArray<string>,
+) =>
+  fieldNames.filter((fieldName) => {
+    // Only validate conditional fields when their controlling selection is active.
+    if (fieldName === 'privateOwnerShip') {
+      return values.heiOwnership === 'private'
+    }
+
+    if (fieldName === 'heiOther') {
+      return values.heiType === 'others'
+    }
+
+    return true
+  })
+
 const normalizeHeiDraft = (value: unknown): HeiFormData => {
   const draft = (value as Partial<HeiFormData>) ?? {}
   const ownership = isHeiOwnership(draft.heiOwnership)
     ? draft.heiOwnership
-    : heiFormDefaultValues.heiOwnership
+    : ''
   const heiType = isHeiType(draft.heiType)
     ? draft.heiType
-    : heiFormDefaultValues.heiType
+    : ''
 
   return {
     ...heiFormDefaultValues,
@@ -53,12 +63,12 @@ const normalizeHeiDraft = (value: unknown): HeiFormData => {
     heiPres: {
       ...heiFormDefaultValues.heiPres,
       ...draft.heiPres,
-      credential: draft.heiPres?.credential ?? heiFormDefaultValues.heiPres.credential,
+      credential: draft.heiPres?.credential || heiFormDefaultValues.heiPres.credential,
     },
     heiReg: {
       ...heiFormDefaultValues.heiReg,
       ...draft.heiReg,
-      credential: draft.heiReg?.credential ?? heiFormDefaultValues.heiReg.credential,
+      credential: draft.heiReg?.credential || heiFormDefaultValues.heiReg.credential,
     },
     heiOwnership: ownership,
     privateOwnerShip: ownership === 'private' ? (draft.privateOwnerShip ?? '') : '',
@@ -100,10 +110,8 @@ function HeiFormContent({
   initialValues: HeiFormData
   onHardReset: () => void
 }) {
+  // HEI keeps useStepper for navigation while shared validation handles Next/Submit.
   const stepper = useStepper(HEI_STEPS)
-  const visitedStepsRef = useRef<Set<number>>(new Set([0]))
-  const forcedErrorStepsRef = useRef<Set<number>>(new Set())
-  const justAdvancedRef = useRef(false)
   const [resetVersion, setResetVersion] = useState(0)
 
   const form = useAppForm({
@@ -111,7 +119,7 @@ function HeiFormContent({
     validators: {
       onChange: heiFormDraftSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       console.log('Submitted:', value)
     },
   })
@@ -130,12 +138,24 @@ function HeiFormContent({
     {
       key: 'hei-president',
       title: 'HEI President',
-      render: () => <HeiPersonel form={form as any} fields={HEI_PRESIDENT_FIELDS} />,
+      render: () => (
+        <HeiPersonel
+          form={form as any}
+          fields={HEI_PRESIDENT_FIELDS}
+          isActive={stepper.currentStep === 2}
+        />
+      ),
     },
     {
       key: 'hei-registrar',
       title: 'HEI Registrar',
-      render: () => <HeiPersonel form={form as any} fields={HEI_REGISTRAR_FIELDS} />,
+      render: () => (
+        <HeiPersonel
+          form={form as any}
+          fields={HEI_REGISTRAR_FIELDS}
+          isActive={stepper.currentStep === 3}
+        />
+      ),
     },
   ] as const
 
@@ -143,8 +163,9 @@ function HeiFormContent({
     const values = form.state.values
     const ownership = isHeiOwnership(values.heiOwnership)
       ? values.heiOwnership
-      : null
+      : ''
     const heiType = isHeiType(values.heiType) ? values.heiType : null
+    const normalizedHeiType = heiType ?? ''
 
     return {
       ...heiFormDefaultValues,
@@ -163,72 +184,32 @@ function HeiFormContent({
       },
       heiOwnership: ownership,
       privateOwnerShip: ownership === 'private' ? (values.privateOwnerShip || null) : null,
-      heiType,
-      heiOther: heiType === 'others' ? (values.heiOther || '') : '',
+      heiType: normalizedHeiType,
+      heiOther: normalizedHeiType === 'others' ? (values.heiOther || '') : '',
     }
   }
 
-  useEffect(() => {
-    if (visitedStepsRef.current.has(stepper.currentStep)) return
-    if (forcedErrorStepsRef.current.has(stepper.currentStep)) return
-
-    const timer = setTimeout(() => {
-      stepper.currentConfig.fields.forEach((field) => {
-        const currentValue = form.getFieldValue(field as never)
-        if (isEmptyValue(currentValue)) {
-          form.setFieldMeta(field as never, (prev) => ({
-            ...prev,
-            isTouched: false,
-          }))
-        }
-      })
-    }, 0)
-
-    visitedStepsRef.current.add(stepper.currentStep)
-    return () => clearTimeout(timer)
-  }, [form, stepper.currentConfig.fields, stepper.currentStep])
+  const { clearSubmitError, validateCurrentStep, validateBeforeSubmit } =
+    useMultistepValidation<HeiFormData>({
+      form,
+      stepper,
+      schema: heiFormSchema,
+      // HEI has conditional fields on step 1 that should not error while inactive.
+      getActiveFields: ({ values, fields }) =>
+        getActiveHeiStepFields(values, fields),
+    })
+  const handleStepNext = validateCurrentStep
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
-    if (justAdvancedRef.current) {
-      justAdvancedRef.current = false
-      return
-    }
-
     if (!stepper.isLast) return
 
-    const result = heiFormSchema.safeParse(form.state.values)
+    // Submit runs full-form validation and jumps to the first invalid step when needed.
+    const result = await validateBeforeSubmit()
 
-    if (!result.success) {
-      const firstFailedPath = result.error.issues[0]?.path?.join('.')
-      if (firstFailedPath) {
-        const failingStepIndex = HEI_STEPS.findIndex((step) =>
-          step.fields.includes(firstFailedPath),
-        )
-
-        if (failingStepIndex !== -1) {
-          visitedStepsRef.current.add(failingStepIndex)
-          forcedErrorStepsRef.current.add(failingStepIndex)
-          stepper.goTo(failingStepIndex)
-
-          const failingFields = HEI_STEPS[failingStepIndex]?.fields ?? []
-          failingFields.forEach((field) => {
-            form.setFieldMeta(field as never, (prev) => ({
-              ...prev,
-              isTouched: true,
-            }))
-          })
-
-          void Promise.all(
-            failingFields.flatMap((field) => [
-              form.validateField(field as never, 'change'),
-              form.validateField(field as never, 'blur'),
-            ]),
-          )
-        }
-      }
+    if (!result.ok) {
       return
     }
 
@@ -240,50 +221,6 @@ function HeiFormContent({
     await form.handleSubmit()
     form.reset(form.state.values, { keepDefaultValues: true })
     stepper.goTo(stepper.totalSteps - 1)
-  }
-
-  const handleStepNext = async () => {
-    const schema = HEI_STEP_SCHEMAS[stepper.currentStep]
-    if (!schema) return true
-
-    const result = schema.safeParse(form.state.values)
-
-    if (result.success) {
-      const nextFields = HEI_STEPS[stepper.currentStep + 1]?.fields ?? []
-      nextFields.forEach((field) => {
-        const currentValue = form.getFieldValue(field as never)
-        if (isEmptyValue(currentValue)) {
-          form.setFieldMeta(field as never, (prev) => ({
-            ...prev,
-            isTouched: false,
-          }))
-        }
-      })
-
-      forcedErrorStepsRef.current.delete(stepper.currentStep)
-      justAdvancedRef.current = true
-      setTimeout(() => {
-        justAdvancedRef.current = false
-      }, 0)
-      return true
-    }
-
-    forcedErrorStepsRef.current.add(stepper.currentStep)
-    stepper.currentConfig.fields.forEach((field) => {
-      form.setFieldMeta(field as never, (prev) => ({
-        ...prev,
-        isTouched: true,
-      }))
-    })
-
-    await Promise.all(
-      stepper.currentConfig.fields.flatMap((field) => [
-        form.validateField(field as never, 'change'),
-        form.validateField(field as never, 'blur'),
-      ]),
-    )
-
-    return false
   }
 
   return (
@@ -310,18 +247,28 @@ function HeiFormContent({
             onNext={handleStepNext}
             onReset={() => {
               onHardReset()
-              visitedStepsRef.current = new Set([0])
-              forcedErrorStepsRef.current = new Set()
-              justAdvancedRef.current = false
+              clearSubmitError()
               setResetVersion((value) => value + 1)
               stepper.goTo(0)
             }}
           />
 
+          <form.FormErrorMessage />
+
           {stepper.isLast && (
-            <div className="px-6 pb-4 flex justify-end">
-              <form.FormErrorMessage />
-            </div>
+            <form.Subscribe selector={(state) => state.isSubmitting}>
+              {(isSubmitting) => (
+                <div className="px-6 pb-4 flex justify-end gap-3">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex items-center gap-2 px-8 py-2 rounded-xl text-sm font-semibold bg-leb text-white shadow-md ring-2 ring-leb/30 hover:scale-105 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? <Spinner size="h-4 w-4" /> : 'Submit'}
+                  </button>
+                </div>
+              )}
+            </form.Subscribe>
           )}
         </form.AppForm>
       </form>

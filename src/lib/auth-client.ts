@@ -11,6 +11,13 @@ export const authClient = createAuthClient({
   fetchOptions: {
     credentials: 'include'
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60 // Cache duration in seconds (5 minutes)
+    }
+  },
+  useSecureCookies: false,
   plugins: [tanstackStartCookies()],
 })
 

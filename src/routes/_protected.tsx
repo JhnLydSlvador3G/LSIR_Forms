@@ -2,21 +2,20 @@ import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 import NavigationBar from '@/components/navigation/NavBar'
 import Footer from '@/components/Footer'
 import { SidebarProvider } from '@/hooks/useSideBar'
-import { checkAuthSession } from '@/lib/auth-fn'
+import { userQueryOptions } from '@/lib/queries/user'
 
 export const Route = createFileRoute('/_protected')({
-  beforeLoad: async ({ location }) => {
-    const session = await checkAuthSession()
+  beforeLoad: async ({ context, location }) => {
+    const user = await context.queryClient.ensureQueryData(userQueryOptions())
 
-    if (!session) {
+    if (!user) {
       throw redirect({
         to: '/login',
         search: { redirect: location.href },
       })
     }
-    const userData = session.user
 
-    return ({ userData })
+    return ({ user })
   },
   component: () => (
     <SidebarProvider>

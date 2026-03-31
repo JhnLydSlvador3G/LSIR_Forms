@@ -6,15 +6,25 @@ const HeiGeneral = withForm({
   render: function Render({ form }) {
     return (
       <div className="flex flex-col gap-4">
-        <form.AppField name="heiName">
+        <form.AppField
+          name="heiName"
+          validators={{
+            onBlur: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+            onChange: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+          }}
+        >
           {(field) => (
             <field.TextField label="HEI Name" htmlForVal="heiName" required />
           )}
         </form.AppField>
 
-        <div className="flex flex-wrap justify-start gap-5">
+        <div className="flex flex-wrap items-start justify-start gap-5">
           <form.AppField
             name="heiOwnership"
+            validators={{
+              onBlur: ({ value }) => (!value ? 'Required' : undefined),
+              onChange: ({ value }) => (!value ? 'Required' : undefined),
+            }}
             listeners={{
               onChange: ({ value }) => {
                 if (value !== 'private') {
@@ -45,6 +55,18 @@ const HeiGeneral = withForm({
             {(ownership) => (
               <form.AppField
                 name="privateOwnerShip"
+                validators={{
+                  onBlur: ({ value, fieldApi }) => {
+                    const ownership = fieldApi.form.getFieldValue('heiOwnership')
+                    if (ownership === 'private' && !value) return 'Required'
+                    return undefined
+                  },
+                  onChange: ({ value, fieldApi }) => {
+                    const ownership = fieldApi.form.getFieldValue('heiOwnership')
+                    if (ownership === 'private' && !value) return 'Required'
+                    return undefined
+                  },
+                }}
               >
                 {(field) => (
                   <field.SelectField
@@ -65,6 +87,10 @@ const HeiGeneral = withForm({
 
           <form.AppField
             name="heiType"
+            validators={{
+              onBlur: ({ value }) => (!value ? 'Required' : undefined),
+              onChange: ({ value }) => (!value ? 'Required' : undefined),
+            }}
             listeners={{
               onChange: ({ value }) => {
                 if (value !== 'others') {
@@ -96,7 +122,25 @@ const HeiGeneral = withForm({
         <form.Subscribe selector={(state) => state.values.heiType}>
           {(heiType) =>
             heiType === 'others' ? (
-              <form.AppField name="heiOther">
+              <form.AppField
+                name="heiOther"
+                validators={{
+                  onBlur: ({ value, fieldApi }) => {
+                    const currentHeiType = fieldApi.form.getFieldValue('heiType')
+                    if (currentHeiType === 'others' && !value?.trim()) {
+                      return 'Please specify'
+                    }
+                    return undefined
+                  },
+                  onChange: ({ value, fieldApi }) => {
+                    const currentHeiType = fieldApi.form.getFieldValue('heiType')
+                    if (currentHeiType === 'others' && !value?.trim()) {
+                      return 'Please specify'
+                    }
+                    return undefined
+                  },
+                }}
+              >
                 {(field) => (
                   <field.TextField
                     label="Please specify"
@@ -110,8 +154,14 @@ const HeiGeneral = withForm({
           }
         </form.Subscribe>
 
-        <div className="flex flex-row gap-3">
-          <form.AppField name="heiTelNumber">
+        <div className="flex flex-row items-start gap-3">
+          <form.AppField
+            name="heiTelNumber"
+            validators={{
+              onBlur: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+              onChange: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="HEI Telephone Number"
@@ -120,7 +170,23 @@ const HeiGeneral = withForm({
               />
             )}
           </form.AppField>
-          <form.AppField name="heiEmail">
+          <form.AppField
+            name="heiEmail"
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value?.trim()) return 'Required'
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                  ? undefined
+                  : 'Invalid Email'
+              },
+              onChange: ({ value }) => {
+                if (!value?.trim()) return 'Required'
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                  ? undefined
+                  : 'Invalid Email'
+              },
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="HEI Email Address"
@@ -131,7 +197,29 @@ const HeiGeneral = withForm({
           </form.AppField>
         </div>
 
-        <form.AppField name="heiWebsite">
+        <form.AppField
+          name="heiWebsite"
+          validators={{
+            onBlur: ({ value }) => {
+              if (!value?.trim()) return undefined
+              try {
+                new URL(value.trim())
+                return undefined
+              } catch {
+                return 'Invalid URL'
+              }
+            },
+            onChange: ({ value }) => {
+              if (!value?.trim()) return undefined
+              try {
+                new URL(value.trim())
+                return undefined
+              } catch {
+                return 'Invalid URL'
+              }
+            },
+          }}
+        >
           {(field) => (
             <field.TextField label="HEI Website" htmlForVal="heiWebsite" />
           )}

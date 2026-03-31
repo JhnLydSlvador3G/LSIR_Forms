@@ -55,6 +55,14 @@ const LawSchoolGeneralInfo = withForm({
                         return 'Required'
                       return undefined
                     },
+                    onChange: ({ value, fieldApi }) => {
+                      const unitName = fieldApi.form.getFieldValue(
+                        'lawSchoolUnitName',
+                      )
+                      if (unitName === 'Others' && !value?.trim())
+                        return 'Required'
+                      return undefined
+                    },
                   }}
                 >
                   {(field) => (
@@ -173,6 +181,18 @@ const LawSchoolGeneralInfo = withForm({
                         return 'Required'
                       return undefined
                     },
+                    onChange: ({ value, fieldApi }) => {
+                      const lawProgram =
+                        fieldApi.form.getFieldValue('lawProgram')
+                      const docType = fieldApi.form.getFieldValue('doctoralType')
+                      if (
+                        lawProgram === 'Doctorate' &&
+                        docType === 'Others' &&
+                        !value?.trim()
+                      )
+                        return 'Required'
+                      return undefined
+                    },
                   }}
                 >
                   {(field) => (
@@ -238,6 +258,13 @@ const LawSchoolGeneralInfo = withForm({
                         return 'Required'
                       return undefined
                     },
+                    onChange: ({ value, fieldApi }) => {
+                      const status =
+                        fieldApi.form.getFieldValue('recognitionStatus')
+                      if (status === 'Others' && !value?.trim())
+                        return 'Required'
+                      return undefined
+                    },
                   }}
                 >
                   {(field) => (
@@ -292,7 +319,23 @@ const LawSchoolGeneralInfo = withForm({
 
         {/* Row 3: Email + Telephone */}
         <div className="flex flex-row gap-4">
-          <form.AppField name="email">
+          <form.AppField
+            name="email"
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value?.trim()) return 'Required'
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                  ? undefined
+                  : 'Invalid Email'
+              },
+              onChange: ({ value }) => {
+                if (!value?.trim()) return 'Required'
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                  ? undefined
+                  : 'Invalid Email'
+              },
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="Email Address"
@@ -302,7 +345,13 @@ const LawSchoolGeneralInfo = withForm({
               />
             )}
           </form.AppField>
-          <form.AppField name="telNumber">
+          <form.AppField
+            name="telNumber"
+            validators={{
+              onBlur: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+              onChange: ({ value }) => (!value?.trim() ? 'Required' : undefined),
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="Telephone Number"
@@ -316,7 +365,25 @@ const LawSchoolGeneralInfo = withForm({
 
         {/* Row 4: Mobile */}
         <div className="flex flex-row gap-4">
-          <form.AppField name="mobileNumber">
+          <form.AppField
+            name="mobileNumber"
+            validators={{
+              onBlur: ({ value }) => {
+                const trimmed = value?.trim() ?? ''
+                if (!trimmed) return 'Required'
+                return /^(09|\+639)\d{9}$/.test(trimmed)
+                  ? undefined
+                  : 'Invalid Number'
+              },
+              onChange: ({ value }) => {
+                const trimmed = value?.trim() ?? ''
+                if (!trimmed) return 'Required'
+                return /^(09|\+639)\d{9}$/.test(trimmed)
+                  ? undefined
+                  : 'Invalid Number'
+              },
+            }}
+          >
             {(field) => (
               <field.TextField
                 label="Mobile Number"
