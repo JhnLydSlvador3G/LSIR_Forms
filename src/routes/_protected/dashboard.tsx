@@ -1,3 +1,5 @@
+import { userQueryOptions } from '@/lib/queries/user'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_protected/dashboard')({
@@ -5,5 +7,8 @@ export const Route = createFileRoute('/_protected/dashboard')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/dashboard"!</div>
+
+  const user = useSuspenseQuery(userQueryOptions())
+
+  return <div>Hello {user.data?.name}!</div>
 }
