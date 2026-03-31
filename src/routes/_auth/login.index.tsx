@@ -7,13 +7,11 @@ import { userQueryOptions } from '@/lib/queries/user'
 
 export const Route = createFileRoute('/_auth/login/')({
   component: RouteComponent,
-  beforeLoad: async ({ context, location }) => {
+  beforeLoad: async ({ context }) => {
     const user = await context.queryClient.ensureQueryData(userQueryOptions())
+
     if (user) {
-      throw redirect({
-        to: '/dashboard',
-        search: { redirect: location.href },
-      })
+      throw redirect({ to: '/dashboard' }) // no need for search param
     }
   },
 })

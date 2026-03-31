@@ -6,6 +6,7 @@ export const userQueryOptions = () => ({
     queryKey: ['user'],
     queryFn: async () => {
         const data = await checkAuthSession()
+        console.log(data)
         return data?.user ?? null
     }
 })

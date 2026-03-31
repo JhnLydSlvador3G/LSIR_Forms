@@ -1,8 +1,11 @@
 import { z } from 'zod'
-import { useLocation, useNavigate, Link } from '@tanstack/react-router'
+import { useLocation, useNavigate, Link, useRouteContext } from '@tanstack/react-router'
 import { useAppForm } from '@/hooks/useFormContext'
 import { authClient } from '@/lib/auth-client'
 import { getLoginErrorMessage } from '@/lib/errorMessages'
+import { userQueryOptions } from '@/lib/queries/user'
+import { Route } from '@/routes'
+import { useQueryClient } from '@tanstack/react-query'
 
 const LoginFormSchema = z.object({
   email: z.email(),
@@ -17,6 +20,7 @@ const defaultValues: LoginFormValues = {
 }
 
 export default function LoginForm() {
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
@@ -27,21 +31,28 @@ export default function LoginForm() {
     validators: {
       onBlur: LoginFormSchema,
       onSubmitAsync: async ({ value }) => {
+
         const { email, password } = value
         const { error } = await authClient.signIn.email({
           email: email,
           password: password,
         })
 
-        if (error) {
-          console.log(error)
+
+        if (error !== null) {
           return getLoginErrorMessage(error.status);
-        } else {
+        }
+
+        await queryClient.invalidateQueries({ queryKey: ['user'] })
+        const user = await queryClient.fetchQuery(userQueryOptions())
+
+        if (user) {
+          console.log("NAVIGATING", user)
           navigate({ to: redirectTo, replace: true })
         }
-      },
-    },
 
+      }
+    },
   })
 
   return (
