@@ -1,4 +1,15 @@
-import { GraduationCapIcon, Home, Info, StickyNote } from 'lucide-react'
+import { 
+  GraduationCapIcon, 
+  Home, 
+  Info, 
+  StickyNote, 
+  University, 
+  BookCheck,
+  UserPen,
+  NotebookTabs,
+  BookUser,
+  CalendarDays
+} from 'lucide-react'
 
 export type NavItemConfig =
   | {
@@ -36,6 +47,19 @@ export const navigationConfig: Array<NavItemConfig> = [
     type: 'item',
     label: 'HEI General Information',
     to: '/heiinfo',
+    icon: University,
+  },
+  {
+    type: 'item',
+    label: 'Program Information',
+    to: '/programinfo-submissions',
+    icon: BookCheck, 
+  },
+  // Law School form page (see `src/routes/_protected/_form/lawschoolinfo.tsx`)
+  {
+    type: 'item',
+    label: 'Law School General Information',
+    to: '/lawschoolinfo',
     icon: Info,
   },
   {
@@ -48,25 +72,25 @@ export const navigationConfig: Array<NavItemConfig> = [
     type: 'item',
     label: 'Law Faculty Profile',
     to: '/facultyprofile',
-    icon: GraduationCapIcon,
+    icon: UserPen,
   },
   {
     type: 'item',
     label: 'Faculty Developement Activity',
     to: '/facultydevelopment',
-    icon: GraduationCapIcon,
+    icon: NotebookTabs,
   },
   {
     type: 'item',
     label: 'Faculty Roster',
     to: '/facultyroster',
-    icon: GraduationCapIcon,
+    icon: BookUser,
   },
   {
     type: 'item',
     label: 'Class Schedule',
     to: '/schedule',
-    icon: GraduationCapIcon,
+    icon: CalendarDays,
   },
   {
     type: 'item',

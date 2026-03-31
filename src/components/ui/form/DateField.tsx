@@ -7,12 +7,14 @@ type TextFieldProps = {
   label: string
   className?: string
   required?: boolean
+  inline?: boolean
 }
 
 export function DateField({
   label,
   className,
   required = false,
+  inline = false,
 }: TextFieldProps) {
   const field = useFieldContext<string>()
 
@@ -20,21 +22,24 @@ export function DateField({
 
   return (
     <label className={cn('flex flex-col grow', className)}>
-      <LabelForm label={label} required={required} />
+      <div className={cn(inline && 'flex items-center gap-3')}>
+        <LabelForm label={label} required={required} />
 
-      <input
-        type="date"
-        placeholder="Select a Start Date"
-        className={cn(
-          'input-text w-full',
-          hasError
-            ? 'border-red-500 ring-2 ring-red-200 focus:ring-red-400'
-            : 'border-gray-200 focus:ring-2 focus:ring-leb/40 focus:border-leb',
-        )}
-        value={field.state.value}
-        onChange={(e) => field.handleChange(e.target.value)}
-        onBlur={field.handleBlur}
-      />
+        <input
+          type="date"
+          placeholder="Select a Start Date"
+          className={cn(
+            'input-text w-full',
+            inline && 'min-w-0 flex-1',
+            hasError
+              ? 'border-red-500 ring-2 ring-red-200 focus:ring-red-400'
+              : 'border-gray-200 focus:ring-2 focus:ring-leb/40 focus:border-leb',
+          )}
+          value={field.state.value}
+          onChange={(e) => field.handleChange(e.target.value)}
+          onBlur={field.handleBlur}
+        />
+      </div>
       <FieldInfo field={field} />
     </label>
   )
